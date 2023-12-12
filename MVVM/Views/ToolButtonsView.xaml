@@ -18,14 +18,11 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-            <Grid.Resources>
-                <viewmodels:ToolButtonsViewModel x:Key="ToolButtonsViewModel"/>
-            </Grid.Resources>
-            <Grid.DataContext>
-                <Binding Source="{StaticResource ToolButtonsViewModel}"/>
-            </Grid.DataContext>
+        <Grid.Resources>
+            <viewmodels:ToolButtonsViewModel x:Key="ToolButtonsViewModel"/>
+        </Grid.Resources>
 
-            <ItemsControl Grid.Column="1" Grid.Row="0" ItemsSource="{Binding ToolButtons}"></ItemsControl>
+        <ItemsControl Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={StaticResource ToolButtonsViewModel}, Path=ToolButtons}"></ItemsControl>
 
     </Grid>
 </UserControl>
