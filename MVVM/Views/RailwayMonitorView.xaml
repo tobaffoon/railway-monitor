@@ -19,8 +19,16 @@
                 <ColumnDefinition Width="10"/>
             </Grid.ColumnDefinitions>
 
-        <Canvas Grid.Column="1" Grid.Row="1">
+        <Border Grid.Column="1" Grid.Row="1"
+                Background="LightGray" 
+                BorderBrush="Black" 
+                BorderThickness="2" 
+                CornerRadius="15" >
 
-        </Canvas>
+            <Canvas>
+
+            </Canvas>
+        </Border>
+        
     </Grid>
 </UserControl>
