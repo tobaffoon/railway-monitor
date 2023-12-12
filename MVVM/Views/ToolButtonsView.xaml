@@ -22,7 +22,13 @@
             <viewmodels:ToolButtonsViewModel x:Key="ToolButtonsViewModel"/>
         </Grid.Resources>
 
-        <ItemsControl Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={StaticResource ToolButtonsViewModel}, Path=ToolButtons}"></ItemsControl>
+        <ItemsControl Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={StaticResource ToolButtonsViewModel}, Path=ToolButtons}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
 
     </Grid>
 </UserControl>
