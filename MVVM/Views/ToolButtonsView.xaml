@@ -7,7 +7,7 @@
              xmlns:viewmodels="clr-namespace:railway_monitor.MVVM.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="auto" d:DesignWidth="auto">
-    <Grid>
+    <Grid Background="Pink">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
