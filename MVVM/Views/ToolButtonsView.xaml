@@ -28,6 +28,12 @@
                     <StackPanel Orientation="Horizontal"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="FrameworkElement.Margin" Value="10,0"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
         </ItemsControl>
 
     </Grid>
