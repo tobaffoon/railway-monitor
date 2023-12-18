@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace railway_monitor.MVVM.ViewModels
+namespace railway_monitor.Components.ToolButtons
 {
     class ToolButtonsViewModel : DependencyObject
     {

@@ -10,8 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Components\" />
     <Folder Include="MVVM\Models\" />
+    <Folder Include="MVVM\ViewModels\" />
   </ItemGroup>
 
 </Project>

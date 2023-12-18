@@ -2,8 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:railway_monitor.MVVM.Views"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:views="clr-namespace:railway_monitor.MVVM.Views"
+             xmlns:toolbuttons="clr-namespace:railway_monitor.Components.ToolButtons"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -26,15 +27,16 @@
                 </Canvas.OpacityMask>
             </Canvas>
 
-            <local:ToolButtonsView Grid.Row="1">
-                <local:ToolButtonsView.HorizontalAlignment>
+            <toolbuttons:ToolButtons Grid.Row="1">
+                <toolbuttons:ToolButtons.HorizontalAlignment>
                     Center
-                </local:ToolButtonsView.HorizontalAlignment> 
-                <local:ToolButtonsView.VerticalAlignment>
+                </toolbuttons:ToolButtons.HorizontalAlignment>
+                <toolbuttons:ToolButtons.VerticalAlignment>
                     Bottom
-                </local:ToolButtonsView.VerticalAlignment> 
-            </local:ToolButtonsView> 
-        </Grid>
+                </toolbuttons:ToolButtons.VerticalAlignment>
+            </toolbuttons:ToolButtons>
+
+</Grid>
     </Border>
         
 </UserControl>

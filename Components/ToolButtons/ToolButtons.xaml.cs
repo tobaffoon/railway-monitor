@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace railway_monitor.MVVM.Views
+namespace railway_monitor.Components.ToolButtons
 {
     /// <summary>
-    /// Interaction logic for ToolButtonsView.xaml
+    /// Interaction logic for ToolButtons.xaml
     /// </summary>
-    public partial class ToolButtonsView : UserControl
+    public partial class ToolButtons : UserControl
     {
-        public ToolButtonsView()
+        public ToolButtons()
         {
             InitializeComponent();
         }
