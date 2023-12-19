@@ -1,6 +1,6 @@
 ﻿namespace railway_monitor.Tools.DrawCommands
 {
-    class DrawSRTCommand : CommandBase
+    class DrawStraightRailTrackCommand : CommandBase
     {
         public override void Execute(object? parameter)
         {
