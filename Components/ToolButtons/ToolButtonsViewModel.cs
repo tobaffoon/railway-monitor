@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using railway_monitor.Tools;
+using railway_monitor.Tools.DrawCommands;
 
 namespace railway_monitor.Components.ToolButtons
 {
@@ -22,7 +24,8 @@ namespace railway_monitor.Components.ToolButtons
             RadioButton srtButton = new RadioButton
             {
                 GroupName = "Tools",
-                Content = "SRT"
+                Content = "SRT",
+                Command = new DrawSRTCommand()
             };
             RadioButton switchButton = new RadioButton
             {
