@@ -15,7 +15,7 @@ namespace railway_monitor.MVVM.ViewModels
 
         public RailwayMonitorViewModel()
         {
-            CurrentToolCommand = new DrawSRTCommand();
+            CurrentToolCommand = new DrawStraightRailTrackCommand();
         }
     }
 }
