@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="Railway monitor" Height="450" Width="800">
     <Grid>
-        <views:RailwayMonitorView Margin="10"/>
+        <views:RailwayMonitorView DataContext="{Binding CurrentViewModel}" Margin="10"/>
 
     </Grid>
 </Window>
