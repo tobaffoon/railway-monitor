@@ -14,6 +14,7 @@ namespace railway_monitor.Components.ToolButtons
 {
     class ToolButtonsViewModel : DependencyObject
     {
+        private const string ToolsGroupName = "Tools";
         #region ToolButtonsList property declaration
 
         private static readonly DependencyPropertyKey ToolButtonsListPropertyKey;
@@ -77,35 +78,35 @@ namespace railway_monitor.Components.ToolButtons
 
             RadioButton srtButton = new RadioButton
             {
-                GroupName = "Tools",
+                GroupName = ToolsGroupName,
                 Content = "SRT",
             };
             srtButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolCommands.DrawStraightRailTrack, sender, e);
 
             RadioButton switchButton = new RadioButton
             {
-                GroupName = "Tools",
+                GroupName = ToolsGroupName,
                 Content = "Switch",
             };
             switchButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolCommands.AddSwitch, sender, e);
 
             RadioButton signalButton = new RadioButton
             {
-                GroupName = "Tools",
+                GroupName = ToolsGroupName,
                 Content = "Signal",
             };
             signalButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolCommands.DrawSignal, sender, e);
 
             RadioButton deadEndButton = new RadioButton
             {
-                GroupName = "Tools",
+                GroupName = ToolsGroupName,
                 Content = "Dead-end",
             };
             deadEndButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolCommands.DrawDeadend, sender, e);
 
             RadioButton externalTrackButton = new RadioButton
             {
-                GroupName = "Tools",
+                GroupName = ToolsGroupName,
                 Content = "External Track",
             };
             externalTrackButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolCommands.DrawExternalTrack, sender, e);
