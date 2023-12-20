@@ -67,7 +67,7 @@ namespace railway_monitor.Components.ToolButtons
         #endregion
 
 
-        private void ToolButtonChecked(CommandBase newCurrentToolCommand, object sender, RoutedEventArgs e)
+        private void ToolButtonChecked(DrawCommand newCurrentToolCommand, object sender, RoutedEventArgs e)
         {
             CurrentToolCommand = newCurrentToolCommand;
         }

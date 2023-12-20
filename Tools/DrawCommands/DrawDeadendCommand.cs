@@ -1,10 +1,12 @@
-﻿namespace railway_monitor.Tools.DrawCommands
+﻿using System.Windows.Shapes;
+
+namespace railway_monitor.Tools.DrawCommands
 {
-    class DrawDeadendCommand : CommandBase
+    class DrawDeadendCommand : DrawCommand
     {
-        public override void Execute(object? parameter)
+        public override void Execute(List<Shape> graphicItemsList)
         {
-            
+            throw new NotImplementedException();
         }
     }
 }
