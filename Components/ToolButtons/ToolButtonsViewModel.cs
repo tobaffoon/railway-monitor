@@ -13,58 +13,94 @@ namespace railway_monitor.Components.ToolButtons
 {
     class ToolButtonsViewModel : DependencyObject
     {
-        private static readonly DependencyPropertyKey ToolButtonsPropertyKey;
-        public static readonly DependencyProperty ToolButtonsProperty;
+        #region ToolButtonsList property declaration
 
+        private static readonly DependencyPropertyKey ToolButtonsListPropertyKey;
+        public static readonly DependencyProperty ToolButtonsListProperty;
+        private static readonly List<RadioButton> _toolButtonsList = new List<RadioButton>();
         static ToolButtonsViewModel()
         {
+            ToolButtonsListPropertyKey =
+                DependencyProperty.RegisterReadOnly(
+                    "ToolButtonsList",
+                    typeof(List<RadioButton>),
+                    typeof(ToolButtonsViewModel),
+                    new FrameworkPropertyMetadata(_toolButtonsList)
+                );
 
-            List<RadioButton> toolButtons = new List<RadioButton>();
+            ToolButtonsListProperty = ToolButtonsListPropertyKey.DependencyProperty;
+        }
+
+        public List<RadioButton> ToolButtonsList => (List<RadioButton>)GetValue(ToolButtonsListProperty);
+
+        #endregion
+
+        #region CurrentTool property declaration
+
+        public static readonly DependencyProperty CurrentToolCommandProperty = DependencyProperty.Register(
+            "CurrentToolCommandProperty",
+            typeof(CommandBase),
+            typeof(ToolButtonsViewModel),
+            new PropertyMetadata(DrawToolCommands.DrawStraightRailTrack)
+        );
+        public CommandBase CurrentToolCommand
+        {
+            get => (CommandBase)GetValue(CurrentToolCommandProperty);
+            set => SetValue(CurrentToolCommandProperty, value);
+        }
+
+        #endregion
+
+
+        private void ToolButtonChecked(CommandBase newCurrentToolCommand, object sender, RoutedEventArgs e)
+        {
+            CurrentToolCommand = newCurrentToolCommand;
+        }
+
+        public ToolButtonsViewModel()
+        {
+            _toolButtonsList.Clear();
 
             RadioButton srtButton = new RadioButton
             {
                 GroupName = "Tools",
                 Content = "SRT",
-                Command = new DrawSRTCommand()
             };
+            srtButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolCommands.DrawStraightRailTrack, sender, e);
+
             RadioButton switchButton = new RadioButton
             {
                 GroupName = "Tools",
-                Content = "Switch"
+                Content = "Switch",
             };
+            switchButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolCommands.AddSwitch, sender, e);
+
             RadioButton signalButton = new RadioButton
             {
                 GroupName = "Tools",
-                Content = "Signal"
+                Content = "Signal",
             };
+            signalButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolCommands.DrawSignal, sender, e);
+
             RadioButton deadEndButton = new RadioButton
             {
                 GroupName = "Tools",
-                Content = "Dead-end"
+                Content = "Dead-end",
             };
+            deadEndButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolCommands.DrawDeadend, sender, e);
+
             RadioButton externalTrackButton = new RadioButton
             {
                 GroupName = "Tools",
-                Content = "External Track"
+                Content = "External Track",
             };
+            externalTrackButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolCommands.DrawExternalTrack, sender, e);
 
-            toolButtons.Add(srtButton);
-            toolButtons.Add(switchButton);
-            toolButtons.Add(signalButton);
-            toolButtons.Add(deadEndButton);
-            toolButtons.Add(externalTrackButton);
-
-            ToolButtonsPropertyKey =
-                DependencyProperty.RegisterReadOnly(
-                    "ToolButtons",
-                    typeof(List<RadioButton>),
-                    typeof(ToolButtonsViewModel),
-                    new FrameworkPropertyMetadata(toolButtons)
-                );
-
-            ToolButtonsProperty = ToolButtonsPropertyKey.DependencyProperty;
+            _toolButtonsList.Add(srtButton);
+            _toolButtonsList.Add(switchButton);
+            _toolButtonsList.Add(signalButton);
+            _toolButtonsList.Add(deadEndButton);
+            _toolButtonsList.Add(externalTrackButton);
         }
-
-        public List<RadioButton> ToolButtons => (List<RadioButton>)GetValue(ToolButtonsProperty);
     }
 }
