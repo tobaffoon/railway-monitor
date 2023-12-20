@@ -9,10 +9,10 @@ namespace railway_monitor.Tools
 {
     public static class DrawToolCommands
     {
-        public static readonly CommandBase DrawStraightRailTrack = new DrawStraightRailTrackCommand();
-        public static readonly CommandBase AddSwitch = new AddSwitchCommand();
-        public static readonly CommandBase DrawDeadend = new DrawDeadendCommand();
-        public static readonly CommandBase DrawSignal = new DrawSignalCommand();
-        public static readonly CommandBase DrawExternalTrack = new DrawExternalTrackCommand();
+        public static readonly DrawCommand DrawStraightRailTrack = new DrawStraightRailTrackCommand();
+        public static readonly DrawCommand AddSwitch = new AddSwitchCommand();
+        public static readonly DrawCommand DrawDeadend = new DrawDeadendCommand();
+        public static readonly DrawCommand DrawSignal = new DrawSignalCommand();
+        public static readonly DrawCommand DrawExternalTrack = new DrawExternalTrackCommand();
     }
 }
