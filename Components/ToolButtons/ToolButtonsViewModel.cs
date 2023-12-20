@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Shapes;
 using railway_monitor.Tools;
 using railway_monitor.Tools.DrawCommands;
 
@@ -48,6 +49,19 @@ namespace railway_monitor.Components.ToolButtons
             get => (CommandBase)GetValue(CurrentToolCommandProperty);
             set => SetValue(CurrentToolCommandProperty, value);
         }
+
+        #endregion
+
+        #region GraphicItemsList property declaration
+
+        public static readonly DependencyProperty GraphicItemsListProperty = DependencyProperty.Register(
+            "GraphicItemList",
+            typeof(List<Shape>),
+            typeof(ToolButtonsViewModel)
+            );
+
+        private readonly List<Shape> _graphicItemList = new List<Shape>();
+        public List<Shape> GraphicItemList => (List<Shape>)GetValue(GraphicItemsListProperty);
 
         #endregion
 
