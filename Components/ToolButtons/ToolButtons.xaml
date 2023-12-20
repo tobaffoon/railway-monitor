@@ -21,7 +21,7 @@
             <local:ToolButtonsViewModel x:Key="ToolButtonsViewModel"/>
         </Grid.Resources>
 
-        <ItemsControl Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={StaticResource ToolButtonsViewModel}, Path=ToolButtons}">
+        <ItemsControl Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={StaticResource ToolButtonsViewModel}, Path=ToolButtonsList}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"/>

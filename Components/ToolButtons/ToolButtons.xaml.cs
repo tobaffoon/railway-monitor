@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 namespace railway_monitor.Components.ToolButtons
 {
     /// <summary>
-    /// Interaction logic for ToolButtons.xaml
+    /// Interaction logic for ToolButtonsList.xaml
     /// </summary>
     public partial class ToolButtons : UserControl
     {
