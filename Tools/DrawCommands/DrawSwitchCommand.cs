@@ -2,7 +2,7 @@
 
 namespace railway_monitor.Tools.DrawCommands
 {
-    class AddSwitchCommand : DrawCommand
+    class DrawSwitchCommand : DrawCommand
     {
         public override void Execute(List<Shape> graphicItemsList)
         {
