@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace railway_monitor.MVVM.ViewModels
 {
-    class MainViewModel : ViewModelBase
+    public class MainViewModel : ViewModelBase
     {
         public ViewModelBase CurrentViewModel { get; }
 

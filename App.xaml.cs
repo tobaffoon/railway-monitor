@@ -1,6 +1,4 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
+﻿using System.Windows;
 using railway_monitor.MVVM.ViewModels;
 
 namespace railway_monitor
