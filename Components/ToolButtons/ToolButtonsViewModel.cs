@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 using railway_monitor.Tools;
-using railway_monitor.Tools.DrawCommands;
 
 namespace railway_monitor.Components.ToolButtons
 {
@@ -37,18 +36,18 @@ namespace railway_monitor.Components.ToolButtons
 
         #endregion
 
-        #region CurrentTool property declaration
+        #region CurrentToolAction property declaration
 
-        public static readonly DependencyProperty CurrentToolCommandProperty = DependencyProperty.Register(
-            "CurrentToolCommandProperty",
-            typeof(CommandBase),
+        public static readonly DependencyProperty CurrentToolActionProperty = DependencyProperty.Register(
+            "CurrentToolActionProperty",
+            typeof(Action<UIElement>),
             typeof(ToolButtonsViewModel),
-            new PropertyMetadata(DrawToolCommands.DrawStraightRailTrack)
+            new PropertyMetadata((object)DrawToolActions.DrawStraightRailTrack)
         );
-        public CommandBase CurrentToolCommand
+        public Action<UIElement> CurrentToolAction
         {
-            get => (CommandBase)GetValue(CurrentToolCommandProperty);
-            set => SetValue(CurrentToolCommandProperty, value);
+            get => (Action<UIElement>)GetValue(CurrentToolActionProperty);
+            set => SetValue(CurrentToolActionProperty, value);
         }
 
         #endregion
@@ -67,9 +66,9 @@ namespace railway_monitor.Components.ToolButtons
         #endregion
 
 
-        private void ToolButtonChecked(DrawCommand newCurrentToolCommand, object sender, RoutedEventArgs e)
+        private void ToolButtonChecked(Action<UIElement> newCurrentToolAction, object sender, RoutedEventArgs e)
         {
-            CurrentToolCommand = newCurrentToolCommand;
+            CurrentToolAction = newCurrentToolAction;
         }
 
         public ToolButtonsViewModel()
@@ -81,35 +80,35 @@ namespace railway_monitor.Components.ToolButtons
                 GroupName = ToolsGroupName,
                 Content = "SRT",
             };
-            srtButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolCommands.DrawStraightRailTrack, sender, e);
+            srtButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolActions.DrawStraightRailTrack, sender, e);
 
             RadioButton switchButton = new RadioButton
             {
                 GroupName = ToolsGroupName,
                 Content = "Switch",
             };
-            switchButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolCommands.DrawSwitch, sender, e);
+            switchButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolActions.DrawSwitch, sender, e);
 
             RadioButton signalButton = new RadioButton
             {
                 GroupName = ToolsGroupName,
                 Content = "Signal",
             };
-            signalButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolCommands.DrawSignal, sender, e);
+            signalButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolActions.DrawSignal, sender, e);
 
             RadioButton deadEndButton = new RadioButton
             {
                 GroupName = ToolsGroupName,
                 Content = "Dead-end",
             };
-            deadEndButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolCommands.DrawDeadend, sender, e);
+            deadEndButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolActions.DrawDeadend, sender, e);
 
             RadioButton externalTrackButton = new RadioButton
             {
                 GroupName = ToolsGroupName,
                 Content = "External Track",
             };
-            externalTrackButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolCommands.DrawExternalTrack, sender, e);
+            externalTrackButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolActions.DrawExternalTrack, sender, e);
 
             _toolButtonsList.Add(srtButton);
             _toolButtonsList.Add(switchButton);
