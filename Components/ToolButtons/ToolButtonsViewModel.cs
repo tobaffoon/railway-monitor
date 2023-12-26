@@ -36,22 +36,6 @@ namespace railway_monitor.Components.ToolButtons
 
         #endregion
 
-        #region CurrentToolAction property declaration
-
-        public static readonly DependencyProperty CurrentToolActionProperty = DependencyProperty.Register(
-            "CurrentToolActionProperty",
-            typeof(Action<UIElement>),
-            typeof(ToolButtonsViewModel),
-            new PropertyMetadata((object)DrawToolActions.DrawStraightRailTrack)
-        );
-        public Action<UIElement> CurrentToolAction
-        {
-            get => (Action<UIElement>)GetValue(CurrentToolActionProperty);
-            set => SetValue(CurrentToolActionProperty, value);
-        }
-
-        #endregion
-
         #region GraphicItemsList property declaration
 
         public static readonly DependencyProperty GraphicItemsListProperty = DependencyProperty.Register(
@@ -64,16 +48,19 @@ namespace railway_monitor.Components.ToolButtons
         public List<Shape> GraphicItemList => (List<Shape>)GetValue(GraphicItemsListProperty);
 
         #endregion
+        private readonly UseToolCommand _toolCommand;
 
+        public UseToolCommand ToolCommand => _toolCommand;
 
         private void ToolButtonChecked(Action<UIElement> newCurrentToolAction, object sender, RoutedEventArgs e)
         {
-            CurrentToolAction = newCurrentToolAction;
+            _toolCommand.ExecuteDelegate = (Action<UIElement>)newCurrentToolAction;
         }
 
         public ToolButtonsViewModel()
         {
             _toolButtonsList.Clear();
+            _toolCommand = new UseToolCommand();
 
             RadioButton srtButton = new RadioButton
             {
@@ -115,6 +102,8 @@ namespace railway_monitor.Components.ToolButtons
             _toolButtonsList.Add(signalButton);
             _toolButtonsList.Add(deadEndButton);
             _toolButtonsList.Add(externalTrackButton);
+
+            srtButton.IsChecked = true;
         }
     }
 }

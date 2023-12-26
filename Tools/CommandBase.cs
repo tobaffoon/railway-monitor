@@ -8,17 +8,17 @@ using Microsoft.VisualBasic.CompilerServices;
 
 namespace railway_monitor.Tools
 {
-    public abstract class CommandBase : ICommand
+    public abstract class CommandBase<T> : ICommand
     {
-        Action<object> _executeDelegate;
+        Action<T> _executeDelegate;
 
-        public Action<object> ExecuteDelegate
+        public Action<T> ExecuteDelegate
         {
-            get => (Action<object>)_executeDelegate;
+            get => (Action<T>)_executeDelegate;
             set => _executeDelegate = value;
         }
 
-        public CommandBase(Action<object> executeDelegate)
+        public CommandBase(Action<T> executeDelegate)
         {
             _executeDelegate = executeDelegate;
         }
