@@ -52,9 +52,9 @@ namespace railway_monitor.Components.ToolButtons
 
         public UseToolCommand ToolCommand => _toolCommand;
 
-        private void ToolButtonChecked(Action<UIElement> newCurrentToolAction, object sender, RoutedEventArgs e)
+        private void ToolButtonChecked(Action<Canvas> newCurrentToolAction, object sender, RoutedEventArgs e)
         {
-            _toolCommand.ExecuteDelegate = (Action<UIElement>)newCurrentToolAction;
+            _toolCommand.ExecuteDelegate = newCurrentToolAction;
         }
 
         public ToolButtonsViewModel()

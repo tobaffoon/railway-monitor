@@ -13,8 +13,7 @@
     <Border x:Name="MainBorder"
             Background="Azure"
             BorderBrush="Black" 
-            BorderThickness="2" 
-            CornerRadius="15">
+            BorderThickness="2">
 
         <Grid>
             <Grid.RowDefinitions>
@@ -26,10 +25,6 @@
                 <Canvas.DataContext>
                     <viewModels:RailwayMonitorViewModel/>
                 </Canvas.DataContext>
-
-                <Canvas.OpacityMask>
-                    <VisualBrush Visual="{Binding ElementName=MainBorder}"/>
-                </Canvas.OpacityMask>
 
                 <Canvas.InputBindings>
                     <MouseBinding Command="{Binding Source={StaticResource SharedToolButtonsViewModel}, Path=ToolCommand}"
