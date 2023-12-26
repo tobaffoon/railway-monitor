@@ -30,6 +30,10 @@
                 <Canvas.OpacityMask>
                     <VisualBrush Visual="{Binding ElementName=MainBorder}"/>
                 </Canvas.OpacityMask>
+
+                <Canvas.InputBindings>
+                    <MouseBinding Command="{Binding CurrentToolCommand}"></MouseBinding>
+                </Canvas.InputBindings>
             </Canvas>
 
             <toolbuttons:ToolButtons Grid.Row="1">
