@@ -10,7 +10,7 @@ namespace railway_monitor.Tools
     public static class DrawToolCommands
     {
         public static readonly DrawCommand DrawStraightRailTrack = new DrawStraightRailTrackCommand();
-        public static readonly DrawCommand AddSwitch = new DrawSwitchCommand();
+        public static readonly DrawCommand DrawSwitch = new DrawSwitchCommand();
         public static readonly DrawCommand DrawDeadend = new DrawDeadendCommand();
         public static readonly DrawCommand DrawSignal = new DrawSignalCommand();
         public static readonly DrawCommand DrawExternalTrack = new DrawExternalTrackCommand();
