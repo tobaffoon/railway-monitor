@@ -4,21 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace railway_monitor.Tools
 {
-    public class UseToolCommand : CommandBase
+    public class UseToolCommand : CommandBase<UIElement>
     {
-        public void Execute(UIElement canvas)
-        {
-            ExecuteDelegate.Invoke(canvas);
-        }
         public override void Execute(object? parameter)
         {
-            throw new NotImplementedException("Command takes exactly one UIElement argument");
+            if(parameter == null) return;
+
+            if (parameter.GetType() != typeof(UIElement))
+            {
+                throw new NotImplementedException("Command takes exactly one UIElement argument");
+            }
+
+            ExecuteDelegate.Invoke((UIElement)parameter);
         }
 
-        public UseToolCommand(Action<object> executeDelegate) : base(executeDelegate)
+        public UseToolCommand(Action<UIElement> executeDelegate) : base(executeDelegate)
         {
             if (executeDelegate.GetType() != typeof(Action<UIElement>))
             {

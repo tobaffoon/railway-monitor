@@ -32,7 +32,9 @@
                 </Canvas.OpacityMask>
 
                 <Canvas.InputBindings>
-                    <MouseBinding Command="{Binding CurrentToolCommand}"></MouseBinding>
+                    <MouseBinding Command="{Binding Source={StaticResource SharedToolButtonsViewModel}, Path=ToolCommand}"
+                                  CommandParameter="{Binding ElementName=MainCanvas}"
+                                  MouseAction="LeftClick"></MouseBinding>
                 </Canvas.InputBindings>
             </Canvas>
 

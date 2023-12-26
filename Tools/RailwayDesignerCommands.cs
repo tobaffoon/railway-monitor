@@ -8,6 +8,6 @@ namespace railway_monitor.Tools
 {
     public static class RailwayDesignerCommands
     {
-        public static readonly CommandBase UseTool = new UseToolCommand();
+        public static readonly UseToolCommand UseTool = new UseToolCommand();
     }
 }
