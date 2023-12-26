@@ -88,7 +88,7 @@ namespace railway_monitor.Components.ToolButtons
                 GroupName = ToolsGroupName,
                 Content = "Switch",
             };
-            switchButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolCommands.AddSwitch, sender, e);
+            switchButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(DrawToolCommands.DrawSwitch, sender, e);
 
             RadioButton signalButton = new RadioButton
             {
