@@ -14,9 +14,9 @@ namespace railway_monitor.Tools
         {
             if(parameter == null) return;
 
-            if (parameter.GetType() != typeof(UIElement))
+            if (parameter is not Canvas)
             {
-                throw new NotImplementedException("Command takes exactly one UIElement argument");
+                throw new NotImplementedException("Command takes exactly one UIElement argument " + parameter.GetType() + " got instead");
             }
 
             ExecuteDelegate.Invoke((UIElement)parameter);
