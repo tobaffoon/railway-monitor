@@ -10,21 +10,14 @@ namespace railway_monitor.Tools
 {
     public abstract class CommandBase<T> : ICommand
     {
-        Action<T> _executeDelegate;
-
-        public Action<T> ExecuteDelegate
-        {
-            get => (Action<T>)_executeDelegate;
-            set => _executeDelegate = value;
-        }
+        public Action<T>? ExecuteDelegate { get; set; }
 
         public CommandBase(Action<T> executeDelegate)
         {
-            _executeDelegate = executeDelegate;
+            ExecuteDelegate = executeDelegate;
         }
         public CommandBase()
         {
-            _executeDelegate = (x => throw new IncompleteInitialization());
         }
 
         public event EventHandler? CanExecuteChanged;

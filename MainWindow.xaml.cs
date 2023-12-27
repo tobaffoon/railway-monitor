@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using System.Windows;
 
 namespace railway_monitor
@@ -12,4 +13,29 @@ namespace railway_monitor
             InitializeComponent();
         }
     }
+=======
+﻿using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace railway_monitor
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        public MainWindow()
+        {
+            InitializeComponent();
+        }
+    }
+>>>>>>> Final 1st sem commit
 }
