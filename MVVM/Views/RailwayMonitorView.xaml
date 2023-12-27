@@ -6,6 +6,7 @@
              xmlns:views="clr-namespace:railway_monitor.MVVM.Views"
              xmlns:viewModels="clr-namespace:railway_monitor.MVVM.ViewModels"
              xmlns:toolbuttons="clr-namespace:railway_monitor.Components.ToolButtons"
+             xmlns:rw_canvas="clr-namespace:railway_monitor.Components.RailwayCanvas"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -21,17 +22,17 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <Canvas x:Name="MainCanvas" Background="Azure" Grid.Row="0">
+            <rw_canvas:RailwayCanvas x:Name="MainCanvas" Background="Azure" Grid.Row="0">
                 <Canvas.DataContext>
                     <viewModels:RailwayMonitorViewModel/>
                 </Canvas.DataContext>
 
                 <Canvas.InputBindings>
-                    <MouseBinding Command="{Binding Source={StaticResource SharedToolButtonsViewModel}, Path=ToolCommand}"
+                    <MouseBinding Command="{Binding Source={StaticResource SharedToolButtonsViewModel}, Path=ClickCommand}"
                                   CommandParameter="{Binding ElementName=MainCanvas}"
                                   MouseAction="LeftClick"></MouseBinding>
                 </Canvas.InputBindings>
-            </Canvas>
+            </rw_canvas:RailwayCanvas>
 
             <toolbuttons:ToolButtons Grid.Row="1">
                 <toolbuttons:ToolButtons.HorizontalAlignment>
