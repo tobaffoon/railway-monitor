@@ -1,5 +1,4 @@
 ﻿using railway_monitor.MVVM.Models.Station;
-using System.Windows;
 
 namespace railway_monitor.MVVM.Models.Station.Units
 {
@@ -8,8 +7,5 @@ namespace railway_monitor.MVVM.Models.Station.Units
     /// </summary>
     public class Connection : NodeUnit
     {
-        public Connection(Point pos) : base(pos)
-        {
-        }
     }
 }

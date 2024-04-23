@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using railway_monitor.MVVM.Models.Station;
+﻿using railway_monitor.MVVM.Models.Station;
 
 namespace railway_monitor.MVVM.Models.Station.Units
 {
@@ -14,7 +13,7 @@ namespace railway_monitor.MVVM.Models.Station.Units
             set => SetField(ref _trackOneChosen, value);
         }
 
-        public Switch(iPoint pos, StraightRailTrack switchableTrackOne, StraightRailTrack switchableTrackTwo) : base(pos)
+        public Switch(StraightRailTrack switchableTrackOne, StraightRailTrack switchableTrackTwo)
         {
             _switchableTrackOne = switchableTrackOne;
             _switchableTrackTwo = switchableTrackTwo;

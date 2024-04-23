@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using railway_monitor.MVVM.Models.Station;
+﻿using railway_monitor.MVVM.Models.Station;
 
 namespace railway_monitor.MVVM.Models.Station.Units
 {
@@ -15,9 +14,6 @@ namespace railway_monitor.MVVM.Models.Station.Units
         {
             get => _status;
             set => SetField(ref _status, value);
-        }
-        public TrafficLight(Point pos) : base(pos)
-        {
         }
 
         public void Toggle()
