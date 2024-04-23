@@ -8,7 +8,7 @@ namespace railway_monitor.MVVM.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        public ViewModelBase CurrentViewModel { get; }
+        public ViewModelBase CurrentViewModel { get; set; }
 
         public MainViewModel()
         {

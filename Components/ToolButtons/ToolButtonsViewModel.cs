@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Shapes;
 using railway_monitor.Components.GraphicItems;
 using railway_monitor.Tools;
 using railway_monitor.Tools.Actions;
-using railway_monitor.Components.RailwayCanvas;
 using System.Windows.Media;
 
 namespace railway_monitor.Components.ToolButtons
