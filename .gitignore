@@ -581,4 +581,6 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 /bin/*
+*.dll
+*.pdb
 # End of https://www.toptal.com/developers/gitignore/api/csharp,visualstudio
