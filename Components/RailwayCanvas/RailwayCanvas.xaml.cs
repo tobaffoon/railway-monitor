@@ -1,4 +1,5 @@
 ﻿using railway_monitor.Components.ToolButtons;
+using railway_monitor.MVVM.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Configuration.Internal;
@@ -30,8 +31,16 @@ namespace railway_monitor.Components.RailwayCanvas
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            Tuple<Canvas, Shape> args = Tuple.Create<Canvas, Shape>(this, new Rectangle());
-            ((ToolButtonsViewModel)TryFindResource("SharedToolButtonsViewModel")).MoveCommand.Execute(args);
+            RailwayMonitorViewModel contex = (RailwayMonitorViewModel)DataContext;
+            Point cursor = e.MouseDevice.GetPosition(this);
+            contex.MoveCommand.Execute(Tuple.Create(contex.RailwayCanvas, cursor));
+        }
+
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            RailwayMonitorViewModel contex = (RailwayMonitorViewModel)DataContext;
+            Point cursor = e.MouseDevice.GetPosition(this);
+            contex.ClickCommand.Execute(Tuple.Create(contex.RailwayCanvas, cursor));
         }
     }
 }

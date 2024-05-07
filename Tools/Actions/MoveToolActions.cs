@@ -1,4 +1,5 @@
 ﻿using railway_monitor.Components.GraphicItems;
+using railway_monitor.Components.RailwayCanvas;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,53 +14,49 @@ using System.Windows.Shapes;
 
 namespace railway_monitor.Tools.Actions
 {
-    public class MoveToolActions
+    public sealed class MoveToolActions
     {
-        public static void MoveStraightRailTrackStart(Tuple<Canvas, Shape> args)
+        public static void MoveStraightRailTrack(Tuple<RailwayCanvasViewModel, Point> args)
         {
-            Canvas canvas = args.Item1;
-            StraightRailTrack railTrack = (StraightRailTrack)args.Item2;
-
-            Point mousePos = Mouse.GetPosition(canvas);
-            railTrack.X1 = mousePos.X;
-            railTrack.Y1 = mousePos.Y;
-            railTrack.X2 = mousePos.X;
-            railTrack.Y2 = mousePos.Y;
-
-            if (!canvas.Children.Contains(railTrack))
+            RailwayCanvasViewModel canvas = args.Item1;
+            Shape? shape = canvas.LatestShape;
+            if (shape == null)
             {
-                canvas.Children.Add(railTrack);
+                shape = new StraightRailTrack();
+                canvas.AddShape(shape);
+            }
+
+            Point mousePos = args.Item2;
+            StraightRailTrack srt = (StraightRailTrack)shape;
+            if (srt.status == StraightRailTrack.PlacementStatus.NOT_PLACED)
+            {
+                srt.X1 = mousePos.X;
+                srt.Y1 = mousePos.Y;
+                srt.X2 = mousePos.X;
+                srt.Y2 = mousePos.Y;
             }
             else
             {
-                railTrack.InvalidateMeasure();
+                srt.X2 = mousePos.X;
+                srt.Y2 = mousePos.Y;
             }
-        }
-        public static void MoveStraightRailTrackFinish(Tuple<Canvas, Shape> args)
-        {
-            Canvas canvas = args.Item1;
-            StraightRailTrack railTrack = (StraightRailTrack)args.Item2;
 
-            Point mousePos = Mouse.GetPosition(canvas);
-            railTrack.X2 = mousePos.X;
-            railTrack.Y2 = mousePos.Y;
-
-            railTrack.InvalidateMeasure();
+            srt.InvalidateMeasure();
         }
 
-        public static void MoveSwitch(Tuple<Canvas, Shape> args)
+        public static void MoveSwitch(Tuple<RailwayCanvasViewModel, Point> args)
         {
             throw new NotImplementedException("Switch");
         }
-        public static void MoveSignal(Tuple<Canvas, Shape> args)
+        public static void MoveSignal(Tuple<RailwayCanvasViewModel, Point> args)
         {
             throw new NotImplementedException("Signal");
         }
-        public static void MoveDeadend(Tuple<Canvas, Shape> args)
+        public static void MoveDeadend(Tuple<RailwayCanvasViewModel, Point> args)
         {
             throw new NotImplementedException("Deadend");
         }
-        public static void MoveExternalTrack(Tuple<Canvas, Shape> args)
+        public static void MoveExternalTrack(Tuple<RailwayCanvasViewModel, Point> args)
         {
             throw new NotImplementedException("External track");
         }

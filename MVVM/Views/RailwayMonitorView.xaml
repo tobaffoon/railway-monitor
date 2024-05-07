@@ -10,9 +10,12 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-
+    <UserControl.DataContext>
+        <viewModels:RailwayMonitorViewModel/>
+    </UserControl.DataContext>
+    
     <Border x:Name="MainBorder"
-            Background="Azure"
+            Background="White"
             BorderBrush="Black" 
             BorderThickness="2">
 
@@ -22,19 +25,15 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <rw_canvas:RailwayCanvas x:Name="MainCanvas" Background="Azure" Grid.Row="0">
-                <Canvas.DataContext>
-                    <viewModels:RailwayMonitorViewModel/>
-                </Canvas.DataContext>
+            <ItemsControl Grid.Row="0" ItemsSource="{Binding RailwayCanvas.GraphicItems}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <rw_canvas:RailwayCanvas x:Name="MainCanvas" Background="Azure"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
 
-                <Canvas.InputBindings>
-                    <MouseBinding Command="{Binding Source={StaticResource SharedToolButtonsViewModel}, Path=ClickCommand}"
-                                  CommandParameter="{Binding ElementName=MainCanvas}"
-                                  MouseAction="LeftClick"></MouseBinding>
-                </Canvas.InputBindings>
-            </rw_canvas:RailwayCanvas>
-
-            <toolbuttons:ToolButtons Grid.Row="1">
+            <toolbuttons:ToolButtons Grid.Row="1" DataContext="{Binding ToolButtons}">
                 <toolbuttons:ToolButtons.HorizontalAlignment>
                     Center
                 </toolbuttons:ToolButtons.HorizontalAlignment>
@@ -42,8 +41,7 @@
                     Bottom
                 </toolbuttons:ToolButtons.VerticalAlignment>
             </toolbuttons:ToolButtons>
-
-</Grid>
+        </Grid>
     </Border>
         
 </UserControl>

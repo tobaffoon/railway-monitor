@@ -16,8 +16,7 @@
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
-        <ItemsControl Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={StaticResource SharedToolButtonsViewModel}, Path=ToolButtonsList}">
+        <ItemsControl Grid.Column="1" Grid.Row="0" ItemsSource="{Binding ToolButtonsList}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"/>
@@ -30,6 +29,5 @@
                 </Style>
             </ItemsControl.ItemContainerStyle>
         </ItemsControl>
-
     </Grid>
 </UserControl>

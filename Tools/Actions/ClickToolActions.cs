@@ -10,45 +10,47 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using railway_monitor.Components.GraphicItems;
+using railway_monitor.Components.RailwayCanvas;
 
 namespace railway_monitor.Tools.Actions
 {
     public sealed class ClickToolActions
     {
-        public static void StartStraightRailTrack(Tuple<Canvas, Shape> args)
+        public static void PlaceStraightRailTrack(Tuple<RailwayCanvasViewModel, Point> args)
         {
-            Canvas canvas = args.Item1;
-            Shape currentShape = args.Item2;
-            Point mousePos = Mouse.GetPosition(canvas);
+            RailwayCanvasViewModel canvas = args.Item1;
+            Shape? shape = canvas.LatestShape;
+            if (shape == null)
+            {
+                shape = new StraightRailTrack();
+                canvas.AddShape(shape);
+            }
 
-            StraightRailTrack currentRailTrack = (StraightRailTrack)currentShape;
-            currentRailTrack.X1 = mousePos.X;
-            currentRailTrack.Y1 = mousePos.Y;
+            Point mousePos = args.Item2;
+            StraightRailTrack srt = (StraightRailTrack)shape;
+            if (srt.status == StraightRailTrack.PlacementStatus.NOT_PLACED) {
+                srt.PlaceFirstEnd(mousePos);
+            }
+            else
+            {
+                srt.PlaceSecondEnd(mousePos);
+                canvas.ResetLatestShape();
+            }
         }
-        public static void FinishStraightRailTrack(Tuple<Canvas, Shape> args)
-        {
-            Canvas canvas = args.Item1;
-            Shape currentShape = args.Item2;
-            Point mousePos = Mouse.GetPosition(canvas);
 
-            StraightRailTrack currentRailTrack = (StraightRailTrack)currentShape;
-            currentRailTrack.X2 = mousePos.X;
-            currentRailTrack.Y2 = mousePos.Y;
-        }
-
-        public static void PlaceSwitch(Tuple<Canvas, Shape> args)
+        public static void PlaceSwitch(Tuple<RailwayCanvasViewModel, Point> args)
         {
             throw new NotImplementedException("Switch");
         }
-        public static void PlaceSignal(Tuple<Canvas, Shape> args)
+        public static void PlaceSignal(Tuple<RailwayCanvasViewModel, Point> args)
         {
             throw new NotImplementedException("Signal");
         }
-        public static void PlaceDeadend(Tuple<Canvas, Shape> args)
+        public static void PlaceDeadend(Tuple<RailwayCanvasViewModel, Point> args)
         {
             throw new NotImplementedException("Deadend");
         }
-        public static void PlaceExternalTrack(Tuple<Canvas, Shape> args)
+        public static void PlaceExternalTrack(Tuple<RailwayCanvasViewModel, Point> args)
         {
             throw new NotImplementedException("External track");
         }

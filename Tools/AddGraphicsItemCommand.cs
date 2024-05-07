@@ -10,29 +10,20 @@ using railway_monitor.Components.RailwayCanvas;
 
 namespace railway_monitor.Tools
 {
-    public class AddGraphicsItemCommand : CommandBase<Tuple<Canvas, Shape>>
+    public class AddGraphicsItemCommand : CommandBase<Tuple<RailwayCanvasViewModel, Point>>
     {
-        public Func<Shape>? ShapeGetter { get; set; }
-        public Action? ExecutedHandler { get; set; }
-
         public override void Execute(object? parameter)
         {
-            if(parameter == null) return;
+            if (parameter == null) return;
 
-            if (parameter is not Canvas)
+            if (parameter is not Tuple<RailwayCanvasViewModel, Point>)
             {
-                throw new NotImplementedException("Command takes exactly one UIElement argument " + parameter.GetType() + " got instead");
+                throw new NotImplementedException("Command takes RailwayCanvasViewModel, Point arguments. " + parameter.GetType() + " got instead");
             }
 
-            Shape currentItem = ShapeGetter.Invoke();
-            ExecuteDelegate.Invoke(Tuple.Create((Canvas)parameter, currentItem));
-            ExecutedHandler.Invoke();
+            ExecuteDelegate.Invoke((Tuple<RailwayCanvasViewModel, Point>)parameter);
         }
 
-        public AddGraphicsItemCommand(Action<Tuple<Canvas, Shape>> executeDelegate, Func<Shape> shapeGetter) : base(executeDelegate)
-        {
-            ShapeGetter = shapeGetter;
-        }
-        public AddGraphicsItemCommand() { }
+        public AddGraphicsItemCommand(Action<Tuple<RailwayCanvasViewModel, Point>> executeDelegate) : base(executeDelegate) { }
     }
 }
