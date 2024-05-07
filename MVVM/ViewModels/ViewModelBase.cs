@@ -1,9 +1,11 @@
-﻿using System.ComponentModel;
+﻿using railway_monitor.Bases;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace railway_monitor.MVVM.ViewModels
 {
-    class ViewModelBase : INotifyPropertyChanged
+    public class ViewModelBase : DependencyObject, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -13,7 +15,7 @@ namespace railway_monitor.MVVM.ViewModels
         }
 
         protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
-        {
+    {
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
             field = value;
             OnPropertyChanged(propertyName);
