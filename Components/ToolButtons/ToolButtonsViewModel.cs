@@ -16,8 +16,8 @@ namespace railway_monitor.Components.ToolButtons
 
         public static List<RadioButton> ToolButtonsList { get; } = new List<RadioButton>();
 
-        public AddGraphicsItemCommand ClickCommand { get; private set; }
-        public MoveGraphicItemCommand MoveCommand { get; private set; }
+        public UseToolCommand ClickCommand { get; private set; }
+        public UseToolCommand MoveCommand { get; private set; }
 
         private void ToolButtonChecked(Action<Tuple<RailwayCanvasViewModel, Point>> newClickFunc, Action<Tuple<RailwayCanvasViewModel, Point>> newMoveFunc)
         {
@@ -29,8 +29,8 @@ namespace railway_monitor.Components.ToolButtons
         {
             ToolButtonsList.Clear();
 
-            ClickCommand = new AddGraphicsItemCommand(ClickToolActions.PlaceStraightRailTrack);
-            MoveCommand = new MoveGraphicItemCommand(MoveToolActions.MoveStraightRailTrack);
+            ClickCommand = new UseToolCommand(ClickToolActions.PlaceStraightRailTrack);
+            MoveCommand = new UseToolCommand(MoveToolActions.MoveStraightRailTrack);
 
             RadioButton srtButton = new RadioButton
             {

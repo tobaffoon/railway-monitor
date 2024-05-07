@@ -11,21 +11,21 @@ namespace railway_monitor.MVVM.ViewModels
     {
         public static readonly DependencyProperty MoveCommandProperty =
             DependencyProperty.Register(
-            "MoveCommand", typeof(MoveGraphicItemCommand),
+            "MoveCommand", typeof(UseToolCommand),
             typeof(RailwayMonitorViewModel));
-        public MoveGraphicItemCommand MoveCommand
+        public UseToolCommand MoveCommand
         {
-            get { return (MoveGraphicItemCommand)GetValue(MoveCommandProperty); }
+            get { return (UseToolCommand)GetValue(MoveCommandProperty); }
             set { SetValue(MoveCommandProperty, value); }
         }
 
         public static readonly DependencyProperty ClickCommandProperty = 
             DependencyProperty.Register(
-            "ClickCommand", typeof(AddGraphicsItemCommand),
+            "ClickCommand", typeof(UseToolCommand),
             typeof(RailwayMonitorViewModel));
-        public AddGraphicsItemCommand ClickCommand
+        public UseToolCommand ClickCommand
         {
-            get { return (AddGraphicsItemCommand)GetValue(ClickCommandProperty); }
+            get { return (UseToolCommand)GetValue(ClickCommandProperty); }
             set { SetValue(ClickCommandProperty, value); }
         }
 
