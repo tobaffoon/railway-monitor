@@ -10,7 +10,7 @@ namespace railway_monitor.Tools
 {
     public abstract class CommandBase<T> : ICommand
     {
-        public Action<T>? ExecuteDelegate { get; set; }
+        public Action<T> ExecuteDelegate { get; set; } = (T param) => { };
 
         public CommandBase(Action<T> executeDelegate)
         {
