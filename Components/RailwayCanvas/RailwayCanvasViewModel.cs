@@ -17,7 +17,7 @@ namespace railway_monitor.Components.RailwayCanvas
     public class RailwayCanvasViewModel : ViewModelBase
     {
         private static readonly double _connectRadius = 10;
-        private StraightRailTrack? ConnectionTrack {  get; set; }
+        private StraightRailTrackItem? ConnectionTrack { get; set; }
 
         public ObservableHashSet<Shape> GraphicItems { get; } = new ObservableHashSet<Shape>();
         public Shape? LatestShape { get; set; }
@@ -47,7 +47,7 @@ namespace railway_monitor.Components.RailwayCanvas
         {
             if (result.VisualHit != LatestShape)
             {
-                ConnectionTrack = result.VisualHit as StraightRailTrack;
+                ConnectionTrack = result.VisualHit as StraightRailTrackItem;
                 return HitTestResultBehavior.Stop;
             }
             else
@@ -59,7 +59,7 @@ namespace railway_monitor.Components.RailwayCanvas
         public Point TryFindRailConnection(Point mousePos)
         {
             EllipseGeometry expandedHitTestArea = new EllipseGeometry(mousePos, _connectRadius, _connectRadius);
-            foreach (StraightRailTrack srt in GraphicItems.OfType<StraightRailTrack>())
+            foreach (StraightRailTrackItem srt in GraphicItems.OfType<StraightRailTrackItem>())
             {
                 ConnectionTrack = null;
                 VisualTreeHelper.HitTest(srt, 

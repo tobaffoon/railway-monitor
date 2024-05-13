@@ -22,14 +22,14 @@ namespace railway_monitor.Tools.Actions
             Shape? shape = canvas.LatestShape;
             if (shape == null)
             {
-                shape = new StraightRailTrack();
+                shape = new StraightRailTrackItem();
                 canvas.AddShape(shape);
             }
 
             Point mousePos = args.Item2;
             Point connectionPos = canvas.TryFindRailConnection(mousePos);
-            StraightRailTrack srt = (StraightRailTrack)shape;
-            if (srt.Status == StraightRailTrack.PlacementStatus.NOT_PLACED)
+            StraightRailTrackItem srt = (StraightRailTrackItem)shape;
+            if (srt.Status == StraightRailTrackItem.PlacementStatus.NOT_PLACED)
             {
                 srt.X1 = connectionPos.X;
                 srt.Y1 = connectionPos.Y;
