@@ -27,13 +27,14 @@ namespace railway_monitor.Tools.Actions
             }
 
             Point mousePos = args.Item2;
+            Point connectionPos = canvas.TryFindRailConnection(mousePos);
             StraightRailTrack srt = (StraightRailTrack)shape;
             if (srt.Status == StraightRailTrack.PlacementStatus.NOT_PLACED) {
-                srt.PlaceFirstEnd(mousePos);
+                srt.PlaceFirstEnd(connectionPos);
             }
             else
             {
-                srt.PlaceSecondEnd(mousePos);
+                srt.PlaceSecondEnd(connectionPos);
                 canvas.ResetLatestShape();
             }
         }
