@@ -11,6 +11,7 @@ using System.Windows.Diagnostics;
 using System.Windows.Media;
 using railway_monitor.Components.GraphicItems;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
 
 namespace railway_monitor.Components.RailwayCanvas
 {
@@ -29,7 +30,7 @@ namespace railway_monitor.Components.RailwayCanvas
             }
         };
 
-        public ObservableHashSet<Shape> GraphicItems { get; } = [];
+        public ObservableCollection<Shape> GraphicItems { get; } = [];
         public Shape? LatestShape { get; set; }
         public int Len { get { return GraphicItems.Count; } }
 
@@ -53,8 +54,27 @@ namespace railway_monitor.Components.RailwayCanvas
             }
         }
 
+        private bool RailDuplicates(StraightRailTrackItem srt)
+        {
+            // search among all SRTs excluding newly added one
+            foreach (StraightRailTrackItem item in GraphicItems.OfType<StraightRailTrackItem>().Except<StraightRailTrackItem>([srt])) 
+            {
+                if (item.Start == srt.Start && item.End == srt.End || item.Start == srt.End && item.End == srt.Start)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void ResetLatestShape()
         {
+            switch (LatestShape)
+            {
+                case StraightRailTrackItem srt:
+                    if (RailDuplicates(srt)) DeleteShape(srt);
+                    break;
+            }
             LatestShape = null;
         }
 
@@ -75,8 +95,10 @@ namespace railway_monitor.Components.RailwayCanvas
         {
             // circle in which new srt tries to connect to an old srt
             EllipseGeometry expandedHitTestArea = new EllipseGeometry(mousePos, _connectRadius, _connectRadius);
+
             foreach (StraightRailTrackItem srt in GraphicItems.OfType<StraightRailTrackItem>())
             {
+                // try finding close srt by hittesting
                 ConnectionTrack = null;
                 VisualTreeHelper.HitTest(srt, 
                     null,
@@ -100,6 +122,7 @@ namespace railway_monitor.Components.RailwayCanvas
                 }
             }
 
+            // hide highlighter when no track is close enough
             HighlightConnection.Visibility = Visibility.Collapsed;
             return mousePos;
         }
