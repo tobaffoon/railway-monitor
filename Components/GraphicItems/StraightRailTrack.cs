@@ -19,13 +19,13 @@ namespace railway_monitor.Components.GraphicItems
         }
 
         private static readonly Brush RailTrackBrush = new SolidColorBrush(Color.FromRgb(153, 255, 51));
-        private static readonly int RailTrackStrokeThickness = 5;
-        private static double _circleRadius = 3;
+        private static readonly int RailTrackStrokeThickness = 6;
+        private static readonly double _circleRadius = 4.21;
 
         // circle is two arcs (semicircle)
         private static Size circleSize = new Size(_circleRadius, _circleRadius);
 
-        public PlacementStatus status { get; set; }
+        public PlacementStatus Status { get; set; }
 
         public double X1 { get; set; }
         public double Y1 { get; set; }
@@ -34,53 +34,62 @@ namespace railway_monitor.Components.GraphicItems
 
         public StraightRailTrack()
         {
-            status = PlacementStatus.NOT_PLACED;
+            Status = PlacementStatus.NOT_PLACED;
             X1 = 0;
             Y1 = 0;
             X2 = 0;
             Y2 = 0;
             Stroke = RailTrackBrush;
+            Fill = RailTrackBrush;
             StrokeThickness = RailTrackStrokeThickness;
+            StrokeMiterLimit = 2.4;
         }
 
         public void PlaceFirstEnd(Point point)
         {
             X1 = point.X; Y1 = point.Y;
-            status = PlacementStatus.PLACEMENT_STARTED;
+            Status = PlacementStatus.PLACEMENT_STARTED;
         }
         public void PlaceSecondEnd(Point point)
         {
             X2 = point.X; Y2 = point.Y;
-            status = PlacementStatus.PLACED;
+            Status = PlacementStatus.PLACED;
         }
         protected override Geometry DefiningGeometry
         {
             get
             {
+                PathGeometry g;
                 Point p1 = new Point(X1, Y1);
                 Point p2 = new Point(X2, Y2);
-
-                PathFigure pf = new PathFigure(p1, new List<PathSegment>(), false);
 
                 // first circle
                 Point a1 = new Point(X1 + _circleRadius, Y1);
                 Point a2 = new Point(X1 - _circleRadius, Y1);
-                pf.Segments.Add(new LineSegment(a1, false));
-                pf.Segments.Add(new ArcSegment(a2, circleSize, 0, true, SweepDirection.Clockwise, true));
-                pf.Segments.Add(new ArcSegment(a1, circleSize, 0, true, SweepDirection.Clockwise, true));
-                pf.Segments.Add(new LineSegment(p1, false));
+                PathFigure circle1 = new PathFigure(a1, [
+                    new ArcSegment(a2, circleSize, 0, false, SweepDirection.Clockwise, true),
+                    new ArcSegment(a1, circleSize, 0, false, SweepDirection.Clockwise, true)
+                    ], false);
+                g = new PathGeometry([circle1], FillRule.Nonzero, Transform.Identity);
 
-                // second circle
-                a1 = new Point(X2 + _circleRadius, Y2);
-                a2 = new Point(X2 - _circleRadius, Y2);
-                pf.Segments.Add(new LineSegment(a1, false));
-                pf.Segments.Add(new ArcSegment(a2, circleSize, 0, true, SweepDirection.Clockwise, true));
-                pf.Segments.Add(new ArcSegment(a1, circleSize, 0, true, SweepDirection.Clockwise, true));
-                pf.Segments.Add(new LineSegment(p2, false));
+                if (Status != PlacementStatus.NOT_PLACED)
+                {
+                    // main line
+                    PathFigure mainLine = new PathFigure(p1, [
+                        new LineSegment(p2, true)
+                        ], true);
 
-                pf.IsClosed = true;
+                    // second circle
+                    a1 = new Point(X2 + _circleRadius, Y2);
+                    a2 = new Point(X2 - _circleRadius, Y2);
+                    PathFigure circle2 = new PathFigure(a1, [
+                        new ArcSegment(a2, circleSize, 0, false, SweepDirection.Clockwise, true),
+                        new ArcSegment(a1, circleSize, 0, false, SweepDirection.Clockwise, true)
+                        ], false);
 
-                Geometry g = new PathGeometry([pf], FillRule.Nonzero, Transform.Identity);
+                    g.Figures.Add(circle2);
+                    g.Figures.Add(mainLine);
+                }
                 return g;
             }
         }
