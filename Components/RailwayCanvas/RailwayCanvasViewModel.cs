@@ -16,12 +16,27 @@ namespace railway_monitor.Components.RailwayCanvas
 {
     public class RailwayCanvasViewModel : ViewModelBase
     {
-        private static readonly double _connectRadius = 10;
+        private static readonly double _connectRadius = 15;
+        private static readonly Brush _highlightBrush = new SolidColorBrush(Color.FromArgb(100, 51, 153, 255));
         private StraightRailTrackItem? ConnectionTrack { get; set; }
+        private Path HighlightConnection { get; set; } = new Path{
+            Fill = _highlightBrush,
+            Visibility = Visibility.Collapsed,
+            Data = new EllipseGeometry
+            {
+                RadiusX = _connectRadius,
+                RadiusY = _connectRadius
+            }
+        };
 
-        public ObservableHashSet<Shape> GraphicItems { get; } = new ObservableHashSet<Shape>();
+        public ObservableHashSet<Shape> GraphicItems { get; } = [];
         public Shape? LatestShape { get; set; }
         public int Len { get { return GraphicItems.Count; } }
+
+        public RailwayCanvasViewModel()
+        {
+            GraphicItems.Add(HighlightConnection);
+        }
 
         public void AddShape(Shape shape)
         {
@@ -58,6 +73,7 @@ namespace railway_monitor.Components.RailwayCanvas
 
         public Point TryFindRailConnection(Point mousePos)
         {
+            // circle in which new srt tries to connect to an old srt
             EllipseGeometry expandedHitTestArea = new EllipseGeometry(mousePos, _connectRadius, _connectRadius);
             foreach (StraightRailTrackItem srt in GraphicItems.OfType<StraightRailTrackItem>())
             {
@@ -73,10 +89,18 @@ namespace railway_monitor.Components.RailwayCanvas
                 double distance2 = (ConnectionTrack.End - mousePos).Length;
                 if (distance1 < _connectRadius || distance2 < _connectRadius)
                 {
-                    if (distance2 < distance1) return ConnectionTrack.End;
+                    HighlightConnection.Visibility = Visibility.Visible;
+                    if (distance2 < distance1)
+                    {
+                        ((EllipseGeometry)HighlightConnection.Data).Center = ConnectionTrack.End;
+                        return ConnectionTrack.End;
+                    }
+                    ((EllipseGeometry)HighlightConnection.Data).Center = ConnectionTrack.Start;
                     return ConnectionTrack.Start;
                 }
             }
+
+            HighlightConnection.Visibility = Visibility.Collapsed;
             return mousePos;
         }
     }
