@@ -31,7 +31,25 @@ namespace railway_monitor.Components.GraphicItems
         public double Y1 { get; set; }
         public double X2 { get; set; }
         public double Y2 { get; set; }
-
+        public Point Start
+        {
+            get => new Point(X1, Y1);
+            set
+            {
+                X1 = value.X;
+                Y1 = value.Y;
+            }
+        }
+        public Point End
+        {
+            get => new Point(X2, Y2);
+            set
+            {
+                X2 = value.X;
+                Y2 = value.Y;
+            }
+        }
+        
         public StraightRailTrack()
         {
             Status = PlacementStatus.NOT_PLACED;
@@ -60,8 +78,8 @@ namespace railway_monitor.Components.GraphicItems
             get
             {
                 PathGeometry g;
-                Point p1 = new Point(X1, Y1);
-                Point p2 = new Point(X2, Y2);
+                Point p1 = this.Start;
+                Point p2 = this.End;
 
                 // first circle
                 Point a1 = new Point(X1 + _circleRadius, Y1);
