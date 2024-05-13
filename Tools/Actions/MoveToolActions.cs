@@ -32,8 +32,6 @@ namespace railway_monitor.Tools.Actions
             {
                 srt.X1 = mousePos.X;
                 srt.Y1 = mousePos.Y;
-                srt.X2 = mousePos.X;
-                srt.Y2 = mousePos.Y;
             }
             else
             {
