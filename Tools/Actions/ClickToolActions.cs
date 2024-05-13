@@ -28,7 +28,7 @@ namespace railway_monitor.Tools.Actions
 
             Point mousePos = args.Item2;
             StraightRailTrack srt = (StraightRailTrack)shape;
-            if (srt.status == StraightRailTrack.PlacementStatus.NOT_PLACED) {
+            if (srt.Status == StraightRailTrack.PlacementStatus.NOT_PLACED) {
                 srt.PlaceFirstEnd(mousePos);
             }
             else
