@@ -30,13 +30,15 @@ namespace railway_monitor.Tools.Actions
             StraightRailTrack srt = (StraightRailTrack)shape;
             if (srt.Status == StraightRailTrack.PlacementStatus.NOT_PLACED)
             {
-                srt.X1 = mousePos.X;
-                srt.Y1 = mousePos.Y;
+                Point connectionPos = canvas.TryFindRailConnection(mousePos);
+                srt.X1 = connectionPos.X;
+                srt.Y1 = connectionPos.Y;
             }
             else
             {
-                srt.X2 = mousePos.X;
-                srt.Y2 = mousePos.Y;
+                Point connectionPos = canvas.TryFindRailConnection(mousePos);
+                srt.X2 = connectionPos.X;
+                srt.Y2 = connectionPos.Y;
             }
 
             srt.InvalidateMeasure();

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Shapes;
 using railway_monitor.Utils;
 using railway_monitor.MVVM.ViewModels;
+using System.Windows;
 
 namespace railway_monitor.Components.RailwayCanvas
 {
@@ -33,6 +34,12 @@ namespace railway_monitor.Components.RailwayCanvas
         public void ResetLatestShape()
         {
             LatestShape = null;
+        }
+
+        // TODO
+        public Point TryFindRailConnection(Point mousePos)
+        {
+            return mousePos;
         }
     }
 }
