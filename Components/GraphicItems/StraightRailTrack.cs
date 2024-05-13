@@ -49,7 +49,7 @@ namespace railway_monitor.Components.GraphicItems
                 Y2 = value.Y;
             }
         }
-        
+                
         public StraightRailTrack()
         {
             Status = PlacementStatus.NOT_PLACED;
@@ -88,7 +88,7 @@ namespace railway_monitor.Components.GraphicItems
                     new ArcSegment(a2, circleSize, 0, false, SweepDirection.Clockwise, true),
                     new ArcSegment(a1, circleSize, 0, false, SweepDirection.Clockwise, true)
                     ], false);
-                g = new PathGeometry([circle1], FillRule.Nonzero, Transform.Identity);
+                g = new PathGeometry([circle1]);
 
                 if (Status != PlacementStatus.NOT_PLACED)
                 {
