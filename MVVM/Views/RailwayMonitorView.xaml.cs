@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using railway_monitor.Components.ToolButtons;
+using railway_monitor.MVVM.ViewModels;
 using railway_monitor.Tools;
 
 namespace railway_monitor.MVVM.Views
@@ -25,6 +26,19 @@ namespace railway_monitor.MVVM.Views
         public RailwayMonitorView()
         {
             InitializeComponent();
+
+            Loaded += (x, y) => Keyboard.Focus(railwayCanvas);
+        }
+
+        private void OnCanvasKeyDown(object sender, KeyEventArgs e)
+        {
+            RailwayMonitorViewModel contex = (RailwayMonitorViewModel)DataContext;
+            switch (e.Key)
+            {
+                case Key.Escape:
+                    contex.EscapeCommand.Execute(Tuple.Create(contex.RailwayCanvas, new Point(0, 0)));
+                    return;
+            }
         }
     }
 }

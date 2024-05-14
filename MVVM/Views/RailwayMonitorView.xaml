@@ -25,7 +25,7 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <ItemsControl Grid.Row="0" ItemsSource="{Binding RailwayCanvas.GraphicItems}">
+            <ItemsControl Grid.Row="0" x:Name="railwayCanvas" ItemsSource="{Binding RailwayCanvas.GraphicItems}" Focusable="True" KeyDown="OnCanvasKeyDown">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <rw_canvas:RailwayCanvas x:Name="MainCanvas" Background="Azure"/>

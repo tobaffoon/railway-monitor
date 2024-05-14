@@ -54,6 +54,14 @@ namespace railway_monitor.Components.RailwayCanvas
             }
         }
 
+        public void DeleteLatestShape()
+        {
+            if(LatestShape != null)
+            {
+                DeleteShape(LatestShape);
+            }
+        }
+
         private bool RailDuplicates(StraightRailTrackItem srt)
         {
             // search among all SRTs excluding newly added one
