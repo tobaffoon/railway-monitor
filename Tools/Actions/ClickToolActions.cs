@@ -22,18 +22,19 @@ namespace railway_monitor.Tools.Actions
             Shape? shape = canvas.LatestShape;
             if (shape == null)
             {
-                shape = new StraightRailTrack();
+                shape = new StraightRailTrackItem();
                 canvas.AddShape(shape);
             }
 
             Point mousePos = args.Item2;
-            StraightRailTrack srt = (StraightRailTrack)shape;
-            if (srt.Status == StraightRailTrack.PlacementStatus.NOT_PLACED) {
-                srt.PlaceFirstEnd(mousePos);
+            Point connectionPos = canvas.TryFindRailConnection(mousePos);
+            StraightRailTrackItem srt = (StraightRailTrackItem)shape;
+            if (srt.Status == StraightRailTrackItem.PlacementStatus.NOT_PLACED) {
+                srt.PlaceFirstEnd(connectionPos);
             }
             else
             {
-                srt.PlaceSecondEnd(mousePos);
+                srt.PlaceSecondEnd(connectionPos);
                 canvas.ResetLatestShape();
             }
         }
