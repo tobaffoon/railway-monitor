@@ -1,6 +1,7 @@
 using railway_monitor.Components.RailwayCanvas;
 using railway_monitor.Components.ToolButtons;
 using railway_monitor.Tools;
+using railway_monitor.Tools.Actions;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Shapes;
@@ -29,6 +30,16 @@ namespace railway_monitor.MVVM.ViewModels
             set { SetValue(ClickCommandProperty, value); }
         }
 
+        public static readonly DependencyProperty EscapeCommandProperty = 
+            DependencyProperty.Register(
+            "EscapeCommand", typeof(UseToolCommand),
+            typeof(RailwayMonitorViewModel));
+        public UseToolCommand EscapeCommand
+        {
+            get { return (UseToolCommand)GetValue(EscapeCommandProperty); }
+            set { SetValue(EscapeCommandProperty, value); }
+        }
+
         public ToolButtonsViewModel ToolButtons { get; } =  new ToolButtonsViewModel();
         public RailwayCanvasViewModel RailwayCanvas { get; } = new RailwayCanvasViewModel();
 
@@ -44,6 +55,8 @@ namespace railway_monitor.MVVM.ViewModels
                 Source = ToolButtons
             };
             BindingOperations.SetBinding(this, MoveCommandProperty, moveBinding);
+
+            EscapeCommand = new UseToolCommand(KeyboardActions.RemoveLatestShape);
         }
     }
 }
