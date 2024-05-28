@@ -14,7 +14,7 @@ namespace railway_monitor.Components.GraphicItems
 
         private static readonly Brush SwitchBrush = new SolidColorBrush(Color.FromRgb(191, 191, 191));
         private static readonly int SwitchStrokeThickness = 4;
-        private static readonly double _circleRadius = 5.0;
+        private static readonly double _circleRadius = 3.0;
         private static readonly double _lineLenght = 14.0;
 
         // circle is two arcs (semicircle)
