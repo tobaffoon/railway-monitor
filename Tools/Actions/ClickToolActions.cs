@@ -41,7 +41,19 @@ namespace railway_monitor.Tools.Actions
 
         public static void PlaceSwitch(Tuple<RailwayCanvasViewModel, Point> args)
         {
-            throw new NotImplementedException("Switch");
+            RailwayCanvasViewModel canvas = args.Item1;
+            Shape? shape = canvas.LatestShape;
+            if (shape == null)
+            {
+                shape = new SwitchItem();
+                canvas.AddShape(shape);
+            }
+
+            Point mousePos = args.Item2;
+            Point connectionPos = canvas.TryFindRailConnection(mousePos);
+            SwitchItem switchItem = (SwitchItem)shape;
+
+            canvas.ResetLatestShape();
         }
         public static void PlaceSignal(Tuple<RailwayCanvasViewModel, Point> args)
         {
