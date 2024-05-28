@@ -63,6 +63,11 @@ namespace railway_monitor.Tools.Actions
             switchItem.Pos = connectionPos;
 
             switchItem.InvalidateMeasure();
+            
+            if (connectionPort != null && (connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count() != 3 || connectionPort.GraphicItems.OfType<SwitchItem>().Count() != 0))
+            {
+                canvas.ConnectionErrorOccured = true;
+            }
         }
         public static void MoveSignal(Tuple<RailwayCanvasViewModel, Point> args)
         {

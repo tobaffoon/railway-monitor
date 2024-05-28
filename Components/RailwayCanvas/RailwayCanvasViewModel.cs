@@ -12,10 +12,11 @@ namespace railway_monitor.Components.RailwayCanvas
     {
         # region HighlightConnection
         private static readonly double _connectRadius = 15;
-        private static readonly Brush _highlightBrush = new SolidColorBrush(Color.FromArgb(100, 51, 153, 255));
+        private static readonly Brush _highlightNormalBrush = new SolidColorBrush(Color.FromArgb(100, 51, 153, 255));
+        private static readonly Brush _highlightErrorBrush = new SolidColorBrush(Color.FromArgb(100, 230, 20, 20));
         private StraightRailTrackItem? ConnectionTrack { get; set; }
         private Path HighlightConnection { get; set; } = new Path{
-            Fill = _highlightBrush,
+            Fill = _highlightNormalBrush,
             Visibility = Visibility.Collapsed,
             Data = new EllipseGeometry
             {
@@ -23,6 +24,26 @@ namespace railway_monitor.Components.RailwayCanvas
                 RadiusY = _connectRadius
             }
         };
+        private bool _connectionErrorOccured = false;
+        public bool ConnectionErrorOccured
+        {
+            get
+            {
+                return _connectionErrorOccured;
+            }
+            set
+            {
+                if (value == true)
+                {
+                    HighlightConnection.Fill = _highlightErrorBrush;
+                }
+                else
+                {
+                    HighlightConnection.Fill = _highlightNormalBrush;
+                }
+                _connectionErrorOccured = value;
+            }
+        }
         #endregion
 
         public ObservableCollection<Shape> GraphicItems { get; }
@@ -157,6 +178,7 @@ namespace railway_monitor.Components.RailwayCanvas
 
             // hide highlighter when no track is close enough
             HighlightConnection.Visibility = Visibility.Collapsed;
+            ConnectionErrorOccured = false;
             return null;
         }
     }

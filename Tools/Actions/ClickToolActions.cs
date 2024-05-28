@@ -78,8 +78,8 @@ namespace railway_monitor.Tools.Actions
 
             Point mousePos = args.Item2;
             SwitchItem switchItem = (SwitchItem)shape;
-            Port? connectionPos = canvas.TryFindRailConnection(mousePos);
-            if (connectionPos == null) 
+            Port? connectionPort = canvas.TryFindRailConnection(mousePos);
+            if (connectionPort == null || connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count() != 3) 
             {
                 return;
             }
