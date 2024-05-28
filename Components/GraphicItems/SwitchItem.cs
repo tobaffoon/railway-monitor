@@ -27,21 +27,21 @@ namespace railway_monitor.Components.GraphicItems
 
         public PlacementStatus Status { get; set; } = PlacementStatus.NOT_PLACED;
 
-        private Port _port;
+        public Port Port { get; private set; }
         public Point Pos { 
             get
             {
-                return _port.Pos;
+                return Port.Pos;
             }
             set
             {
-                _port.Pos = value;
+                Port.Pos = value;
             }
         }
 
         public SwitchItem() : base()
         {
-            _port = new Port(this, new Point(0, 0));
+            Port = new Port(this, new Point(0, 0));
             _portDstOne = new Port(this, new Point(0, 0));
             _portDstTwo = new Port(this, new Point(0, 0));
             Stroke = SwitchBrush;
@@ -52,7 +52,7 @@ namespace railway_monitor.Components.GraphicItems
         public void Connect(Port mainPort, StraightRailTrackItem dstOne, StraightRailTrackItem dstTwo)
         {
             // set main port
-            mainPort.Merge(_port);
+            mainPort.Merge(Port);
 
             // set 1st destination port
             if (Pos == dstOne.Start)
@@ -83,9 +83,9 @@ namespace railway_monitor.Components.GraphicItems
 
         public override void Reassign_OnPortMerged(object? sender, Port oldPort)
         {
-            if (sender == null || sender is not Port) return;
+            if (sender == null || sender is not Bases.Port) return;
 
-            _port = (Port)sender;
+            Port = (Port)sender;
         }
 
         protected override Geometry DefiningGeometry

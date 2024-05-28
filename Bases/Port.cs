@@ -8,7 +8,7 @@ namespace railway_monitor.Bases
 
         public event EventHandler<Port> OnPortMerged;
 
-        private List<GraphicItem> GraphicItems { get; }
+        public HashSet<GraphicItem> GraphicItems { get; }
         private Point _pos;
         public Point Pos
         {
@@ -25,7 +25,8 @@ namespace railway_monitor.Bases
 
         public Port(GraphicItem parentItem, Point startPos)
         {
-            GraphicItems = new List<GraphicItem>();
+            GraphicItems = new HashSet<GraphicItem>();
+            AddItem(parentItem);
             Pos = startPos;
         }
 
@@ -45,13 +46,18 @@ namespace railway_monitor.Bases
         public void Merge(Port other)
         {
             // reassign port link
-            OnPortMerged?.Invoke(this, other);
-            // move items from port's list
+            other.OnPortMerged?.Invoke(this, other);
+            // move items to new port's list
             foreach (GraphicItem item in other.GraphicItems) 
             {
                 this.AddItem(item);
+            }
+            // move items from old port's list
+            foreach (GraphicItem item in this.GraphicItems) 
+            {
                 other.RemoveItem(item);
             }
+
         }
     }
 }

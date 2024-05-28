@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Shapes;
-using railway_monitor.Utils;
+﻿using System.Windows.Shapes;
 using railway_monitor.MVVM.ViewModels;
 using System.Windows;
-using System.Windows.Diagnostics;
 using System.Windows.Media;
 using railway_monitor.Components.GraphicItems;
-using System.Diagnostics;
 using System.Collections.ObjectModel;
 using railway_monitor.Bases;
 
@@ -57,6 +49,17 @@ namespace railway_monitor.Components.RailwayCanvas
                 LatestShape = null;
             }
         }
+        public void DeleteStraightRailTrack(StraightRailTrackItem srt)
+        {
+            DeleteShape(srt);
+            srt.PortStart.RemoveItem(srt);
+            srt.PortEnd.RemoveItem(srt);
+        }
+        public void DeleteSwitch(SwitchItem swtch)
+        {
+            DeleteShape(swtch);
+            swtch.Port.RemoveItem(swtch);
+        }
 
         public void DeleteLatestShape()
         {
@@ -68,13 +71,22 @@ namespace railway_monitor.Components.RailwayCanvas
 
         private bool RailDuplicates(StraightRailTrackItem srt)
         {
-            // search among all SRTs excluding newly added one
-            foreach (StraightRailTrackItem item in GraphicItems.OfType<StraightRailTrackItem>().Except<StraightRailTrackItem>([srt])) 
+            // search among all SRTs on the same starting port excluding newly added one
+            foreach (StraightRailTrackItem item in srt.PortStart.GraphicItems.OfType<StraightRailTrackItem>().Except<StraightRailTrackItem>([srt])) 
             {
                 if (item.Start == srt.Start && item.End == srt.End || item.Start == srt.End && item.End == srt.Start)
                 {
                     return true;
                 }
+            }
+            return false;
+        }
+        
+        private bool SwitchDuplicates(SwitchItem swtch)
+        {
+            if (swtch.Port.GraphicItems.OfType<SwitchItem>().Count() > 1) 
+            {
+                return true;
             }
             return false;
         }
@@ -84,7 +96,16 @@ namespace railway_monitor.Components.RailwayCanvas
             switch (LatestShape)
             {
                 case StraightRailTrackItem srt:
-                    if (RailDuplicates(srt)) DeleteShape(srt);
+                    if (RailDuplicates(srt))
+                    {
+                        DeleteStraightRailTrack(srt);
+                    }
+                    break;
+                case SwitchItem swtch:
+                    if (SwitchDuplicates(swtch))
+                    {
+                        DeleteSwitch(swtch);
+                    }
                     break;
             }
             LatestShape = null;
