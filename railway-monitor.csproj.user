@@ -13,6 +13,9 @@
     <Compile Update="Components\ToolButtons\ToolButtons.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="MVVM\Views\MainView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="MVVM\Views\RailwayMonitorView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -25,6 +28,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MVVM\Views\MainView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MVVM\Views\RailwayMonitorView.xaml">

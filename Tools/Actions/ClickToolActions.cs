@@ -25,6 +25,12 @@ namespace railway_monitor.Tools.Actions
                 shape = new StraightRailTrackItem();
                 canvas.AddShape(shape);
             }
+            else if (shape is not StraightRailTrackItem)
+            {
+                canvas.DeleteLatestShape();
+                shape = new StraightRailTrackItem();
+                canvas.AddShape(shape);
+            }
 
             Point mousePos = args.Item2;
             Point connectionPos = canvas.TryFindRailConnection(mousePos);
@@ -45,6 +51,12 @@ namespace railway_monitor.Tools.Actions
             Shape? shape = canvas.LatestShape;
             if (shape == null)
             {
+                shape = new SwitchItem();
+                canvas.AddShape(shape);
+            }
+            else if (shape is not SwitchItem)
+            {
+                canvas.DeleteLatestShape();
                 shape = new SwitchItem();
                 canvas.AddShape(shape);
             }

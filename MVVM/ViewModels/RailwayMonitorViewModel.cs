@@ -40,11 +40,15 @@ namespace railway_monitor.MVVM.ViewModels
             set { SetValue(EscapeCommandProperty, value); }
         }
 
-        public ToolButtonsViewModel ToolButtons { get; } =  new ToolButtonsViewModel();
-        public RailwayCanvasViewModel RailwayCanvas { get; } = new RailwayCanvasViewModel();
+        public ToolButtonsViewModel ToolButtons { get; }
+        public RailwayCanvasViewModel RailwayCanvas { get; }
 
         public RailwayMonitorViewModel()
         {
+            ToolButtons = new ToolButtonsViewModel();
+            RailwayCanvas = new RailwayCanvasViewModel();
+            EscapeCommand = new UseToolCommand(KeyboardActions.RemoveLatestShape);
+            
             var clickBinding = new Binding("ClickCommand")
             {
                 Source = ToolButtons
@@ -55,8 +59,6 @@ namespace railway_monitor.MVVM.ViewModels
                 Source = ToolButtons
             };
             BindingOperations.SetBinding(this, MoveCommandProperty, moveBinding);
-
-            EscapeCommand = new UseToolCommand(KeyboardActions.RemoveLatestShape);
         }
     }
 }

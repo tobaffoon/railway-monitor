@@ -73,8 +73,7 @@ namespace railway_monitor.Components.ToolButtons
             ToolButtonsList.Add(deadEndButton);
             ToolButtonsList.Add(externalTrackButton);
 
-            //srtButton.IsChecked = true;
-            switchButton.IsChecked = true;
+            srtButton.IsChecked = true;
         }
     }
 }
