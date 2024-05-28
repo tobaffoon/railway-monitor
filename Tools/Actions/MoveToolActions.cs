@@ -1,15 +1,6 @@
 ﻿using railway_monitor.Components.GraphicItems;
 using railway_monitor.Components.RailwayCanvas;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace railway_monitor.Tools.Actions
@@ -22,6 +13,12 @@ namespace railway_monitor.Tools.Actions
             Shape? shape = canvas.LatestShape;
             if (shape == null)
             {
+                shape = new StraightRailTrackItem();
+                canvas.AddShape(shape);
+            }
+            else if (shape is not StraightRailTrackItem)
+            {
+                canvas.DeleteLatestShape();
                 shape = new StraightRailTrackItem();
                 canvas.AddShape(shape);
             }
@@ -45,7 +42,26 @@ namespace railway_monitor.Tools.Actions
 
         public static void MoveSwitch(Tuple<RailwayCanvasViewModel, Point> args)
         {
-            throw new NotImplementedException("Switch");
+            RailwayCanvasViewModel canvas = args.Item1;
+            Shape? shape = canvas.LatestShape;
+            if (shape == null)
+            {
+                shape = new SwitchItem();
+                canvas.AddShape(shape);
+            }
+            else if (shape is not SwitchItem)
+            {
+                canvas.DeleteLatestShape();
+                shape = new SwitchItem();
+                canvas.AddShape(shape);
+            }
+
+            Point mousePos = args.Item2;
+            Point connectionPos = canvas.TryFindRailConnection(mousePos);
+            SwitchItem switchItem = (SwitchItem)shape;
+            switchItem.Pos = connectionPos;
+
+            switchItem.InvalidateMeasure();
         }
         public static void MoveSignal(Tuple<RailwayCanvasViewModel, Point> args)
         {

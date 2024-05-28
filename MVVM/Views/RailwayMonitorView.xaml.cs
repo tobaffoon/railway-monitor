@@ -27,7 +27,15 @@ namespace railway_monitor.MVVM.Views
         {
             InitializeComponent();
 
-            Loaded += (x, y) => Keyboard.Focus(railwayCanvas);
+            Loaded += (x, y) => Keyboard.Focus(railwayCanvas); 
+        }
+
+        private void FocusCanvas(object sender, KeyEventArgs e)
+        {
+            if (!railwayCanvas.IsFocused)
+            {
+                railwayCanvas.Focus();
+            }
         }
 
         private void OnCanvasKeyDown(object sender, KeyEventArgs e)
