@@ -128,17 +128,11 @@ namespace railway_monitor.Components.GraphicItems
                     }
                     else
                     {
-                        double angleToTwo = Math.Atan2(-_portDstTwo.Pos.Y + Pos.Y, -_portDstTwo.Pos.X + Pos.X);
-                        Point orientedPoint = new Point(Pos.X + Math.Cos(angleToTwo) * _lineLength, Pos.Y + Math.Sin(angleToTwo) * _lineLength);
+                        double angleToTwo = Math.Atan2(_portDstTwo.Pos.Y - Pos.Y, _portDstTwo.Pos.X - Pos.X);
+                        Point orientedPoint = new Point(Pos.X + _lineLength * Math.Cos(angleToTwo), Pos.Y + _lineLength * Math.Sin(angleToTwo));
                         switchLine = new PathFigure(Pos, [
                             new LineSegment(orientedPoint, true)
                             ], false);
-                        a1 = new Point(orientedPoint.X + _circleRadius, orientedPoint.Y);
-                        a2 = new Point(orientedPoint.X - _circleRadius, orientedPoint.Y);
-                        addCircle = new PathFigure(a1, [
-                            new ArcSegment(a2, circleSize, 0, false, SweepDirection.Clockwise, true),
-                            new ArcSegment(a1, circleSize, 0, false, SweepDirection.Clockwise, true)
-                            ], true);
 
                     }
 
