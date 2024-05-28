@@ -12,11 +12,13 @@ using System.Windows.Media;
 using railway_monitor.Components.GraphicItems;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
+using railway_monitor.Bases;
 
 namespace railway_monitor.Components.RailwayCanvas
 {
     public class RailwayCanvasViewModel : ViewModelBase
     {
+        # region HighlightConnection
         private static readonly double _connectRadius = 15;
         private static readonly Brush _highlightBrush = new SolidColorBrush(Color.FromArgb(100, 51, 153, 255));
         private StraightRailTrackItem? ConnectionTrack { get; set; }
@@ -29,13 +31,15 @@ namespace railway_monitor.Components.RailwayCanvas
                 RadiusY = _connectRadius
             }
         };
+        #endregion
 
-        public ObservableCollection<Shape> GraphicItems { get; } = [];
+        public ObservableCollection<Shape> GraphicItems { get; }
         public Shape? LatestShape { get; set; }
         public int Len { get { return GraphicItems.Count; } }
 
         public RailwayCanvasViewModel()
         {
+            GraphicItems = [];
             GraphicItems.Add(HighlightConnection);
         }
 

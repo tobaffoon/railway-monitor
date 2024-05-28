@@ -36,11 +36,11 @@ namespace railway_monitor.Tools.Actions
             Point connectionPos = canvas.TryFindRailConnection(mousePos);
             StraightRailTrackItem srt = (StraightRailTrackItem)shape;
             if (srt.Status == StraightRailTrackItem.PlacementStatus.NOT_PLACED) {
-                srt.PlaceFirstEnd(connectionPos);
+                srt.PlaceStartPoint(connectionPos);
             }
             else
             {
-                srt.PlaceSecondEnd(connectionPos);
+                srt.PlaceEndPoint(connectionPos);
                 canvas.ResetLatestShape();
             }
         }

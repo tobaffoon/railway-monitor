@@ -1,12 +1,6 @@
 ﻿using railway_monitor.Bases;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace railway_monitor.Components.GraphicItems
 {
@@ -28,49 +22,61 @@ namespace railway_monitor.Components.GraphicItems
 
         public PlacementStatus Status { get; set; }
 
-        public double X1 { get; set; }
-        public double Y1 { get; set; }
-        public double X2 { get; set; }
-        public double Y2 { get; set; }
+        public Port PortStart { get; set; }
+        public Port PortEnd { get; set; }
         public Point Start
         {
-            get => new Point(X1, Y1);
+            get => PortStart.Pos;
             set
             {
-                X1 = value.X;
-                Y1 = value.Y;
+                PortStart.Pos = value;
             }
         }
         public Point End
         {
-            get => new Point(X2, Y2);
+            get => PortEnd.Pos;
             set
             {
-                X2 = value.X;
-                Y2 = value.Y;
+                PortEnd.Pos = value;
             }
         }
                 
         public StraightRailTrackItem() : base()
         {
             Status = PlacementStatus.NOT_PLACED;
-            X1 = 0;
-            Y1 = 0;
-            X2 = 0;
-            Y2 = 0;
+            PortStart = new Port(this, new Point(0,0));
+            PortEnd = new Port(this, new Point(0,0));
             Stroke = RailTrackBrush;
             Fill = RailTrackBrush;
             StrokeThickness = RailTrackStrokeThickness;
         }
 
-        public void PlaceFirstEnd(Point point)
+        public override void Move_OnPortMoved(object? sender, Point newPos)
         {
-            X1 = point.X; Y1 = point.Y;
+        }
+
+        public override void Reassign_OnPortMerged(object? sender, Port oldPort)
+        {
+            if(sender == null || sender is not Port) return;
+
+            if(oldPort == PortStart)
+            {
+                PortStart = (Port)sender;
+            }
+            else
+            {
+                PortEnd = (Port)sender;
+            }
+        }
+
+        public void PlaceStartPoint(Point point)
+        {
+            Start = point;
             Status = PlacementStatus.PLACEMENT_STARTED;
         }
-        public void PlaceSecondEnd(Point point)
+        public void PlaceEndPoint(Point point)
         {
-            X2 = point.X; Y2 = point.Y;
+            End = point;
             Status = PlacementStatus.PLACED;
         }
         protected override Geometry DefiningGeometry
@@ -78,12 +84,10 @@ namespace railway_monitor.Components.GraphicItems
             get
             {
                 PathGeometry g;
-                Point p1 = this.Start;
-                Point p2 = this.End;
 
                 // first circle
-                Point a1 = new Point(X1 + _circleRadius, Y1);
-                Point a2 = new Point(X1 - _circleRadius, Y1);
+                Point a1 = new Point(Start.X + _circleRadius, Start.Y);
+                Point a2 = new Point(Start.X - _circleRadius, Start.Y);
                 PathFigure circle1 = new PathFigure(a1, [
                     new ArcSegment(a2, circleSize, 0, false, SweepDirection.Clockwise, true),
                     new ArcSegment(a1, circleSize, 0, false, SweepDirection.Clockwise, true)
@@ -93,13 +97,13 @@ namespace railway_monitor.Components.GraphicItems
                 if (Status != PlacementStatus.NOT_PLACED)
                 {
                     // main line
-                    PathFigure mainLine = new PathFigure(p1, [
-                        new LineSegment(p2, true)
+                    PathFigure mainLine = new PathFigure(Start, [
+                        new LineSegment(End, true)
                         ], true);
 
                     // second circle
-                    a1 = new Point(X2 + _circleRadius, Y2);
-                    a2 = new Point(X2 - _circleRadius, Y2);
+                    a1 = new Point(End.X + _circleRadius, End.Y);
+                    a2 = new Point(End.X - _circleRadius, End.Y);
                     PathFigure circle2 = new PathFigure(a1, [
                         new ArcSegment(a2, circleSize, 0, false, SweepDirection.Clockwise, true),
                         new ArcSegment(a1, circleSize, 0, false, SweepDirection.Clockwise, true)

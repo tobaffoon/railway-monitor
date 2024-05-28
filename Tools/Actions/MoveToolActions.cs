@@ -28,13 +28,11 @@ namespace railway_monitor.Tools.Actions
             StraightRailTrackItem srt = (StraightRailTrackItem)shape;
             if (srt.Status == StraightRailTrackItem.PlacementStatus.NOT_PLACED)
             {
-                srt.X1 = connectionPos.X;
-                srt.Y1 = connectionPos.Y;
+                srt.Start = connectionPos;
             }
             else
             {
-                srt.X2 = connectionPos.X;
-                srt.Y2 = connectionPos.Y;
+                srt.End = connectionPos;
             }
 
             srt.InvalidateMeasure();
