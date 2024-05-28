@@ -49,17 +49,10 @@ namespace railway_monitor.Components.GraphicItems
             StrokeThickness = SwitchStrokeThickness;
         }
 
-        public void Connect(StraightRailTrackItem src, StraightRailTrackItem dstOne, StraightRailTrackItem dstTwo)
+        public void Connect(Port mainPort, StraightRailTrackItem dstOne, StraightRailTrackItem dstTwo)
         {
             // set main port
-            if(Pos == src.Start)
-            {
-                src.PortStart.Merge(_port);
-            }
-            else
-            {
-                src.PortEnd.Merge(_port);
-            }
+            mainPort.Merge(_port);
 
             // set 1st destination port
             if (Pos == dstOne.Start)

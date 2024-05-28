@@ -103,7 +103,7 @@ namespace railway_monitor.Components.RailwayCanvas
             }
         }
 
-        public Point TryFindRailConnection(Point mousePos)
+        public Port? TryFindRailConnection(Point mousePos)
         {
             // circle in which new srt tries to connect to an old srt
             EllipseGeometry expandedHitTestArea = new EllipseGeometry(mousePos, _connectRadius, _connectRadius);
@@ -127,16 +127,16 @@ namespace railway_monitor.Components.RailwayCanvas
                     if (distance2 < distance1)
                     {
                         ((EllipseGeometry)HighlightConnection.Data).Center = ConnectionTrack.End;
-                        return ConnectionTrack.End;
+                        return ConnectionTrack.PortEnd;
                     }
                     ((EllipseGeometry)HighlightConnection.Data).Center = ConnectionTrack.Start;
-                    return ConnectionTrack.Start;
+                    return ConnectionTrack.PortStart;
                 }
             }
 
             // hide highlighter when no track is close enough
             HighlightConnection.Visibility = Visibility.Collapsed;
-            return mousePos;
+            return null;
         }
     }
 }

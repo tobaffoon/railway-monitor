@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using railway_monitor.Bases;
 using railway_monitor.Components.GraphicItems;
 using railway_monitor.Components.RailwayCanvas;
 
@@ -33,14 +34,28 @@ namespace railway_monitor.Tools.Actions
             }
 
             Point mousePos = args.Item2;
-            Point connectionPos = canvas.TryFindRailConnection(mousePos);
             StraightRailTrackItem srt = (StraightRailTrackItem)shape;
+            Port? connectionPort = canvas.TryFindRailConnection(mousePos);
+            if(connectionPort != null)
+            {
+                if (srt.Status == StraightRailTrackItem.PlacementStatus.NOT_PLACED)
+                {
+                    srt.PlaceStartPoint(connectionPort);
+                }
+                else
+                {
+                    srt.PlaceEndPoint(connectionPort);
+                    canvas.ResetLatestShape();
+                }
+                return;
+            }
+
             if (srt.Status == StraightRailTrackItem.PlacementStatus.NOT_PLACED) {
-                srt.PlaceStartPoint(connectionPos);
+                srt.PlaceStartPoint(mousePos);
             }
             else
             {
-                srt.PlaceEndPoint(connectionPos);
+                srt.PlaceEndPoint(mousePos);
                 canvas.ResetLatestShape();
             }
         }
@@ -62,8 +77,13 @@ namespace railway_monitor.Tools.Actions
             }
 
             Point mousePos = args.Item2;
-            Point connectionPos = canvas.TryFindRailConnection(mousePos);
             SwitchItem switchItem = (SwitchItem)shape;
+            Port? connectionPos = canvas.TryFindRailConnection(mousePos);
+            if (connectionPos == null) 
+            {
+                return;
+            }
+            // Connect
 
             canvas.ResetLatestShape();
         }

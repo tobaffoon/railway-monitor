@@ -74,9 +74,21 @@ namespace railway_monitor.Components.GraphicItems
             Start = point;
             Status = PlacementStatus.PLACEMENT_STARTED;
         }
+        public void PlaceStartPoint(Port port)
+        {
+            Start = port.Pos;
+            port.Merge(PortStart);
+            Status = PlacementStatus.PLACEMENT_STARTED;
+        }
         public void PlaceEndPoint(Point point)
         {
             End = point;
+            Status = PlacementStatus.PLACED;
+        }
+        public void PlaceEndPoint(Port port)
+        {
+            End = port.Pos;
+            port.Merge(PortEnd);
             Status = PlacementStatus.PLACED;
         }
         protected override Geometry DefiningGeometry

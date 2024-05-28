@@ -1,4 +1,5 @@
-﻿using railway_monitor.Components.GraphicItems;
+﻿using railway_monitor.Bases;
+using railway_monitor.Components.GraphicItems;
 using railway_monitor.Components.RailwayCanvas;
 using System.Windows;
 using System.Windows.Shapes;
@@ -24,8 +25,9 @@ namespace railway_monitor.Tools.Actions
             }
 
             Point mousePos = args.Item2;
-            Point connectionPos = canvas.TryFindRailConnection(mousePos);
             StraightRailTrackItem srt = (StraightRailTrackItem)shape;
+            Port? connectionPort = canvas.TryFindRailConnection(mousePos);
+            Point connectionPos = connectionPort == null ? mousePos : connectionPort.Pos;
             if (srt.Status == StraightRailTrackItem.PlacementStatus.NOT_PLACED)
             {
                 srt.Start = connectionPos;
@@ -55,8 +57,9 @@ namespace railway_monitor.Tools.Actions
             }
 
             Point mousePos = args.Item2;
-            Point connectionPos = canvas.TryFindRailConnection(mousePos);
             SwitchItem switchItem = (SwitchItem)shape;
+            Port? connectionPort = canvas.TryFindRailConnection(mousePos);
+            Point connectionPos = connectionPort == null ? mousePos : connectionPort.Pos;
             switchItem.Pos = connectionPos;
 
             switchItem.InvalidateMeasure();
