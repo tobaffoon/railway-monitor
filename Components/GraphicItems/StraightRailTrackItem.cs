@@ -1,4 +1,5 @@
-﻿using System;
+﻿using railway_monitor.Bases;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ using System.Windows.Shapes;
 
 namespace railway_monitor.Components.GraphicItems
 {
-    public class StraightRailTrackItem : Shape
+    public class StraightRailTrackItem : GraphicItem
     {
         public enum PlacementStatus
         {
@@ -50,7 +51,7 @@ namespace railway_monitor.Components.GraphicItems
             }
         }
                 
-        public StraightRailTrackItem()
+        public StraightRailTrackItem() : base()
         {
             Status = PlacementStatus.NOT_PLACED;
             X1 = 0;
@@ -60,7 +61,6 @@ namespace railway_monitor.Components.GraphicItems
             Stroke = RailTrackBrush;
             Fill = RailTrackBrush;
             StrokeThickness = RailTrackStrokeThickness;
-            StrokeMiterLimit = 2.4;
         }
 
         public void PlaceFirstEnd(Point point)

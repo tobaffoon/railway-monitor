@@ -1,10 +1,11 @@
-﻿using System.Windows;
+﻿using railway_monitor.Bases;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace railway_monitor.Components.GraphicItems
 {
-    public class SwitchItem : Shape
+    public class SwitchItem : GraphicItem
     {
         public enum PlacementStatus
         {
@@ -27,13 +28,12 @@ namespace railway_monitor.Components.GraphicItems
         public PlacementStatus Status { get; set; } = PlacementStatus.NOT_PLACED;
         public Point Pos { get; set; }
 
-        public SwitchItem()
+        public SwitchItem() : base()
         {
             Pos = new Point(0, 0);
             Stroke = SwitchBrush;
             Fill = SwitchBrush;
             StrokeThickness = SwitchStrokeThickness;
-            StrokeMiterLimit = 2.4;
         }
 
         public void Connect(StraightRailTrackItem src, StraightRailTrackItem dstOne, StraightRailTrackItem dstTwo)
