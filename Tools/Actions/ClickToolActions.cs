@@ -78,14 +78,28 @@ namespace railway_monitor.Tools.Actions
 
             Point mousePos = args.Item2;
             SwitchItem switchItem = (SwitchItem)shape;
-            Port? connectionPort = canvas.TryFindRailConnection(mousePos);
-            if (connectionPort == null || connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count() != 3) 
+            switch (switchItem.Status)
             {
-                return;
-            }
-            // Connect
+                case SwitchItem.PlacementStatus.NOT_PLACED:
+                    Port? connectionPort = canvas.TryFindRailConnection(mousePos);
+                    if (connectionPort == null || connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count() != 3 || connectionPort.GraphicItems.OfType<SwitchItem>().Count() != 0)
+                    {
+                        return;
+                    }
+                    switchItem.Place(connectionPort);
+                    break;
+                case SwitchItem.PlacementStatus.PLACED:
+                    connectionPort = canvas.TryFindRailConnection(mousePos);
+                    if (connectionPort == null)
+                    {
+                        return;
+                    }
+                    switchItem.SetSource(connectionPort);
+                    canvas.ResetLatestShape();
+                    switchItem.InvalidateMeasure();
+                    break;
 
-            canvas.ResetLatestShape();
+            }
         }
         public static void PlaceSignal(Tuple<RailwayCanvasViewModel, Point> args)
         {

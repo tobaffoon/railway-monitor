@@ -59,6 +59,8 @@ namespace railway_monitor.Tools.Actions
             Point mousePos = args.Item2;
             SwitchItem switchItem = (SwitchItem)shape;
             Port? connectionPort = canvas.TryFindRailConnection(mousePos);
+            if (switchItem.Status != SwitchItem.PlacementStatus.NOT_PLACED) return;
+
             Point connectionPos = connectionPort == null ? mousePos : connectionPort.Pos;
             switchItem.Pos = connectionPos;
 

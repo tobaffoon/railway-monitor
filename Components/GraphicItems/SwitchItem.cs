@@ -1,4 +1,5 @@
 ﻿using railway_monitor.Bases;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -10,13 +11,14 @@ namespace railway_monitor.Components.GraphicItems
         public enum PlacementStatus
         {
             NOT_PLACED,
-            PLACED
+            PLACED,
+            CONNECTED
         }
 
         private static readonly Brush SwitchBrush = new SolidColorBrush(Color.FromRgb(191, 191, 191));
         private static readonly int SwitchStrokeThickness = 4;
         private static readonly double _circleRadius = 3.0;
-        private static readonly double _lineLenght = 14.0;
+        private static readonly double _lineLength = 14.0;
 
         // circle is two arcs (semicircle)
         private static Size circleSize = new Size(_circleRadius, _circleRadius);
@@ -49,32 +51,40 @@ namespace railway_monitor.Components.GraphicItems
             StrokeThickness = SwitchStrokeThickness;
         }
 
-        public void Connect(Port mainPort, StraightRailTrackItem dstOne, StraightRailTrackItem dstTwo)
+        public void Place(Port mainPort)
         {
-            // set main port
             mainPort.Merge(Port);
-
-            // set 1st destination port
-            if (Pos == dstOne.Start)
-            {
-                _portDstOne.Pos = dstOne.End;
-            }
-            else
-            {
-                _portDstOne.Pos = dstOne.Start;
-            }
-
-            // set 2nd destination port
-            if (Pos == dstTwo.Start)
-            {
-                _portDstTwo.Pos = dstTwo.End;
-            }
-            else
-            {
-                _portDstTwo.Pos = dstTwo.Start;
-            }
-
             Status = PlacementStatus.PLACED;
+        }
+
+        public void SetSource(Port source)
+        {            
+            var connectedRails = Port.GraphicItems.OfType<StraightRailTrackItem>();
+            var srcRail = connectedRails.Where((rail) => rail.PortStart == source || rail.PortEnd == source).First();
+            if (srcRail == null) return; // this happens if user has chosen not one of three connected ports
+            connectedRails = connectedRails.Except([srcRail]);
+            
+            StraightRailTrackItem dstOne = connectedRails.ElementAt(0);
+            if (dstOne.PortStart != Port)
+            {
+                _portDstOne = dstOne.PortStart;
+            }
+            else
+            {
+                _portDstOne = dstOne.PortEnd;
+            }
+
+            StraightRailTrackItem dstTwo = connectedRails.ElementAt(1);
+            if (dstTwo.PortStart != Port)
+            {
+                _portDstTwo = dstTwo.PortStart;
+            }
+            else
+            {
+                _portDstTwo = dstTwo.PortEnd;
+            }
+
+            Status = PlacementStatus.CONNECTED;
         }
 
         public override void Move_OnPortMoved(object? sender, Point newPos)
@@ -93,7 +103,6 @@ namespace railway_monitor.Components.GraphicItems
             get
             {
                 PathGeometry g;
-                Point center = Pos;
 
                 // circle
                 Point a1 = new Point(Pos.X + _circleRadius, Pos.Y);
@@ -103,44 +112,44 @@ namespace railway_monitor.Components.GraphicItems
                     new ArcSegment(a1, circleSize, 0, false, SweepDirection.Clockwise, true)
                     ], true);
                 g = new PathGeometry([circle1]);
-
                 PathFigure switchLine;
+                PathFigure addCircle;
 
-                //Pos = src.End;
+                if (Status == PlacementStatus.CONNECTED)
+                {
+                    if (SwitchedToOne)
+                    {
+                        double angleToOne = Math.Atan2(_portDstOne.Pos.Y - Pos.Y, _portDstOne.Pos.X - Pos.X);
+                        Point orientedPoint = new Point(Pos.X + _lineLength * Math.Cos(angleToOne), Pos.Y + _lineLength * Math.Sin(angleToOne));
+                        switchLine = new PathFigure(Pos, [
+                            new LineSegment(orientedPoint, true)
+                            ], false);
 
-                //double angleToOne = Math.Atan2(dstOne.End.Y - Pos.Y, dstOne.End.X - Pos.X) * 180.0 / Math.PI;
-                //ConnectionOne = new Point(Pos.X + Math.Cos(angleToOne) * _lineLenght, Pos.Y + Math.Sin(angleToOne) * _lineLenght);
+                    }
+                    else
+                    {
+                        double angleToTwo = Math.Atan2(-_portDstTwo.Pos.Y + Pos.Y, -_portDstTwo.Pos.X + Pos.X);
+                        Point orientedPoint = new Point(Pos.X + Math.Cos(angleToTwo) * _lineLength, Pos.Y + Math.Sin(angleToTwo) * _lineLength);
+                        switchLine = new PathFigure(Pos, [
+                            new LineSegment(orientedPoint, true)
+                            ], false);
+                        a1 = new Point(orientedPoint.X + _circleRadius, orientedPoint.Y);
+                        a2 = new Point(orientedPoint.X - _circleRadius, orientedPoint.Y);
+                        addCircle = new PathFigure(a1, [
+                            new ArcSegment(a2, circleSize, 0, false, SweepDirection.Clockwise, true),
+                            new ArcSegment(a1, circleSize, 0, false, SweepDirection.Clockwise, true)
+                            ], true);
 
-                //double angleToTwo = Math.Atan2(dstTwo.End.Y - Pos.Y, dstTwo.End.X - Pos.X) * 180.0 / Math.PI;
-                //ConnectionTwo = new Point(Pos.X + Math.Cos(angleToTwo) * _lineLenght, Pos.Y + Math.Sin(angleToTwo) * _lineLenght);
-                //if (Status == PlacementStatus.NOT_PLACED)
-                //{
-                //    // switch faces right
-                //    Point lineEnd = new Point(Pos.X + _lineLenght, Pos.Y);
-                //    switchLine = new PathFigure(center, [
-                //        new LineSegment(lineEnd, true)
-                //        ], true);
-                //}
-                //else
-                //{
-                //    // switch faces one of the chosen directions
-                //    if (SwitchedToOne)
-                //    {
-                //        switchLine = new PathFigure(center, [
-                //            new LineSegment(ConnectionOne, true)
-                //            ], true);
-                //    }
-                //    else
-                //    {
-                //        switchLine = new PathFigure(center, [
-                //            new LineSegment(ConnectionTwo, true)
-                //            ], true);
-                //    }
-                //}
-                Point lineEnd = new Point(Pos.X + _lineLenght, Pos.Y);
-                    switchLine = new PathFigure(center, [
+                    }
+
+                }
+                else
+                {
+                    Point lineEnd = new Point(Pos.X + _lineLength, Pos.Y);
+                    switchLine = new PathFigure(Pos, [
                         new LineSegment(lineEnd, true)
                         ], true);
+                }
                 g.Figures.Add(switchLine);
                 return g;
             }
