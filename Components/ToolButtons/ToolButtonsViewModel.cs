@@ -1,10 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Shapes;
-using railway_monitor.Components.GraphicItems;
 using railway_monitor.Tools;
 using railway_monitor.Tools.Actions;
-using System.Windows.Media;
 using railway_monitor.MVVM.ViewModels;
 using railway_monitor.Components.RailwayCanvas;
 

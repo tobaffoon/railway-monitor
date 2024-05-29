@@ -1,22 +1,7 @@
-﻿using railway_monitor.Components.GraphicItems;
-using railway_monitor.Components.ToolButtons;
-using railway_monitor.MVVM.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Configuration.Internal;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
+﻿using railway_monitor.Componenusing railway_monitor.MVVM.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace railway_monitor.Components.RailwayCanvas
 {

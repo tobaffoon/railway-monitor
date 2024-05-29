@@ -2,8 +2,6 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Shapes;
-
 namespace railway_monitor.Components.GraphicItems
 {
     public class SwitchItem : GraphicItem
@@ -133,7 +131,6 @@ namespace railway_monitor.Components.GraphicItems
                     ], true);
                 g = new PathGeometry([circle1]);
                 PathFigure switchLine;
-                PathFigure addCircle;
 
                 if (Status == PlacementStatus.CONNECTED)
                 {

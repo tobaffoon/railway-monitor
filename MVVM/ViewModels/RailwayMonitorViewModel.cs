@@ -4,7 +4,6 @@ using railway_monitor.Tools;
 using railway_monitor.Tools.Actions;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Shapes;
 
 namespace railway_monitor.MVVM.ViewModels
 {
