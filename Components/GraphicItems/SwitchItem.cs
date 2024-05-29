@@ -15,7 +15,7 @@ namespace railway_monitor.Components.GraphicItems
             CONNECTED
         }
 
-        private static readonly Brush SwitchBrush = new SolidColorBrush(Color.FromRgb(191, 191, 191));
+        private static readonly Brush SwitchBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
         private static readonly int SwitchStrokeThickness = 4;
         private static readonly double _circleRadius = 3.0;
         private static readonly double _lineLength = 14.0;
@@ -25,7 +25,19 @@ namespace railway_monitor.Components.GraphicItems
 
         private Port _portDstOne {  get; set; }
         private Port _portDstTwo {  get; set; }
-        public bool SwitchedToOne { get; set; } = true;
+
+        private bool _switchedToTwo = true;
+        public bool SwitchedToOne { 
+            get 
+            { 
+                return _switchedToTwo;
+            }
+            set
+            {
+                _switchedToTwo = value;
+                this.InvalidateMeasure();
+            }
+        }
 
         public PlacementStatus Status { get; set; } = PlacementStatus.NOT_PLACED;
 
