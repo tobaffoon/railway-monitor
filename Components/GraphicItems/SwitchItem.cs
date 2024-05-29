@@ -72,6 +72,10 @@ namespace railway_monitor.Components.GraphicItems
 
         public void SetSource(Port source)
         {            
+            if(source == Port)
+            {
+                return; // this happens if user has chosen port where switch is placed
+            }
             var connectedRails = Port.GraphicItems.OfType<StraightRailTrackItem>();
             var srcRail = connectedRails.Where((rail) => rail.PortStart == source || rail.PortEnd == source).FirstOrDefault();
             if (srcRail == null)
