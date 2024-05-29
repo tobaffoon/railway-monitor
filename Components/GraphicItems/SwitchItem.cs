@@ -10,6 +10,7 @@ namespace railway_monitor.Components.GraphicItems
     {
         public enum PlacementStatus
         {
+            ERROR,
             NOT_PLACED,
             PLACED,
             CONNECTED
@@ -72,8 +73,11 @@ namespace railway_monitor.Components.GraphicItems
         public void SetSource(Port source)
         {            
             var connectedRails = Port.GraphicItems.OfType<StraightRailTrackItem>();
-            var srcRail = connectedRails.Where((rail) => rail.PortStart == source || rail.PortEnd == source).First();
-            if (srcRail == null) return; // this happens if user has chosen not one of three connected ports
+            var srcRail = connectedRails.Where((rail) => rail.PortStart == source || rail.PortEnd == source).FirstOrDefault();
+            if (srcRail == null)
+            {
+                return; // this happens if user has chosen not one of three connected ports
+            }
             connectedRails = connectedRails.Except([srcRail]);
             
             StraightRailTrackItem dstOne = connectedRails.ElementAt(0);

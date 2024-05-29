@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -95,6 +96,11 @@ namespace railway_monitor.Tools.Actions
                         return;
                     }
                     switchItem.SetSource(connectionPort);
+                    if(switchItem.Status == SwitchItem.PlacementStatus.PLACED)
+                    {
+                        Trace.WriteLine("Can't set Exterior ports as Switch's source port");
+                        break;
+                    }
                     canvas.ResetLatestShape();
                     switchItem.InvalidateMeasure();
                     break;
