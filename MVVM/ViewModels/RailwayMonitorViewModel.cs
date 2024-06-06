@@ -3,12 +3,32 @@ using railway_monitor.Components.ToolButtons;
 using railway_monitor.Tools;
 using railway_monitor.Tools.Actions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace railway_monitor.MVVM.ViewModels
 {
     public class RailwayMonitorViewModel : ViewModelBase
     {
+        //private static void PreprocessButtonChecked(RailwayCanvasViewModel canvas)
+        //{
+        //    canvas.DeleteLatestShape();
+        //}
+
+        //private void AddPreprocessButtonChecked(IEnumerable<RadioButton> buttons)
+        //{
+        //    RailwayCanvasViewModel canvas = ((RailwayMonitorViewModel)DataContext).RailwayCanvas;
+        //    foreach (RadioButton button in buttons)
+        //    {
+        //        button.Checked += (object sender, RoutedEventArgs e) => PreprocessButtonChecked(canvas);
+        //    }
+        //}
+
+        //private void InitializeViewModels()
+        //{
+        //    AddPreprocessButtonChecked(this.ToolButtons.ToolButtonsList);
+        //}
+
         public static readonly DependencyProperty MoveCommandProperty =
             DependencyProperty.Register(
             "MoveCommand", typeof(UseToolCommand),
