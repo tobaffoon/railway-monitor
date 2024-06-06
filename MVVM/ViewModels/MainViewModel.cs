@@ -34,7 +34,7 @@ namespace railway_monitor.MVVM.ViewModels
 
         public void SelectView(ViewModelName viewModelName)
         {
-            if (ViewModels.TryGetValue(viewModelName, out ViewModelBase selectedViewModel))
+            if (ViewModels.TryGetValue(viewModelName, out ViewModelBase? selectedViewModel))
             {
                 this.SelectedViewModel = selectedViewModel;
             }

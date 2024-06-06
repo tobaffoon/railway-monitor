@@ -3,12 +3,33 @@ using railway_monitor.Components.ToolButtons;
 using railway_monitor.Tools;
 using railway_monitor.Tools.Actions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace railway_monitor.MVVM.ViewModels
 {
     public class RailwayMonitorViewModel : ViewModelBase
     {
+        private void PreprocessButtonChecked()
+        {
+            RailwayCanvas.DeleteLatestShape();
+        }
+
+        private void AddPreprocessButtonChecked(IEnumerable<RadioButton> buttons)
+        {
+            foreach (RadioButton button in buttons)
+            {
+                button.Checked += (object sender, RoutedEventArgs e) => PreprocessButtonChecked();
+            }
+        }
+
+        private void InitializeViewModels()
+        {
+            ToolButtons = new ToolButtonsViewModel();
+            RailwayCanvas = new RailwayCanvasViewModel();
+            AddPreprocessButtonChecked(ToolButtons.ToolButtonsList);
+        }
+
         public static readonly DependencyProperty MoveCommandProperty =
             DependencyProperty.Register(
             "MoveCommand", typeof(UseToolCommand),
@@ -39,13 +60,12 @@ namespace railway_monitor.MVVM.ViewModels
             set { SetValue(EscapeCommandProperty, value); }
         }
 
-        public ToolButtonsViewModel ToolButtons { get; }
-        public RailwayCanvasViewModel RailwayCanvas { get; }
+        public ToolButtonsViewModel ToolButtons { get; private set; }
+        public RailwayCanvasViewModel RailwayCanvas { get; private set; }
 
         public RailwayMonitorViewModel()
         {
-            ToolButtons = new ToolButtonsViewModel();
-            RailwayCanvas = new RailwayCanvasViewModel();
+            InitializeViewModels();
             EscapeCommand = new UseToolCommand(KeyboardActions.RemoveLatestShape);
             
             var clickBinding = new Binding("ClickCommand")
