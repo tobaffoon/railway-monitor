@@ -86,6 +86,15 @@ namespace railway_monitor.Components.RailwayCanvas
         {
             if(LatestShape != null)
             {
+                switch (LatestShape)
+                {
+                    case StraightRailTrackItem srt:
+                        DeleteStraightRailTrack(srt);
+                        break;
+                    case SwitchItem swtch:
+                        DeleteSwitch(swtch);
+                        break;
+                }
                 DeleteShape(LatestShape);
             }
         }

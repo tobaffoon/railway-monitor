@@ -10,24 +10,25 @@ namespace railway_monitor.MVVM.ViewModels
 {
     public class RailwayMonitorViewModel : ViewModelBase
     {
-        //private static void PreprocessButtonChecked(RailwayCanvasViewModel canvas)
-        //{
-        //    canvas.DeleteLatestShape();
-        //}
+        private void PreprocessButtonChecked()
+        {
+            RailwayCanvas.DeleteLatestShape();
+        }
 
-        //private void AddPreprocessButtonChecked(IEnumerable<RadioButton> buttons)
-        //{
-        //    RailwayCanvasViewModel canvas = ((RailwayMonitorViewModel)DataContext).RailwayCanvas;
-        //    foreach (RadioButton button in buttons)
-        //    {
-        //        button.Checked += (object sender, RoutedEventArgs e) => PreprocessButtonChecked(canvas);
-        //    }
-        //}
+        private void AddPreprocessButtonChecked(IEnumerable<RadioButton> buttons)
+        {
+            foreach (RadioButton button in buttons)
+            {
+                button.Checked += (object sender, RoutedEventArgs e) => PreprocessButtonChecked();
+            }
+        }
 
-        //private void InitializeViewModels()
-        //{
-        //    AddPreprocessButtonChecked(this.ToolButtons.ToolButtonsList);
-        //}
+        private void InitializeViewModels()
+        {
+            ToolButtons = new ToolButtonsViewModel();
+            RailwayCanvas = new RailwayCanvasViewModel();
+            AddPreprocessButtonChecked(ToolButtons.ToolButtonsList);
+        }
 
         public static readonly DependencyProperty MoveCommandProperty =
             DependencyProperty.Register(
@@ -59,13 +60,12 @@ namespace railway_monitor.MVVM.ViewModels
             set { SetValue(EscapeCommandProperty, value); }
         }
 
-        public ToolButtonsViewModel ToolButtons { get; }
-        public RailwayCanvasViewModel RailwayCanvas { get; }
+        public ToolButtonsViewModel ToolButtons { get; private set; }
+        public RailwayCanvasViewModel RailwayCanvas { get; private set; }
 
         public RailwayMonitorViewModel()
         {
-            ToolButtons = new ToolButtonsViewModel();
-            RailwayCanvas = new RailwayCanvasViewModel();
+            InitializeViewModels();
             EscapeCommand = new UseToolCommand(KeyboardActions.RemoveLatestShape);
             
             var clickBinding = new Binding("ClickCommand")

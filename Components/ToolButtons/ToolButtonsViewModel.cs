@@ -11,7 +11,7 @@ namespace railway_monitor.Components.ToolButtons
     {
         private const string ToolsGroupName = "Tools";
 
-        public static List<RadioButton> ToolButtonsList { get; } = new List<RadioButton>();
+        public List<RadioButton> ToolButtonsList { get; } = new List<RadioButton>();
 
         public UseToolCommand ClickCommand { get; private set; }
         public UseToolCommand MoveCommand { get; private set; }
