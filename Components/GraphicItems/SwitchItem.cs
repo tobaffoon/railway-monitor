@@ -155,19 +155,20 @@ namespace railway_monitor.Components.GraphicItems
                 g = new PathGeometry([circle1]);
                 PathFigure switchLine;
 
-
-                if (Status == PlacementStatus.PLACED)
+                #region Draw arrow
+                if (Status >= PlacementStatus.PLACED)
                 {
 
                 }
-                
+                #endregion
+
+                #region Draw direction line
                 if (Status == PlacementStatus.CONNECTED)
                 {
                     Point orientedPoint;
                     if (SwitchedToOne)
                     {
                         orientedPoint = GraphicCalc.GetPointInDirection(Pos, _portDstOne.Pos, _lineLength);
-
                     }
                     else
                     {
@@ -185,6 +186,8 @@ namespace railway_monitor.Components.GraphicItems
                         new LineSegment(lineEnd, true)
                         ], true);
                 }
+                #endregion
+
                 g.Figures.Add(switchLine);
                 return g;
             }
