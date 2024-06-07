@@ -1,4 +1,5 @@
 ﻿using railway_monitor.Bases;
+using railway_monitor.Utils;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
@@ -50,6 +51,19 @@ namespace railway_monitor.Components.GraphicItems
             set
             {
                 Port.Pos = value;
+            }
+        }
+
+        private Point _arrowPos = new Point(0, 0);
+        public Point ArrowPos
+        {
+            get
+            {
+                return _arrowPos;
+            }
+            set 
+            {
+            
             }
         }
 
@@ -141,27 +155,28 @@ namespace railway_monitor.Components.GraphicItems
                 g = new PathGeometry([circle1]);
                 PathFigure switchLine;
 
+
+                if (Status == PlacementStatus.PLACED)
+                {
+
+                }
+                
                 if (Status == PlacementStatus.CONNECTED)
                 {
+                    Point orientedPoint;
                     if (SwitchedToOne)
                     {
-                        double angleToOne = Math.Atan2(_portDstOne.Pos.Y - Pos.Y, _portDstOne.Pos.X - Pos.X);
-                        Point orientedPoint = new Point(Pos.X + _lineLength * Math.Cos(angleToOne), Pos.Y + _lineLength * Math.Sin(angleToOne));
-                        switchLine = new PathFigure(Pos, [
-                            new LineSegment(orientedPoint, true)
-                            ], false);
+                        orientedPoint = GraphicCalc.GetPointInDirection(Pos, _portDstOne.Pos, _lineLength);
 
                     }
                     else
                     {
-                        double angleToTwo = Math.Atan2(_portDstTwo.Pos.Y - Pos.Y, _portDstTwo.Pos.X - Pos.X);
-                        Point orientedPoint = new Point(Pos.X + _lineLength * Math.Cos(angleToTwo), Pos.Y + _lineLength * Math.Sin(angleToTwo));
-                        switchLine = new PathFigure(Pos, [
-                            new LineSegment(orientedPoint, true)
-                            ], false);
-
+                        orientedPoint = GraphicCalc.GetPointInDirection(Pos, _portDstTwo.Pos, _lineLength);
                     }
 
+                    switchLine = new PathFigure(Pos, [
+                            new LineSegment(orientedPoint, true)
+                            ], false);
                 }
                 else
                 {
