@@ -42,7 +42,7 @@ namespace railway_monitor.Tools.Actions
 
         private static bool IsSwitchConnectable(Port connectionPort)
         {
-            return connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count() == 3 || connectionPort.GraphicItems.OfType<SwitchItem>().Count() == 0;
+            return connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count() == 3 && connectionPort.GraphicItems.OfType<SwitchItem>().Count() == 0;
         }
 
         public static void MoveSwitch(Tuple<RailwayCanvasViewModel, Point> args)
