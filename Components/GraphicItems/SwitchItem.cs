@@ -22,6 +22,7 @@ namespace railway_monitor.Components.GraphicItems
         // circle is two arcs (semicircle)
         private static Size circleSize = new Size(_circleRadius, _circleRadius);
 
+        private Port _portSrc {  get; set; }
         private Port _portDstOne {  get; set; }
         private Port _portDstTwo {  get; set; }
 
@@ -55,6 +56,7 @@ namespace railway_monitor.Components.GraphicItems
         public SwitchItem() : base()
         {
             Port = new Port(this, new Point(0, 0));
+            _portSrc = new Port(this, new Point(0, 0));
             _portDstOne = new Port(this, new Point(0, 0));
             _portDstTwo = new Port(this, new Point(0, 0));
             Stroke = SwitchBrush;
@@ -72,13 +74,15 @@ namespace railway_monitor.Components.GraphicItems
         {            
             if(source == Port)
             {
-                return; // this happens if user has chosen port where switch is placed
+                // user has chosen port where switch is placed
+                return; 
             }
             var connectedRails = Port.GraphicItems.OfType<StraightRailTrackItem>();
             var srcRail = connectedRails.Where((rail) => rail.PortStart == source || rail.PortEnd == source).FirstOrDefault();
             if (srcRail == null)
             {
-                return; // this happens if user has chosen not one of three connected ports
+                // user has chosen port not out of three connected ports
+                return; 
             }
             connectedRails = connectedRails.Except([srcRail]);
             
