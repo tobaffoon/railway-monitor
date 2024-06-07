@@ -54,19 +54,6 @@ namespace railway_monitor.Components.GraphicItems
             }
         }
 
-        private Point _arrowPos = new Point(0, 0);
-        public Point ArrowPos
-        {
-            get
-            {
-                return _arrowPos;
-            }
-            set 
-            {
-            
-            }
-        }
-
         public SwitchItem() : base()
         {
             Port = new Port(this, new Point(0, 0));

@@ -90,7 +90,7 @@ namespace railway_monitor.Tools.Actions
                     if(switchItem.Status == SwitchItem.PlacementStatus.PLACED)
                     {
                         Trace.WriteLine("Can't set Exterior ports as Switch's source port");
-                        break;
+                        return;
                     }
                     canvas.ResetLatestShape();
                     switchItem.InvalidateMeasure();
