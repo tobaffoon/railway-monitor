@@ -85,7 +85,11 @@ namespace railway_monitor.Components.GraphicItems
                 return; 
             }
             connectedRails = connectedRails.Except([srcRail]);
-            
+
+            // set Source Port
+            _portSrc = source;
+
+            // set first Destination Port
             StraightRailTrackItem dstOne = connectedRails.ElementAt(0);
             if (dstOne.PortStart != Port)
             {
@@ -96,6 +100,7 @@ namespace railway_monitor.Components.GraphicItems
                 _portDstOne = dstOne.PortEnd;
             }
 
+            // set second Destination Port
             StraightRailTrackItem dstTwo = connectedRails.ElementAt(1);
             if (dstTwo.PortStart != Port)
             {
