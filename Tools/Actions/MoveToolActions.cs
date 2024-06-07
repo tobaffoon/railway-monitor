@@ -19,7 +19,6 @@ namespace railway_monitor.Tools.Actions
             }
             else if (shape is not StraightRailTrackItem)
             {
-                canvas.DeleteLatestShape();
                 shape = new StraightRailTrackItem();
                 canvas.AddShape(shape);
             }
@@ -51,7 +50,6 @@ namespace railway_monitor.Tools.Actions
             }
             else if (shape is not SwitchItem)
             {
-                canvas.DeleteLatestShape();
                 shape = new SwitchItem();
                 canvas.AddShape(shape);
             }
