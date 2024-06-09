@@ -15,15 +15,38 @@ namespace railway_monitor.Components.GraphicItems
             CONNECTED
         }
 
+
         private static readonly Brush SwitchBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
         private static readonly int SwitchStrokeThickness = 4;
         private static readonly double _circleRadius = 3.0;
         private static readonly double _lineLength = 14.0;
 
+        #region Arrow params
+        private static readonly double _arrowDistance = 40.0;
+        private static readonly double _arrowLength = 10.0;
+        private static readonly double _arrowTipsLength = 10.0;
+        private static readonly double _arrowTipsAngle = 0.524;  // radians = 30 deg
+        #endregion
+
         // circle is two arcs (semicircle)
         private static Size circleSize = new Size(_circleRadius, _circleRadius);
 
-        private Port _portSrc {  get; set; }
+        private Point _arrowPos;
+        private Point _arrowHeadPos;
+        private Point _arrowHelpPos;
+        private Point _arrowHeadHelpPos;
+        private Port _portSrc { get; set; }
+        public Point SrcPos {
+            get
+            {
+                return _portSrc.Pos;
+            }
+            set
+            {
+                _portSrc.Pos = value;
+            }
+        }
+
         private Port _portDstOne {  get; set; }
         private Port _portDstTwo {  get; set; }
 
@@ -42,6 +65,7 @@ namespace railway_monitor.Components.GraphicItems
 
         public PlacementStatus Status { get; set; } = PlacementStatus.NOT_PLACED;
 
+        private Point _lineHeadPos;
         public Port Port { get; private set; }
         public Point Pos { 
             get
@@ -56,10 +80,16 @@ namespace railway_monitor.Components.GraphicItems
 
         public SwitchItem() : base()
         {
-            Port = new Port(this, new Point(0, 0));
+            Port = new Port(this, new Point(0, 0)); 
+            _lineHeadPos = new Point(0, 0);
             _portSrc = new Port(this, new Point(0, 0));
+            _arrowPos = new Point(0, 0);
+            _arrowHeadPos = new Point(0, 0);
+            _arrowHelpPos = new Point(0, 0);
+            _arrowHeadHelpPos = new Point(0, 0);
             _portDstOne = new Port(this, new Point(0, 0));
             _portDstTwo = new Port(this, new Point(0, 0));
+            
             Stroke = SwitchBrush;
             Fill = SwitchBrush;
             StrokeThickness = SwitchStrokeThickness;
@@ -68,6 +98,7 @@ namespace railway_monitor.Components.GraphicItems
         public void Place(Port mainPort)
         {
             mainPort.Merge(Port);
+            Port = mainPort;
             Status = PlacementStatus.PLACED;
         }
 
@@ -135,44 +166,59 @@ namespace railway_monitor.Components.GraphicItems
                 // circle
                 Point a1 = new Point(Pos.X + _circleRadius, Pos.Y);
                 Point a2 = new Point(Pos.X - _circleRadius, Pos.Y);
-                PathFigure circle1 = new PathFigure(a1, [
+                PathFigure circle = new PathFigure(a1, [
                     new ArcSegment(a2, circleSize, 0, false, SweepDirection.Clockwise, true),
                     new ArcSegment(a1, circleSize, 0, false, SweepDirection.Clockwise, true)
-                    ], true);
-                g = new PathGeometry([circle1]);
+                    ], false);
+                g = new PathGeometry([circle]);
                 PathFigure switchLine;
 
                 #region Draw arrow
                 if (Status >= PlacementStatus.PLACED)
                 {
+                    //Point arrowTipOne = GraphicCalc.GetPointInDirection(arrowHead, arrowHead, _arrowTipsLength, _arrowTipsAngle);
+                    //Point arrowTipTwo = GraphicCalc.GetPointInDirection(arrowHead, arrowHead, _arrowTipsLength, -_arrowTipsAngle);
+                    
+                    GraphicCalc.GetPointInDirection(ref _arrowPos, Pos, SrcPos, _arrowDistance);
+                    GraphicCalc.GetPointInDirection(ref _arrowHeadPos, _arrowPos, Pos, _arrowLength);
+                    _arrowHelpPos.X = 2 * Pos.X - _arrowPos.X;
+                    _arrowHelpPos.Y = 2 * Pos.Y - _arrowPos.Y;
+                    _arrowHeadHelpPos.X = 2 * Pos.X - _arrowHeadPos.X;
+                    _arrowHeadHelpPos.Y = 2 * Pos.Y - _arrowHeadPos.Y;
 
+                    PathFigure arrow = new PathFigure(_arrowPos, [
+                        new LineSegment(_arrowHeadPos, true),
+                        new LineSegment(_arrowHeadHelpPos, false),
+                        //new LineSegment(_arrowHeadPos, false),
+                        //new LineSegment(arrowTipOne, true),
+                        //new LineSegment(arrowHead, false),
+                        //new LineSegment(arrowTipTwo, true),
+                        ], false);
+                    g.Figures.Add(arrow);
                 }
                 #endregion
 
                 #region Draw direction line
+
                 if (Status == PlacementStatus.CONNECTED)
                 {
-                    Point orientedPoint;
-                    if (SwitchedToOne)
-                    {
-                        orientedPoint = GraphicCalc.GetPointInDirection(Pos, _portDstOne.Pos, _lineLength);
-                    }
-                    else
-                    {
-                        orientedPoint = GraphicCalc.GetPointInDirection(Pos, _portDstTwo.Pos, _lineLength);
-                    }
-
-                    switchLine = new PathFigure(Pos, [
-                            new LineSegment(orientedPoint, true)
-                            ], false);
+                    if (SwitchedToOne) GraphicCalc.GetPointInDirection(ref _lineHeadPos, Pos, _portDstOne.Pos, _lineLength);
+                    else GraphicCalc.GetPointInDirection(ref _lineHeadPos, Pos, _portDstTwo.Pos, _lineLength);
                 }
                 else
                 {
-                    Point lineEnd = new Point(Pos.X + _lineLength, Pos.Y);
-                    switchLine = new PathFigure(Pos, [
-                        new LineSegment(lineEnd, true)
-                        ], true);
+                    _lineHeadPos.X = Pos.X + _lineLength;
+                    _lineHeadPos.Y = Pos.Y;
                 }
+                //Trace.WriteLine("_lineHeadPos = " + _lineHeadPos);
+
+                Point help = new Point(2*Pos.X-_lineHeadPos.X, 2*Pos.Y-_lineHeadPos.Y);
+                Point help2 = new Point(2*Pos.X-_lineHeadPos.X-10, 2*Pos.Y-_lineHeadPos.Y-10);
+                switchLine = new PathFigure(_arrowHeadHelpPos, [
+                            new ArcSegment(help, circleSize, 0, false, SweepDirection.Clockwise, true),
+                            new LineSegment(Pos, true),
+                            new LineSegment(_lineHeadPos, true),
+                        ], false);
                 #endregion
 
                 g.Figures.Add(switchLine);

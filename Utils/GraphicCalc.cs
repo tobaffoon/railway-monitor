@@ -5,11 +5,11 @@ namespace railway_monitor.Utils
 {
     public static class GraphicCalc
     {
-        public static Point GetPointInDirection(Point src, Point dst, double length)
+        public static void GetPointInDirection(ref Point outPnt, Point src, Point dst, double length, double shiftAngle = 0)
         {
-            double angleToDst = Math.Atan2(dst.Y - src.Y, dst.X - src.X);
-            Point orientedPoint = new Point(src.X + length * Math.Cos(angleToDst), src.Y + length * Math.Sin(angleToDst));
-            return orientedPoint;
+            double angleToDst = Math.Atan2(dst.Y - src.Y, dst.X - src.X) + shiftAngle;
+            outPnt.X = src.X + length * Math.Cos(angleToDst);
+            outPnt.Y = src.Y + length * Math.Sin(angleToDst);
         }
     }
 }

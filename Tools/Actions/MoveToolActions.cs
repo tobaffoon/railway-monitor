@@ -89,15 +89,15 @@ namespace railway_monitor.Tools.Actions
                     switchItem.InvalidateMeasure();
                     break;
                 case SwitchItem.PlacementStatus.PLACED:
+                    connectionPos = connectionPort == null ? mousePos : connectionPort.Pos;
+                    switchItem.SrcPos = connectionPos;
                     switchItem.InvalidateMeasure();
                     break;
                 default:
                     return;
             }
-
-
-            
         }
+
         public static void MoveSignal(Tuple<RailwayCanvasViewModel, Point> args)
         {
             throw new NotImplementedException("Signal");
