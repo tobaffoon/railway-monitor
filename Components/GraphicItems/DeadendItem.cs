@@ -8,7 +8,7 @@ namespace railway_monitor.Components.GraphicItems
     public class DeadendItem : GraphicItem
     {
         public DeadendItem() : base() { }
-        protected override Geometry DefiningGeometry => throw new NotImplementedException();
+        //protected override Geometry DefiningGeometry => throw new NotImplementedException();
 
         public override void Move_OnPortMoved(object? sender, Point newPos)
         {

@@ -90,9 +90,9 @@ namespace railway_monitor.Components.GraphicItems
             _portDstOne = new Port(this, new Point(0, 0));
             _portDstTwo = new Port(this, new Point(0, 0));
             
-            Stroke = SwitchBrush;
-            Fill = SwitchBrush;
-            StrokeThickness = SwitchStrokeThickness;
+            //Stroke = SwitchBrush;
+            //Fill = SwitchBrush;
+            //StrokeThickness = SwitchStrokeThickness;
         }
 
         public void Place(Port mainPort)
@@ -157,73 +157,73 @@ namespace railway_monitor.Components.GraphicItems
             Port = (Port)sender;
         }
 
-        protected override Geometry DefiningGeometry
-        {
-            get
-            {
-                PathGeometry g;
+        //protected override Geometry DefiningGeometry
+        //{
+        //    get
+        //    {
+        //        PathGeometry g;
 
-                // circle
-                Point a1 = new Point(Pos.X + _circleRadius, Pos.Y);
-                Point a2 = new Point(Pos.X - _circleRadius, Pos.Y);
-                PathFigure circle = new PathFigure(a1, [
-                    new ArcSegment(a2, circleSize, 0, false, SweepDirection.Clockwise, true),
-                    new ArcSegment(a1, circleSize, 0, false, SweepDirection.Clockwise, true)
-                    ], false);
-                g = new PathGeometry([circle]);
-                PathFigure switchLine;
+        //        // circle
+        //        Point a1 = new Point(Pos.X + _circleRadius, Pos.Y);
+        //        Point a2 = new Point(Pos.X - _circleRadius, Pos.Y);
+        //        PathFigure circle = new PathFigure(a1, [
+        //            new ArcSegment(a2, circleSize, 0, false, SweepDirection.Clockwise, true),
+        //            new ArcSegment(a1, circleSize, 0, false, SweepDirection.Clockwise, true)
+        //            ], false);
+        //        g = new PathGeometry([circle]);
+        //        PathFigure switchLine;
 
-                #region Draw arrow
-                if (Status >= PlacementStatus.PLACED)
-                {
-                    //Point arrowTipOne = GraphicCalc.GetPointInDirection(arrowHead, arrowHead, _arrowTipsLength, _arrowTipsAngle);
-                    //Point arrowTipTwo = GraphicCalc.GetPointInDirection(arrowHead, arrowHead, _arrowTipsLength, -_arrowTipsAngle);
+        //        #region Draw arrow
+        //        if (Status >= PlacementStatus.PLACED)
+        //        {
+        //            //Point arrowTipOne = GraphicCalc.GetPointInDirection(arrowHead, arrowHead, _arrowTipsLength, _arrowTipsAngle);
+        //            //Point arrowTipTwo = GraphicCalc.GetPointInDirection(arrowHead, arrowHead, _arrowTipsLength, -_arrowTipsAngle);
                     
-                    GraphicCalc.GetPointInDirection(ref _arrowPos, Pos, SrcPos, _arrowDistance);
-                    GraphicCalc.GetPointInDirection(ref _arrowHeadPos, _arrowPos, Pos, _arrowLength);
-                    _arrowHelpPos.X = 2 * Pos.X - _arrowPos.X;
-                    _arrowHelpPos.Y = 2 * Pos.Y - _arrowPos.Y;
-                    _arrowHeadHelpPos.X = 2 * Pos.X - _arrowHeadPos.X;
-                    _arrowHeadHelpPos.Y = 2 * Pos.Y - _arrowHeadPos.Y;
+        //            GraphicCalc.GetPointInDirection(ref _arrowPos, Pos, SrcPos, _arrowDistance);
+        //            GraphicCalc.GetPointInDirection(ref _arrowHeadPos, _arrowPos, Pos, _arrowLength);
+        //            _arrowHelpPos.X = 2 * Pos.X - _arrowPos.X;
+        //            _arrowHelpPos.Y = 2 * Pos.Y - _arrowPos.Y;
+        //            _arrowHeadHelpPos.X = 2 * Pos.X - _arrowHeadPos.X;
+        //            _arrowHeadHelpPos.Y = 2 * Pos.Y - _arrowHeadPos.Y;
 
-                    PathFigure arrow = new PathFigure(_arrowPos, [
-                        new LineSegment(_arrowHeadPos, true),
-                        new LineSegment(_arrowHeadHelpPos, false),
-                        //new LineSegment(_arrowHeadPos, false),
-                        //new LineSegment(arrowTipOne, true),
-                        //new LineSegment(arrowHead, false),
-                        //new LineSegment(arrowTipTwo, true),
-                        ], false);
-                    g.Figures.Add(arrow);
-                }
-                #endregion
+        //            PathFigure arrow = new PathFigure(_arrowPos, [
+        //                new LineSegment(_arrowHeadPos, true),
+        //                new LineSegment(_arrowHeadHelpPos, false),
+        //                //new LineSegment(_arrowHeadPos, false),
+        //                //new LineSegment(arrowTipOne, true),
+        //                //new LineSegment(arrowHead, false),
+        //                //new LineSegment(arrowTipTwo, true),
+        //                ], false);
+        //            g.Figures.Add(arrow);
+        //        }
+        //        #endregion
 
-                #region Draw direction line
+        //        #region Draw direction line
 
-                if (Status == PlacementStatus.CONNECTED)
-                {
-                    if (SwitchedToOne) GraphicCalc.GetPointInDirection(ref _lineHeadPos, Pos, _portDstOne.Pos, _lineLength);
-                    else GraphicCalc.GetPointInDirection(ref _lineHeadPos, Pos, _portDstTwo.Pos, _lineLength);
-                }
-                else
-                {
-                    _lineHeadPos.X = Pos.X + _lineLength;
-                    _lineHeadPos.Y = Pos.Y;
-                }
-                //Trace.WriteLine("_lineHeadPos = " + _lineHeadPos);
+        //        if (Status == PlacementStatus.CONNECTED)
+        //        {
+        //            if (SwitchedToOne) GraphicCalc.GetPointInDirection(ref _lineHeadPos, Pos, _portDstOne.Pos, _lineLength);
+        //            else GraphicCalc.GetPointInDirection(ref _lineHeadPos, Pos, _portDstTwo.Pos, _lineLength);
+        //        }
+        //        else
+        //        {
+        //            _lineHeadPos.X = Pos.X + _lineLength;
+        //            _lineHeadPos.Y = Pos.Y;
+        //        }
+        //        //Trace.WriteLine("_lineHeadPos = " + _lineHeadPos);
 
-                Point help = new Point(2*Pos.X-_lineHeadPos.X, 2*Pos.Y-_lineHeadPos.Y);
-                Point help2 = new Point(2*Pos.X-_lineHeadPos.X-10, 2*Pos.Y-_lineHeadPos.Y-10);
-                switchLine = new PathFigure(_arrowHeadHelpPos, [
-                            new ArcSegment(help, circleSize, 0, false, SweepDirection.Clockwise, true),
-                            new LineSegment(Pos, true),
-                            new LineSegment(_lineHeadPos, true),
-                        ], false);
-                #endregion
+        //        Point help = new Point(2*Pos.X-_lineHeadPos.X, 2*Pos.Y-_lineHeadPos.Y);
+        //        Point help2 = new Point(2*Pos.X-_lineHeadPos.X-10, 2*Pos.Y-_lineHeadPos.Y-10);
+        //        switchLine = new PathFigure(_arrowHeadHelpPos, [
+        //                    new ArcSegment(help, circleSize, 0, false, SweepDirection.Clockwise, true),
+        //                    new LineSegment(Pos, true),
+        //                    new LineSegment(_lineHeadPos, true),
+        //                ], false);
+        //        #endregion
 
-                g.Figures.Add(switchLine);
-                return g;
-            }
-        }
+        //        g.Figures.Add(switchLine);
+        //        return g;
+        //    }
+        //}
     }
 }
