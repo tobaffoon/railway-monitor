@@ -15,11 +15,22 @@ namespace railway_monitor.Components.ToolButtons
 
         public UseToolCommand ClickCommand { get; private set; }
         public UseToolCommand MoveCommand { get; private set; }
+        public UseToolCommand ReleaseCommand { get; private set; }
 
-        private void ToolButtonChecked(Action<Tuple<RailwayCanvasViewModel, Point>> newClickFunc, Action<Tuple<RailwayCanvasViewModel, Point>> newMoveFunc)
+        private void ToolButtonChecked(Action<Tuple<RailwayCanvasViewModel, Point>> newClickFunc, 
+            Action<Tuple<RailwayCanvasViewModel, Point>> newMoveFunc)
         {
             ClickCommand.ExecuteDelegate = newClickFunc;
             MoveCommand.ExecuteDelegate = newMoveFunc;
+            ReleaseCommand.ExecuteDelegate = UtilToolActions.NoAction;
+        }
+        private void ToolButtonChecked(Action<Tuple<RailwayCanvasViewModel, Point>> newClickFunc, 
+            Action<Tuple<RailwayCanvasViewModel, Point>> newMoveFunc, 
+            Action<Tuple<RailwayCanvasViewModel, Point>> newReleaseFunc)
+        {
+            ClickCommand.ExecuteDelegate = newClickFunc;
+            MoveCommand.ExecuteDelegate = newMoveFunc;
+            ReleaseCommand.ExecuteDelegate = newReleaseFunc;
         }
 
         public ToolButtonsViewModel()
@@ -28,6 +39,7 @@ namespace railway_monitor.Components.ToolButtons
 
             ClickCommand = new UseToolCommand(ClickToolActions.PlaceStraightRailTrack);
             MoveCommand = new UseToolCommand(MoveToolActions.MoveStraightRailTrack);
+            ReleaseCommand = new UseToolCommand(UtilToolActions.NoAction);
 
             RadioButton srtButton = new RadioButton
             {

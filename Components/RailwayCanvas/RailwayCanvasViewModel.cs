@@ -45,7 +45,7 @@ namespace railway_monitor.Components.RailwayCanvas
             }
         }
         #endregion
-        private Port? _draggedPort;
+        public Port? DraggedPort;
 
         public ObservableCollection<FrameworkElement> GraphicItems { get; }
         public FrameworkElement? LatestElement { get; set; }

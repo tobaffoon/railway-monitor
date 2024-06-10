@@ -28,5 +28,12 @@ namespace railway_monitor.Components.RailwayCanvas
             Point cursor = e.MouseDevice.GetPosition(this);
             contex.ClickCommand.Execute(Tuple.Create(contex.RailwayCanvas, cursor));
         }
+
+        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+        {
+            RailwayMonitorViewModel contex = (RailwayMonitorViewModel)DataContext;
+            Point cursor = e.MouseDevice.GetPosition(this);
+            contex.ReleaseCommand.Execute(Tuple.Create(contex.RailwayCanvas, cursor));
+        }
     }
 }

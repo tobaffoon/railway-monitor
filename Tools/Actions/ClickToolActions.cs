@@ -117,10 +117,5 @@ namespace railway_monitor.Tools.Actions
 
             canvas.DraggedPort = connectionPort;
         }
-        public static void ReleaseDrag(Tuple<RailwayCanvasViewModel, Point> args)
-        {
-            RailwayCanvasViewModel canvas = args.Item1;
-            if (canvas.DraggedPort != null) canvas.DraggedPort = null;
-        }
     }
 }

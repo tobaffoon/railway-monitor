@@ -50,6 +50,16 @@ namespace railway_monitor.MVVM.ViewModels
             set { SetValue(ClickCommandProperty, value); }
         }
 
+        public static readonly DependencyProperty ReleaseCommandProperty = 
+            DependencyProperty.Register(
+            "ReleaseCommand", typeof(UseToolCommand),
+            typeof(RailwayMonitorViewModel));
+        public UseToolCommand ReleaseCommand
+        {
+            get { return (UseToolCommand)GetValue(ReleaseCommandProperty); }
+            set { SetValue(ReleaseCommandProperty, value); }
+        }
+
         public static readonly DependencyProperty EscapeCommandProperty = 
             DependencyProperty.Register(
             "EscapeCommand", typeof(UseToolCommand),
@@ -78,6 +88,11 @@ namespace railway_monitor.MVVM.ViewModels
                 Source = ToolButtons
             };
             BindingOperations.SetBinding(this, MoveCommandProperty, moveBinding);
+            var releaseBinding = new Binding("ReleaseCommand")
+            {
+                Source = ToolButtons
+            };
+            BindingOperations.SetBinding(this, ReleaseCommandProperty, releaseBinding);
         }
     }
 }
