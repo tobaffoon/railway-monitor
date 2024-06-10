@@ -12,21 +12,21 @@ namespace railway_monitor.Tools.Actions
         public static void PlaceStraightRailTrack(Tuple<RailwayCanvasViewModel, Point> args)
         {
             RailwayCanvasViewModel canvas = args.Item1;
-            Shape? shape = canvas.LatestShape;
-            if (shape == null)
+            FrameworkElement? element = canvas.LatestElement;
+            if (element == null)
             {
-                shape = new StraightRailTrackItem();
-                canvas.AddShape(shape);
+                element = new StraightRailTrackItem();
+                canvas.AddElement(element);
             }
-            else if (shape is not StraightRailTrackItem)
+            else if (element is not StraightRailTrackItem)
             {
-                canvas.DeleteLatestShape();
-                shape = new StraightRailTrackItem();
-                canvas.AddShape(shape);
+                canvas.DeleteLatestElement();
+                element = new StraightRailTrackItem();
+                canvas.AddElement(element);
             }
 
             Point mousePos = args.Item2;
-            StraightRailTrackItem srt = (StraightRailTrackItem)shape;
+            StraightRailTrackItem srt = (StraightRailTrackItem)element;
             Port? connectionPort = canvas.TryFindRailConnection(mousePos);
             if(connectionPort != null)
             {
@@ -37,7 +37,7 @@ namespace railway_monitor.Tools.Actions
                 else
                 {
                     srt.PlaceEndPoint(connectionPort);
-                    canvas.ResetLatestShape();
+                    canvas.ResetLatestElement();
                 }
                 return;
             }
@@ -48,28 +48,28 @@ namespace railway_monitor.Tools.Actions
             else
             {
                 srt.PlaceEndPoint(mousePos);
-                canvas.ResetLatestShape();
+                canvas.ResetLatestElement();
             }
         }
 
         public static void PlaceSwitch(Tuple<RailwayCanvasViewModel, Point> args)
         {
             RailwayCanvasViewModel canvas = args.Item1;
-            Shape? shape = canvas.LatestShape;
-            if (shape == null)
+            FrameworkElement? element = canvas.LatestElement;
+            if (element == null)
             {
-                shape = new SwitchItem();
-                canvas.AddShape(shape);
+                element = new SwitchItem();
+                canvas.AddElement(element);
             }
-            else if (shape is not SwitchItem)
+            else if (element is not SwitchItem)
             {
-                canvas.DeleteLatestShape();
-                shape = new SwitchItem();
-                canvas.AddShape(shape);
+                canvas.DeleteLatestElement();
+                element = new SwitchItem();
+                canvas.AddElement(element);
             }
 
             Point mousePos = args.Item2;
-            SwitchItem switchItem = (SwitchItem)shape;
+            SwitchItem switchItem = (SwitchItem)element;
             switch (switchItem.Status)
             {
                 case SwitchItem.PlacementStatus.NOT_PLACED:
@@ -92,8 +92,8 @@ namespace railway_monitor.Tools.Actions
                         Trace.WriteLine("Can't set Exterior ports as Switch's source port");
                         return;
                     }
-                    canvas.ResetLatestShape();
-                    switchItem.InvalidateMeasure();
+                    canvas.ResetLatestElement();
+                    switchItem.Render();
                     break;
 
             }

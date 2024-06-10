@@ -12,20 +12,20 @@ namespace railway_monitor.Tools.Actions
         public static void MoveStraightRailTrack(Tuple<RailwayCanvasViewModel, Point> args)
         {
             RailwayCanvasViewModel canvas = args.Item1;
-            Shape? shape = canvas.LatestShape;
-            if (shape == null)
+            FrameworkElement? element = canvas.LatestElement;
+            if (element == null)
             {
-                shape = new StraightRailTrackItem();
-                canvas.AddShape(shape);
+                element = new StraightRailTrackItem();
+                canvas.AddElement(element);
             }
-            else if (shape is not StraightRailTrackItem)
+            else if (element is not StraightRailTrackItem)
             {
-                shape = new StraightRailTrackItem();
-                canvas.AddShape(shape);
+                element = new StraightRailTrackItem();
+                canvas.AddElement(element);
             }
 
             Point mousePos = args.Item2;
-            StraightRailTrackItem srt = (StraightRailTrackItem)shape;
+            StraightRailTrackItem srt = (StraightRailTrackItem)element;
             Port? connectionPort = canvas.TryFindRailConnection(mousePos);
             Point connectionPos = connectionPort == null ? mousePos : connectionPort.Pos;
             if (srt.Status == StraightRailTrackItem.PlacementStatus.NOT_PLACED)
@@ -37,7 +37,7 @@ namespace railway_monitor.Tools.Actions
                 srt.End = connectionPos;
             }
 
-            srt.InvalidateMeasure();
+            srt.Render();
         }
 
         private static bool IsSwitchConnectable(Port connectionPort)
@@ -48,20 +48,20 @@ namespace railway_monitor.Tools.Actions
         public static void MoveSwitch(Tuple<RailwayCanvasViewModel, Point> args)
         {
             RailwayCanvasViewModel canvas = args.Item1;
-            Shape? shape = canvas.LatestShape;
-            if (shape == null)
+            FrameworkElement? element = canvas.LatestElement;
+            if (element == null)
             {
-                shape = new SwitchItem();
-                canvas.AddShape(shape);
+                element = new SwitchItem();
+                canvas.AddElement(element);
             }
-            else if (shape is not SwitchItem)
+            else if (element is not SwitchItem)
             {
-                shape = new SwitchItem();
-                canvas.AddShape(shape);
+                element = new SwitchItem();
+                canvas.AddElement(element);
             }
 
             Point mousePos = args.Item2;
-            SwitchItem switchItem = (SwitchItem)shape;
+            SwitchItem switchItem = (SwitchItem)element;
             Port? connectionPort = canvas.TryFindRailConnection(mousePos);
             switch (switchItem.Status)
             {
@@ -86,12 +86,12 @@ namespace railway_monitor.Tools.Actions
                     }
 
                     switchItem.Pos = connectionPos;
-                    switchItem.InvalidateMeasure();
+                    switchItem.Render();
                     break;
                 case SwitchItem.PlacementStatus.PLACED:
                     connectionPos = connectionPort == null ? mousePos : connectionPort.Pos;
                     switchItem.SrcPos = connectionPos;
-                    switchItem.InvalidateMeasure();
+                    switchItem.Render();
                     break;
                 default:
                     return;

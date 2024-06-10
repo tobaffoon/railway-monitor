@@ -8,7 +8,6 @@ namespace railway_monitor.Components.GraphicItems
     public class ExternalTrackItem : GraphicItem
     {
         public ExternalTrackItem() : base() { }
-        protected override Geometry DefiningGeometry => throw new NotImplementedException();
 
         public override void Move_OnPortMoved(object? sender, Point newPos)
         {
@@ -16,6 +15,11 @@ namespace railway_monitor.Components.GraphicItems
         }
 
         public override void Reassign_OnPortMerged(object? sender, Port oldPort)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Render(DrawingContext drawingContext)
         {
             throw new NotImplementedException();
         }
