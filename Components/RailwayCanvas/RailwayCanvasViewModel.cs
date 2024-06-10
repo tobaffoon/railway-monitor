@@ -45,6 +45,7 @@ namespace railway_monitor.Components.RailwayCanvas
             }
         }
         #endregion
+        private Port? _draggedPort;
 
         public ObservableCollection<FrameworkElement> GraphicItems { get; }
         public FrameworkElement? LatestElement { get; set; }
@@ -154,7 +155,7 @@ namespace railway_monitor.Components.RailwayCanvas
             }
         }
 
-        public Port? TryFindRailConnection(Point mousePos)
+        public Port? TryFindUnderlyingPort(Point mousePos)
         {
             // circle in which new srt tries to connect to an old srt
             EllipseGeometry expandedHitTestArea = new EllipseGeometry(mousePos, _connectRadius, _connectRadius);
