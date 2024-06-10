@@ -13,9 +13,8 @@ namespace railway_monitor.Components.GraphicItems
             PLACED
         }
 
-        private static readonly Brush RailTrackBrush = new SolidColorBrush(Color.FromRgb(153, 255, 51));
-        private static readonly Pen RailTrackPen = new Pen(RailTrackBrush, 1);
-        private static readonly int RailTrackStrokeThickness = 6;
+        private static readonly Brush _railTrackBrush = new SolidColorBrush(Color.FromRgb(153, 255, 51));
+        private static readonly Pen _railTrackPen = new Pen(_railTrackBrush, 6);
         private static readonly double _circleRadius = 4.21;
 
         // circle is two arcs (semicircle)
@@ -47,9 +46,6 @@ namespace railway_monitor.Components.GraphicItems
             Status = PlacementStatus.NOT_PLACED;
             PortStart = new Port(this, new Point(0,0));
             PortEnd = new Port(this, new Point(0,0));
-            //Stroke = RailTrackBrush;
-            //Fill = RailTrackBrush;
-            //StrokeThickness = RailTrackStrokeThickness;
         }
 
         public override void Move_OnPortMoved(object? sender, Point newPos)
@@ -95,34 +91,15 @@ namespace railway_monitor.Components.GraphicItems
 
         protected override void Render(DrawingContext dc)
         {
-            dc.DrawEllipse(RailTrackBrush, RailTrackPen, Start, _circleRadius, _circleRadius);
-            //Point a1 = new Point(Start.X + _circleRadius, Start.Y);
-            //Point a2 = new Point(Start.X - _circleRadius, Start.Y);
-            //PathFigure circle1 = new PathFigure(a1, [
-            //    new ArcSegment(a2, circleSize, 0, false, SweepDirection.Clockwise, true),
-            //            new ArcSegment(a1, circleSize, 0, false, SweepDirection.Clockwise, true)
-            //    ], false);
-            //g = new PathGeometry([circle1]);
+            dc.DrawEllipse(_railTrackBrush, _railTrackPen, Start, _circleRadius, _circleRadius);
 
             if (Status != PlacementStatus.NOT_PLACED)
             {
                 // main line
-                dc.DrawLine(RailTrackPen, Start, End);
-                //PathFigure mainLine = new PathFigure(Start, [
-                //    new LineSegment(End, true)
-                //    ], true);
+                dc.DrawLine(_railTrackPen, Start, End);
 
                 // second circle
-                dc.DrawEllipse(RailTrackBrush, RailTrackPen, End, _circleRadius, _circleRadius);
-                //a1 = new Point(End.X + _circleRadius, End.Y);
-                //a2 = new Point(End.X - _circleRadius, End.Y);
-                //PathFigure circle2 = new PathFigure(a1, [
-                //    new ArcSegment(a2, circleSize, 0, false, SweepDirection.Clockwise, true),
-                //            new ArcSegment(a1, circleSize, 0, false, SweepDirection.Clockwise, true)
-                //    ], false);
-
-                //g.Figures.Add(circle2);
-                //g.Figures.Add(mainLine);
+                dc.DrawEllipse(_railTrackBrush, _railTrackPen, End, _circleRadius, _circleRadius);
             }
         }
     }
