@@ -51,7 +51,6 @@ namespace railway_monitor.Tools.Actions
                 canvas.ResetLatestElement();
             }
         }
-
         public static void PlaceSwitch(Tuple<RailwayCanvasViewModel, Point> args)
         {
             RailwayCanvasViewModel canvas = args.Item1;
@@ -110,6 +109,13 @@ namespace railway_monitor.Tools.Actions
         {
             throw new NotImplementedException("External track");
         }
-
+        public static void CaptureDrag(Tuple<RailwayCanvasViewModel, Point> args)
+        {
+            throw new NotImplementedException("Drag");
+        }
+        public static void ReleaseDrag(Port draggedPort)
+        {
+            throw new NotImplementedException("Drag");
+        }
     }
 }

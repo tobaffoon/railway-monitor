@@ -110,5 +110,9 @@ namespace railway_monitor.Tools.Actions
         {
             throw new NotImplementedException("External track");
         }
+        public static void MoveDrag(Tuple<RailwayCanvasViewModel, Point> args)
+        {
+            throw new NotImplementedException("Drag");
+        }
     }
 }

@@ -64,11 +64,19 @@ namespace railway_monitor.Components.ToolButtons
             };
             externalTrackButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(ClickToolActions.PlaceExternalTrack, MoveToolActions.MoveDeadend);
 
+            RadioButton dragButton = new RadioButton
+            {
+                GroupName = ToolsGroupName,
+                Content = "Drag",
+            };
+            dragButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(ClickToolActions.CaptureDrag, MoveToolActions.MoveDrag);
+
             ToolButtonsList.Add(srtButton);
             ToolButtonsList.Add(switchButton);
             ToolButtonsList.Add(signalButton);
             ToolButtonsList.Add(deadEndButton);
             ToolButtonsList.Add(externalTrackButton);
+            ToolButtonsList.Add(dragButton);
 
             srtButton.IsChecked = true;
         }
