@@ -18,17 +18,24 @@ namespace railway_monitor.Components.GraphicItems
 
         private static readonly Brush _switchBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
         private static readonly Pen _switchPen = new Pen(_switchBrush, 3);
+        private static readonly Pen _switchArrowPen = new Pen(_switchBrush, 1);
         private static readonly double _circleRadius = 3.0;
         private static readonly double _lineLength = 14.0;
 
         #region Arrow params
         private static readonly double _arrowDistance = 40.0;
         private static readonly double _arrowLength = 10.0;
-        private static readonly double _arrowTipsLength = 10.0;
+        private static readonly double _arrowTipsLength = 4.0;
         private static readonly double _arrowTipsAngle = 0.524;  // radians = 30 deg
         #endregion
 
-        #region Drawing points
+        static SwitchItem() 
+        {
+            _switchArrowPen.StartLineCap = PenLineCap.Round;
+            _switchArrowPen.EndLineCap = PenLineCap.Round;
+        }
+
+        #region Drawing points        
         private Point _arrowTailPos = new Point(0, 0);
         private Point ArrowTailPos
         {
@@ -46,6 +53,25 @@ namespace railway_monitor.Components.GraphicItems
             {
                 GraphicCalc.GetPointInDirection(ref _arrowHeadPos, _arrowTailPos, Pos, _arrowLength);
                 return _arrowHeadPos;
+            }
+        }
+
+        private Point _arrowTipOne = new Point(0, 0);
+        private Point ArrowTipOne
+        {
+            get
+            {
+                GraphicCalc.GetPointInDirection(ref _arrowTipOne, _arrowHeadPos, _arrowTailPos, _arrowTipsLength, _arrowTipsAngle);
+                return _arrowTipOne;
+            }
+        }
+        private Point _arrowTipTwo = new Point(0, 0);
+        private Point ArrowTipTwo
+        {
+            get
+            {
+                GraphicCalc.GetPointInDirection(ref _arrowTipTwo, _arrowHeadPos, _arrowTailPos, _arrowTipsLength, -_arrowTipsAngle);
+                return _arrowTipTwo;
             }
         }
 
@@ -208,9 +234,9 @@ namespace railway_monitor.Components.GraphicItems
             // source arrow
             if (Status >= PlacementStatus.PLACED)
             {
-                dc.DrawLine(_switchPen, ArrowTailPos, ArrowHeadPos);
-                //Point arrowTipOne = GraphicCalc.GetPointInDirection(arrowHead, arrowHead, _arrowTipsLength, _arrowTipsAngle);
-                //Point arrowTipTwo = GraphicCalc.GetPointInDirection(arrowHead, arrowHead, _arrowTipsLength, -_arrowTipsAngle);
+                dc.DrawLine(_switchArrowPen, ArrowTailPos, ArrowHeadPos);
+                dc.DrawLine(_switchArrowPen, _arrowHeadPos, ArrowTipOne);
+                dc.DrawLine(_switchArrowPen, _arrowHeadPos, ArrowTipTwo);
             }
         }
     }
