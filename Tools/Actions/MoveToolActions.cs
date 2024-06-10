@@ -2,12 +2,10 @@
 using railway_monitor.Components.GraphicItems;
 using railway_monitor.Components.RailwayCanvas;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Shapes;
 
 namespace railway_monitor.Tools.Actions
 {
-    public sealed class MoveToolActions
+    public static class MoveToolActions
     {
         public static void MoveStraightRailTrack(Tuple<RailwayCanvasViewModel, Point> args)
         {
@@ -112,7 +110,16 @@ namespace railway_monitor.Tools.Actions
         }
         public static void MoveDrag(Tuple<RailwayCanvasViewModel, Point> args)
         {
-            throw new NotImplementedException("Drag");
+            RailwayCanvasViewModel canvas = args.Item1;
+            Point mousePos = args.Item2;
+            if (canvas.DraggedPort != null)
+            {
+                canvas.DraggedPort.Pos = mousePos;
+            }
+            else
+            {
+                canvas.TryFindUnderlyingPort(mousePos);
+            }
         }
     }
 }

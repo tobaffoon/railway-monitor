@@ -1,13 +1,12 @@
 ﻿using System.Diagnostics;
 using System.Windows;
-using System.Windows.Shapes;
 using railway_monitor.Bases;
 using railway_monitor.Components.GraphicItems;
 using railway_monitor.Components.RailwayCanvas;
 
 namespace railway_monitor.Tools.Actions
 {
-    public sealed class ClickToolActions
+    public static class ClickToolActions
     {
         public static void PlaceStraightRailTrack(Tuple<RailwayCanvasViewModel, Point> args)
         {
@@ -111,11 +110,17 @@ namespace railway_monitor.Tools.Actions
         }
         public static void CaptureDrag(Tuple<RailwayCanvasViewModel, Point> args)
         {
-            throw new NotImplementedException("Drag");
+            RailwayCanvasViewModel canvas = args.Item1;
+            Point mousePos = args.Item2;
+            Port? connectionPort = canvas.TryFindUnderlyingPort(mousePos);
+            if (connectionPort == null) return;
+
+            canvas.DraggedPort = connectionPort;
         }
-        public static void ReleaseDrag(Port draggedPort)
+        public static void ReleaseDrag(Tuple<RailwayCanvasViewModel, Point> args)
         {
-            throw new NotImplementedException("Drag");
+            RailwayCanvasViewModel canvas = args.Item1;
+            if (canvas.DraggedPort != null) canvas.DraggedPort = null;
         }
     }
 }
