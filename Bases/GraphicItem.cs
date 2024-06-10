@@ -1,14 +1,28 @@
 ﻿using System.Windows;
-using System.Windows.Shapes;
+using System.Windows.Media;
 
 namespace railway_monitor.Bases
 {
-    public abstract class GraphicItem : Shape
+    public abstract class GraphicItem : FrameworkElement
     {
-        public GraphicItem()
+        private readonly DrawingGroup drawing = new DrawingGroup();
+
+        protected sealed override void OnRender(DrawingContext drawingContext)
         {
-            StrokeMiterLimit = 2.4;
+            base.OnRender(drawingContext);
+
+            Render();
+            drawingContext.DrawDrawing(drawing);
         }
+
+        protected abstract void Render(DrawingContext drawingContext);
+        public void Render()
+        {
+            DrawingContext drawingContext = drawing.Open();
+            Render(drawingContext);
+            drawingContext.Close();
+        }
+
         public abstract void Move_OnPortMoved(object? sender, Point newPos);
         public abstract void Reassign_OnPortMerged(object? sender, Port oldPort);
     }
