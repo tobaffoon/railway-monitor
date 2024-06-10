@@ -59,7 +59,7 @@ namespace railway_monitor.Components.GraphicItems
             set
             {
                 _switchedToTwo = value;
-                this.InvalidateMeasure();
+                this.Render();
             }
         }
 
@@ -157,6 +157,11 @@ namespace railway_monitor.Components.GraphicItems
             Port = (Port)sender;
         }
 
+        protected override void Render(DrawingContext drawingContext)
+        {
+            throw new NotImplementedException();
+        }
+
         //protected override Geometry DefiningGeometry
         //{
         //    get
@@ -178,7 +183,7 @@ namespace railway_monitor.Components.GraphicItems
         //        {
         //            //Point arrowTipOne = GraphicCalc.GetPointInDirection(arrowHead, arrowHead, _arrowTipsLength, _arrowTipsAngle);
         //            //Point arrowTipTwo = GraphicCalc.GetPointInDirection(arrowHead, arrowHead, _arrowTipsLength, -_arrowTipsAngle);
-                    
+
         //            GraphicCalc.GetPointInDirection(ref _arrowPos, Pos, SrcPos, _arrowDistance);
         //            GraphicCalc.GetPointInDirection(ref _arrowHeadPos, _arrowPos, Pos, _arrowLength);
         //            _arrowHelpPos.X = 2 * Pos.X - _arrowPos.X;

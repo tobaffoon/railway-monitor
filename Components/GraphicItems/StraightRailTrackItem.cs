@@ -92,10 +92,9 @@ namespace railway_monitor.Components.GraphicItems
             port.Merge(PortEnd);
             Status = PlacementStatus.PLACED;
         }
-        protected override void OnRender(DrawingContext dc)
-        {
-            base.OnRender(dc);
 
+        protected override void Render(DrawingContext dc)
+        {
             dc.DrawEllipse(RailTrackBrush, RailTrackPen, Start, _circleRadius, _circleRadius);
             //Point a1 = new Point(Start.X + _circleRadius, Start.Y);
             //Point a2 = new Point(Start.X - _circleRadius, Start.Y);

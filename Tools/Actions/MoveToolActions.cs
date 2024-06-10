@@ -37,7 +37,7 @@ namespace railway_monitor.Tools.Actions
                 srt.End = connectionPos;
             }
 
-            srt.InvalidateMeasure();
+            srt.Render();
         }
 
         private static bool IsSwitchConnectable(Port connectionPort)
@@ -86,12 +86,12 @@ namespace railway_monitor.Tools.Actions
                     }
 
                     switchItem.Pos = connectionPos;
-                    switchItem.InvalidateMeasure();
+                    switchItem.Render();
                     break;
                 case SwitchItem.PlacementStatus.PLACED:
                     connectionPos = connectionPort == null ? mousePos : connectionPort.Pos;
                     switchItem.SrcPos = connectionPos;
-                    switchItem.InvalidateMeasure();
+                    switchItem.Render();
                     break;
                 default:
                     return;

@@ -93,7 +93,7 @@ namespace railway_monitor.Tools.Actions
                         return;
                     }
                     canvas.ResetLatestElement();
-                    switchItem.InvalidateMeasure();
+                    switchItem.Render();
                     break;
 
             }
