@@ -18,5 +18,10 @@ namespace railway_monitor.Utils
         {
             return connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count() == 3 && connectionPort.GraphicItems.OfType<SwitchItem>().Count() == 0;
         }
+
+        public static bool IsSignalConnectable(Port connectionPort)
+        {
+            return connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count() >= 2 && connectionPort.GraphicItems.OfType<SignalItem>().Count() == 0;
+        }
     }
 }

@@ -96,15 +96,6 @@ namespace railway_monitor.Components.RailwayCanvas
             return false;
         }
         
-        private bool SwitchDuplicates(SwitchItem swtch)
-        {
-            if (swtch.Port.GraphicItems.OfType<SwitchItem>().Count() > 1) 
-            {
-                return true;
-            }
-            return false;
-        }
-
         public void ResetLatestGraphicItem()
         {
             switch (LatestGraphicItem)
@@ -113,12 +104,6 @@ namespace railway_monitor.Components.RailwayCanvas
                     if (RailDuplicates(srt))
                     {
                         DeleteStraightRailTrack(srt);
-                    }
-                    break;
-                case SwitchItem swtch:
-                    if (SwitchDuplicates(swtch))
-                    {
-                        DeleteSwitch(swtch);
                     }
                     break;
             }
