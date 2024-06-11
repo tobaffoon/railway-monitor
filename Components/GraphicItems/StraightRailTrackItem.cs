@@ -40,11 +40,11 @@ namespace railway_monitor.Components.GraphicItems
             }
         }
                 
-        public StraightRailTrackItem() : base()
+        public StraightRailTrackItem(Point initPos) : base()
         {
             PlacementStatus = RailPlacementStatus.NOT_PLACED;
-            PortStart = new Port(this, new Point(0,0));
-            PortEnd = new Port(this, new Point(0,0));
+            PortStart = new Port(this, initPos);
+            PortEnd = new Port(this, initPos);
         }
 
         public override void Reassign_OnPortMerged(object? sender, Port oldPort)

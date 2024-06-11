@@ -150,9 +150,9 @@ namespace railway_monitor.Components.GraphicItems
             }
         }
 
-        public SwitchItem() : base()
+        public SwitchItem(Point initPos) : base()
         {
-            Port = new Port(this, new Point(0, 0));
+            Port = new Port(this, initPos);
 
             _portSrc = new Port(this, new Point(0, 0));
             _portDstOne = new Port(this, new Point(0, 0));
