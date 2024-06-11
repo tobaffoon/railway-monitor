@@ -60,14 +60,8 @@ namespace railway_monitor.Tools.Actions
         {
             RailwayCanvasViewModel canvas = args.Item1;
             GraphicItem? item = canvas.LatestGraphicItem;
-            if (item == null)
+            if (item is not SwitchItem)
             {
-                item = new SwitchItem();
-                canvas.AddGraphicItem(item);
-            }
-            else if (item is not SwitchItem)
-            {
-                canvas.DeleteLatestGraphicItem();
                 item = new SwitchItem();
                 canvas.AddGraphicItem(item);
             }
@@ -101,7 +95,30 @@ namespace railway_monitor.Tools.Actions
         }
         public static void PlaceSignal(Tuple<RailwayCanvasViewModel, Point> args)
         {
-            throw new NotImplementedException("Signal");
+            RailwayCanvasViewModel canvas = args.Item1;
+            Point mousePos = args.Item2;
+            GraphicItem? item = canvas.LatestGraphicItem;
+            if (item is not SignalItem)
+            {
+                item = new SignalItem(mousePos);
+                canvas.AddGraphicItem(item);
+            }
+
+            SignalItem signalItem = (SignalItem)item;
+            switch (signalItem.PlacementStatus)
+            {
+                case SignalItem.SignalPlacementStatus.NOT_PLACED:
+                    Port? connectionPort = canvas.TryFindUnderlyingPort(mousePos);
+                    if (connectionPort == null || !ConnectConditions.IsSignalConnectable(connectionPort))
+                    {
+                        // no port found for connection
+                        return;
+                    }
+                    signalItem.Place(connectionPort);
+                    canvas.ResetLatestGraphicItem();
+                    signalItem.Render();
+                    break;
+            }
         }
         public static void PlaceDeadend(Tuple<RailwayCanvasViewModel, Point> args)
         {

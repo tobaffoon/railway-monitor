@@ -123,14 +123,48 @@ namespace railway_monitor.Tools.Actions
                     switchItem.SrcPos = connectionPos;
                     switchItem.Render();
                     break;
-                default:
-                    return;
             }
         }
 
         public static void MoveSignal(Tuple<RailwayCanvasViewModel, Point> args)
         {
-            throw new NotImplementedException("Signal");
+            RailwayCanvasViewModel canvas = args.Item1;
+            Point mousePos = args.Item2;
+            GraphicItem? item = canvas.LatestGraphicItem;
+            if (item is not SignalItem)
+            {
+                item = new SignalItem(mousePos);
+                canvas.AddGraphicItem(item);
+            }
+
+            SignalItem signalItem = (SignalItem)item;
+            Port? connectionPort = canvas.TryFindUnderlyingPort(mousePos);
+            switch (signalItem.PlacementStatus)
+            {
+                case SignalItem.SignalPlacementStatus.NOT_PLACED:
+                    Point connectionPos;
+
+                    if (connectionPort == null)
+                    {
+                        connectionPos = mousePos;
+                    }
+                    else
+                    {
+                        if (!ConnectConditions.IsSignalConnectable(connectionPort))
+                        {
+                            connectionPos = mousePos;
+                            canvas.ConnectionErrorOccured = true;
+                        }
+                        else
+                        {
+                            connectionPos = connectionPort.Pos;
+                        }
+                    }
+
+                    signalItem.Pos = connectionPos;
+                    signalItem.Render();
+                    break;
+            }
         }
         public static void MoveDeadend(Tuple<RailwayCanvasViewModel, Point> args)
         {
