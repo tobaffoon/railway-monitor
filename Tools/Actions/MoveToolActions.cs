@@ -7,6 +7,15 @@ namespace railway_monitor.Tools.Actions
 {
     public static class MoveToolActions
     {
+        private static bool IsRailConnectable(Port connectionPort)
+        {
+            int switches = connectionPort.GraphicItems.OfType<SwitchItem>().Count();
+            int srts = connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count();
+
+            if (switches != 0 && srts >= 3) return false;
+            return true;
+        }
+
         public static void MoveStraightRailTrack(Tuple<RailwayCanvasViewModel, Point> args)
         {
             RailwayCanvasViewModel canvas = args.Item1;
@@ -25,7 +34,24 @@ namespace railway_monitor.Tools.Actions
             Point mousePos = args.Item2;
             StraightRailTrackItem srt = (StraightRailTrackItem)item;
             Port? connectionPort = canvas.TryFindUnderlyingPort(mousePos);
-            Point connectionPos = connectionPort == null ? mousePos : connectionPort.Pos;
+            Point connectionPos;
+            if (connectionPort == null)
+            {
+                connectionPos = mousePos;
+            }
+            else
+            {
+                if (!IsRailConnectable(connectionPort))
+                {
+                    connectionPos = mousePos;
+                    canvas.ConnectionErrorOccured = true;
+                }
+                else
+                {
+                    connectionPos = connectionPort.Pos;
+                }
+            }
+
             if (srt.Status == StraightRailTrackItem.PlacementStatus.NOT_PLACED)
             {
                 srt.Start = connectionPos;
