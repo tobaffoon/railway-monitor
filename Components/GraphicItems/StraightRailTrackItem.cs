@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using railway_monitor.Bases;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace railway_monitor.Components.GraphicItems
 {
-    public class StraightRailTrackItem : Shape
+    public class StraightRailTrackItem : GraphicItem
     {
         public enum PlacementStatus
         {
@@ -18,8 +13,8 @@ namespace railway_monitor.Components.GraphicItems
             PLACED
         }
 
-        private static readonly Brush RailTrackBrush = new SolidColorBrush(Color.FromRgb(153, 255, 51));
-        private static readonly int RailTrackStrokeThickness = 6;
+        private static readonly Brush _railTrackBrush = new SolidColorBrush(Color.FromRgb(153, 255, 51));
+        private static readonly Pen _railTrackPen = new Pen(_railTrackBrush, 6);
         private static readonly double _circleRadius = 4.21;
 
         // circle is two arcs (semicircle)
@@ -27,88 +22,80 @@ namespace railway_monitor.Components.GraphicItems
 
         public PlacementStatus Status { get; set; }
 
-        public double X1 { get; set; }
-        public double Y1 { get; set; }
-        public double X2 { get; set; }
-        public double Y2 { get; set; }
+        public Port PortStart { get; set; }
+        public Port PortEnd { get; set; }
         public Point Start
         {
-            get => new Point(X1, Y1);
+            get => PortStart.Pos;
             set
             {
-                X1 = value.X;
-                Y1 = value.Y;
+                PortStart.Pos = value;
             }
         }
         public Point End
         {
-            get => new Point(X2, Y2);
+            get => PortEnd.Pos;
             set
             {
-                X2 = value.X;
-                Y2 = value.Y;
+                PortEnd.Pos = value;
             }
         }
                 
-        public StraightRailTrackItem()
+        public StraightRailTrackItem() : base()
         {
             Status = PlacementStatus.NOT_PLACED;
-            X1 = 0;
-            Y1 = 0;
-            X2 = 0;
-            Y2 = 0;
-            Stroke = RailTrackBrush;
-            Fill = RailTrackBrush;
-            StrokeThickness = RailTrackStrokeThickness;
-            StrokeMiterLimit = 2.4;
+            PortStart = new Port(this, new Point(0,0));
+            PortEnd = new Port(this, new Point(0,0));
         }
 
-        public void PlaceFirstEnd(Point point)
+        public override void Reassign_OnPortMerged(object? sender, Port oldPort)
         {
-            X1 = point.X; Y1 = point.Y;
+            if(sender == null || sender is not Port port || port.GraphicItems.Contains(this)) return;
+
+            if(oldPort == PortStart)
+            {
+                PortStart = (Port)sender;
+            }
+            else
+            {
+                PortEnd = (Port)sender;
+            }
+        }
+
+        public void PlaceStartPoint(Point point)
+        {
+            Start = point;
             Status = PlacementStatus.PLACEMENT_STARTED;
         }
-        public void PlaceSecondEnd(Point point)
+        public void PlaceStartPoint(Port port)
         {
-            X2 = point.X; Y2 = point.Y;
+            Start = port.Pos;
+            port.Merge(PortStart);
+            Status = PlacementStatus.PLACEMENT_STARTED;
+        }
+        public void PlaceEndPoint(Point point)
+        {
+            End = point;
             Status = PlacementStatus.PLACED;
         }
-        protected override Geometry DefiningGeometry
+        public void PlaceEndPoint(Port port)
         {
-            get
+            End = port.Pos;
+            port.Merge(PortEnd);
+            Status = PlacementStatus.PLACED;
+        }
+
+        protected override void Render(DrawingContext dc)
+        {
+            dc.DrawEllipse(_railTrackBrush, _railTrackPen, Start, _circleRadius, _circleRadius);
+
+            if (Status != PlacementStatus.NOT_PLACED)
             {
-                PathGeometry g;
-                Point p1 = this.Start;
-                Point p2 = this.End;
+                // main line
+                dc.DrawLine(_railTrackPen, Start, End);
 
-                // first circle
-                Point a1 = new Point(X1 + _circleRadius, Y1);
-                Point a2 = new Point(X1 - _circleRadius, Y1);
-                PathFigure circle1 = new PathFigure(a1, [
-                    new ArcSegment(a2, circleSize, 0, false, SweepDirection.Clockwise, true),
-                    new ArcSegment(a1, circleSize, 0, false, SweepDirection.Clockwise, true)
-                    ], false);
-                g = new PathGeometry([circle1]);
-
-                if (Status != PlacementStatus.NOT_PLACED)
-                {
-                    // main line
-                    PathFigure mainLine = new PathFigure(p1, [
-                        new LineSegment(p2, true)
-                        ], true);
-
-                    // second circle
-                    a1 = new Point(X2 + _circleRadius, Y2);
-                    a2 = new Point(X2 - _circleRadius, Y2);
-                    PathFigure circle2 = new PathFigure(a1, [
-                        new ArcSegment(a2, circleSize, 0, false, SweepDirection.Clockwise, true),
-                        new ArcSegment(a1, circleSize, 0, false, SweepDirection.Clockwise, true)
-                        ], false);
-
-                    g.Figures.Add(circle2);
-                    g.Figures.Add(mainLine);
-                }
-                return g;
+                // second circle
+                dc.DrawEllipse(_railTrackBrush, _railTrackPen, End, _circleRadius, _circleRadius);
             }
         }
     }

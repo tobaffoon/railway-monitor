@@ -1,100 +1,238 @@
-﻿using System.Windows;
+﻿using railway_monitor.Bases;
+using railway_monitor.Utils;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Media;
-using System.Windows.Shapes;
-
 namespace railway_monitor.Components.GraphicItems
 {
-    public class SwitchItem : Shape
+    public class SwitchItem : GraphicItem
     {
         public enum PlacementStatus
         {
+            ERROR,
             NOT_PLACED,
-            PLACED
+            PLACED,
+            CONNECTED
         }
 
-        private static readonly Brush SwitchBrush = new SolidColorBrush(Color.FromRgb(191, 191, 191));
-        private static readonly int SwitchStrokeThickness = 4;
-        private static readonly double _circleRadius = 5.0;
-        private static readonly double _lineLenght = 14.0;
 
-        // circle is two arcs (semicircle)
-        private static Size circleSize = new Size(_circleRadius, _circleRadius);
+        private static readonly Brush _switchBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+        private static readonly Pen _switchPen = new Pen(_switchBrush, 3);
+        private static readonly Pen _switchArrowPen = new Pen(_switchBrush, 1);
+        private static readonly double _circleRadius = 3.0;
+        private static readonly double _lineLength = 14.0;
 
-        private Point ConnectionOne {  get; set; }
-        private Point ConnectionTwo {  get; set; }
-        public bool SwitchedToOne { get; set; } = true;
+        #region Arrow params
+        private static readonly double _arrowDistance = 40.0;
+        private static readonly double _arrowLength = 10.0;
+        private static readonly double _arrowTipsLength = 4.0;
+        private static readonly double _arrowTipsAngle = 0.524;  // radians = 30 deg
+        #endregion
 
-        public PlacementStatus Status { get; set; } = PlacementStatus.NOT_PLACED;
-        public Point Pos { get; set; }
-
-        public SwitchItem()
+        static SwitchItem() 
         {
-            Pos = new Point(0, 0);
-            Stroke = SwitchBrush;
-            Fill = SwitchBrush;
-            StrokeThickness = SwitchStrokeThickness;
-            StrokeMiterLimit = 2.4;
+            _switchArrowPen.StartLineCap = PenLineCap.Round;
+            _switchArrowPen.EndLineCap = PenLineCap.Round;
         }
 
-        public void Connect(StraightRailTrackItem src, StraightRailTrackItem dstOne, StraightRailTrackItem dstTwo)
-        {
-            Pos = src.End;
-
-            double angleToOne = Math.Atan2(dstOne.End.Y-Pos.Y, dstOne.End.X-Pos.X) * 180.0 / Math.PI;
-            ConnectionOne = new Point(Pos.X + Math.Cos(angleToOne) * _lineLenght, Pos.Y + Math.Sin(angleToOne) * _lineLenght);
-
-            double angleToTwo = Math.Atan2(dstTwo.End.Y-Pos.Y, dstTwo.End.X-Pos.X) * 180.0 / Math.PI;
-            ConnectionTwo = new Point(Pos.X + Math.Cos(angleToOne) * _lineLenght, Pos.Y + Math.Sin(angleToOne) * _lineLenght);
-
-            Status = PlacementStatus.PLACED;
-        }
-        protected override Geometry DefiningGeometry
+        #region Drawing points        
+        private Point _arrowTailPos = new Point(0, 0);
+        private Point ArrowTailPos
         {
             get
             {
-                PathGeometry g;
-                Point center = Pos;
+                GraphicCalc.GetPointInDirection(ref _arrowTailPos, Pos, _portSrc.Pos, _arrowDistance);
+                return _arrowTailPos;
+            }
+        }
 
-                // circle
-                Point a1 = new Point(Pos.X + _circleRadius, Pos.Y);
-                Point a2 = new Point(Pos.X - _circleRadius, Pos.Y);
-                PathFigure circle1 = new PathFigure(a1, [
-                    new ArcSegment(a2, circleSize, 0, false, SweepDirection.Clockwise, true),
-                    new ArcSegment(a1, circleSize, 0, false, SweepDirection.Clockwise, true)
-                    ], true);
-                g = new PathGeometry([circle1]);
+        private Point _arrowHeadPos = new Point(0, 0);
+        private Point ArrowHeadPos
+        {
+            get
+            {
+                GraphicCalc.GetPointInDirection(ref _arrowHeadPos, _arrowTailPos, Pos, _arrowLength);
+                return _arrowHeadPos;
+            }
+        }
 
-                PathFigure switchLine;
-                //if (Status == PlacementStatus.NOT_PLACED)
-                //{
-                //    // switch faces right
-                //    Point lineEnd = new Point(Pos.X + _lineLenght, Pos.Y);
-                //    switchLine = new PathFigure(center, [
-                //        new LineSegment(lineEnd, true)
-                //        ], true);
-                //}
-                //else
-                //{
-                //    // switch faces one of the chosen directions
-                //    if (SwitchedToOne)
-                //    {
-                //        switchLine = new PathFigure(center, [
-                //            new LineSegment(ConnectionOne, true)
-                //            ], true);
-                //    }
-                //    else
-                //    {
-                //        switchLine = new PathFigure(center, [
-                //            new LineSegment(ConnectionTwo, true)
-                //            ], true);
-                //    }
-                //}
-                Point lineEnd = new Point(Pos.X + _lineLenght, Pos.Y);
-                    switchLine = new PathFigure(center, [
-                        new LineSegment(lineEnd, true)
-                        ], true);
-                g.Figures.Add(switchLine);
-                return g;
+        private Point _arrowTipOne = new Point(0, 0);
+        private Point ArrowTipOne
+        {
+            get
+            {
+                GraphicCalc.GetPointInDirection(ref _arrowTipOne, _arrowHeadPos, _arrowTailPos, _arrowTipsLength, _arrowTipsAngle);
+                return _arrowTipOne;
+            }
+        }
+        private Point _arrowTipTwo = new Point(0, 0);
+        private Point ArrowTipTwo
+        {
+            get
+            {
+                GraphicCalc.GetPointInDirection(ref _arrowTipTwo, _arrowHeadPos, _arrowTailPos, _arrowTipsLength, -_arrowTipsAngle);
+                return _arrowTipTwo;
+            }
+        }
+
+        private Point _lineDirection = new Point(0, 0);
+        private Point _lineHeadPos = new Point(0, 0);
+        private Point LineHeadPos
+        {
+            get
+            {
+                if (Status == PlacementStatus.CONNECTED)
+                {
+                    GraphicCalc.GetPointInDirection(ref _lineHeadPos, Pos, _lineDirection, _lineLength);
+                }
+                else
+                {
+                    _lineHeadPos.X = Pos.X + _lineLength;
+                    _lineHeadPos.Y = Pos.Y;
+                }
+
+                return _lineHeadPos;
+            }
+        }
+        #endregion
+
+        private Port _portSrc { get; set; }
+        public Point SrcPos
+        {
+            get
+            {
+                return _portSrc.Pos;
+            }
+            set
+            {
+                _portSrc.Pos = value;
+            }
+        }
+
+        private Port _portDstOne { get; set; }
+        private Port _portDstTwo { get; set; }
+
+        private bool _switchedToTwo = true;
+        public bool SwitchedToOne
+        {
+            get
+            {
+                return _switchedToTwo;
+            }
+            set
+            {
+                if (value == true)
+                {
+                    _lineDirection = _portDstOne.Pos;
+                }
+                else
+                {
+                    _lineDirection = _portDstTwo.Pos;
+                }
+
+                _switchedToTwo = value;
+                Render();
+            }
+        }
+
+        public PlacementStatus Status { get; set; } = PlacementStatus.NOT_PLACED;
+
+        public Port Port { get; private set; }
+        public Point Pos
+        {
+            get
+            {
+                return Port.Pos;
+            }
+            set
+            {
+                Port.Pos = value;
+            }
+        }
+
+        public SwitchItem() : base()
+        {
+            Port = new Port(this, new Point(0, 0));
+
+            _portSrc = new Port(this, new Point(0, 0));
+            _portDstOne = new Port(this, new Point(0, 0));
+            _portDstTwo = new Port(this, new Point(0, 0));
+        }
+
+        public void Place(Port mainPort)
+        {
+            mainPort.Merge(Port);
+            Port = mainPort;
+            Status = PlacementStatus.PLACED;
+        }
+
+        public void SetSource(Port source)
+        {
+            if (source == Port)
+            {
+                // user has chosen port where switch is placed
+                return;
+            }
+            var connectedRails = Port.GraphicItems.OfType<StraightRailTrackItem>();
+            var srcRail = connectedRails.Where((rail) => rail.PortStart == source || rail.PortEnd == source).FirstOrDefault();
+            if (srcRail == null)
+            {
+                // user has chosen port not out of three connected ports
+                return;
+            }
+            connectedRails = connectedRails.Except([srcRail]);
+
+            // set Source Port
+            _portSrc = source;
+
+            // set first Destination Port
+            StraightRailTrackItem dstOne = connectedRails.ElementAt(0);
+            if (dstOne.PortStart != Port)
+            {
+                _portDstOne = dstOne.PortStart;
+            }
+            else
+            {
+                _portDstOne = dstOne.PortEnd;
+            }
+
+            // set second Destination Port
+            StraightRailTrackItem dstTwo = connectedRails.ElementAt(1);
+            if (dstTwo.PortStart != Port)
+            {
+                _portDstTwo = dstTwo.PortStart;
+            }
+            else
+            {
+                _portDstTwo = dstTwo.PortEnd;
+            }
+
+            SwitchedToOne = true;
+
+            Status = PlacementStatus.CONNECTED;
+        }
+
+        public override void Reassign_OnPortMerged(object? sender, Port oldPort)
+        {
+            if (sender == null || sender is not Bases.Port) return;
+
+            Port = (Port)sender;
+        }
+
+        protected override void Render(DrawingContext dc)
+        {
+            // body
+            dc.DrawEllipse(_switchBrush, _switchPen, Pos, _circleRadius, _circleRadius);
+
+            // main line
+            dc.DrawLine(_switchPen, Pos, LineHeadPos);
+
+            // source arrow
+            if (Status >= PlacementStatus.PLACED)
+            {
+                dc.DrawLine(_switchArrowPen, ArrowTailPos, ArrowHeadPos);
+                dc.DrawLine(_switchArrowPen, _arrowHeadPos, ArrowTipOne);
+                dc.DrawLine(_switchArrowPen, _arrowHeadPos, ArrowTipTwo);
             }
         }
     }

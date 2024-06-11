@@ -1,10 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Shapes;
-using railway_monitor.Components.GraphicItems;
 using railway_monitor.Tools;
 using railway_monitor.Tools.Actions;
-using System.Windows.Media;
 using railway_monitor.MVVM.ViewModels;
 using railway_monitor.Components.RailwayCanvas;
 
@@ -14,15 +11,26 @@ namespace railway_monitor.Components.ToolButtons
     {
         private const string ToolsGroupName = "Tools";
 
-        public static List<RadioButton> ToolButtonsList { get; } = new List<RadioButton>();
+        public List<RadioButton> ToolButtonsList { get; } = new List<RadioButton>();
 
         public UseToolCommand ClickCommand { get; private set; }
         public UseToolCommand MoveCommand { get; private set; }
+        public UseToolCommand ReleaseCommand { get; private set; }
 
-        private void ToolButtonChecked(Action<Tuple<RailwayCanvasViewModel, Point>> newClickFunc, Action<Tuple<RailwayCanvasViewModel, Point>> newMoveFunc)
+        private void ToolButtonChecked(Action<Tuple<RailwayCanvasViewModel, Point>> newClickFunc, 
+            Action<Tuple<RailwayCanvasViewModel, Point>> newMoveFunc)
         {
             ClickCommand.ExecuteDelegate = newClickFunc;
             MoveCommand.ExecuteDelegate = newMoveFunc;
+            ReleaseCommand.ExecuteDelegate = UtilToolActions.NoAction;
+        }
+        private void ToolButtonChecked(Action<Tuple<RailwayCanvasViewModel, Point>> newClickFunc, 
+            Action<Tuple<RailwayCanvasViewModel, Point>> newMoveFunc, 
+            Action<Tuple<RailwayCanvasViewModel, Point>> newReleaseFunc)
+        {
+            ClickCommand.ExecuteDelegate = newClickFunc;
+            MoveCommand.ExecuteDelegate = newMoveFunc;
+            ReleaseCommand.ExecuteDelegate = newReleaseFunc;
         }
 
         public ToolButtonsViewModel()
@@ -31,6 +39,7 @@ namespace railway_monitor.Components.ToolButtons
 
             ClickCommand = new UseToolCommand(ClickToolActions.PlaceStraightRailTrack);
             MoveCommand = new UseToolCommand(MoveToolActions.MoveStraightRailTrack);
+            ReleaseCommand = new UseToolCommand(UtilToolActions.NoAction);
 
             RadioButton srtButton = new RadioButton
             {
@@ -67,11 +76,19 @@ namespace railway_monitor.Components.ToolButtons
             };
             externalTrackButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(ClickToolActions.PlaceExternalTrack, MoveToolActions.MoveDeadend);
 
+            RadioButton dragButton = new RadioButton
+            {
+                GroupName = ToolsGroupName,
+                Content = "Drag",
+            };
+            dragButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(ClickToolActions.CaptureDrag, MoveToolActions.MoveDrag, ReleaseToolActions.ReleaseDrag);
+
             ToolButtonsList.Add(srtButton);
             ToolButtonsList.Add(switchButton);
             ToolButtonsList.Add(signalButton);
             ToolButtonsList.Add(deadEndButton);
             ToolButtonsList.Add(externalTrackButton);
+            ToolButtonsList.Add(dragButton);
 
             srtButton.IsChecked = true;
         }

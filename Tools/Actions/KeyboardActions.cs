@@ -8,7 +8,7 @@ namespace railway_monitor.Tools.Actions
         public static void RemoveLatestShape(Tuple<RailwayCanvasViewModel, Point> args)
         {
             RailwayCanvasViewModel canvas = args.Item1;
-            canvas.DeleteLatestShape();
+            canvas.DeleteLatestElement();
         }
     }
 }
