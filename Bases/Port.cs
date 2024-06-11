@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using railway_monitor.Components.GraphicItems;
+using System.Windows;
 
 namespace railway_monitor.Bases
 {
@@ -44,12 +45,35 @@ namespace railway_monitor.Bases
 
         }
 
-        public void RenderGraphicItems()
+        private void RenderGraphicItemsFlat()
         {
             foreach (GraphicItem item in GraphicItems)
             {
                 item.Render();
             }
+        }
+        public void RenderGraphicItems()
+        {
+            List<Port> neighbourPorts = new List<Port>();
+            foreach (GraphicItem item in GraphicItems)
+            {
+                item.Render();
+                if (item is StraightRailTrackItem srt)
+                {
+                    // and neighbours to update them (for switches especially)
+                    neighbourPorts.Add(srt.GetOtherPort(this));
+                }
+            }
+
+            foreach (Port neighbourPort in neighbourPorts)
+            {
+                neighbourPort.RenderGraphicItemsFlat();
+            }
+        }
+
+        public override string ToString()
+        {
+            return "<Port " + GetHashCode() + ">";
         }
     }
 }
