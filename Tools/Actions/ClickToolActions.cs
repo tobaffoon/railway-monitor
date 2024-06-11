@@ -11,21 +11,21 @@ namespace railway_monitor.Tools.Actions
         public static void PlaceStraightRailTrack(Tuple<RailwayCanvasViewModel, Point> args)
         {
             RailwayCanvasViewModel canvas = args.Item1;
-            FrameworkElement? element = canvas.LatestElement;
-            if (element == null)
+            GraphicItem? item = canvas.LatestGraphicItem;
+            if (item == null)
             {
-                element = new StraightRailTrackItem();
-                canvas.AddElement(element);
+                item = new StraightRailTrackItem();
+                canvas.AddElement(item);
             }
-            else if (element is not StraightRailTrackItem)
+            else if (item is not StraightRailTrackItem)
             {
                 canvas.DeleteLatestElement();
-                element = new StraightRailTrackItem();
-                canvas.AddElement(element);
+                item = new StraightRailTrackItem();
+                canvas.AddElement(item);
             }
 
             Point mousePos = args.Item2;
-            StraightRailTrackItem srt = (StraightRailTrackItem)element;
+            StraightRailTrackItem srt = (StraightRailTrackItem)item;
             Port? connectionPort = canvas.TryFindUnderlyingPort(mousePos);
             if(connectionPort != null)
             {
@@ -53,21 +53,21 @@ namespace railway_monitor.Tools.Actions
         public static void PlaceSwitch(Tuple<RailwayCanvasViewModel, Point> args)
         {
             RailwayCanvasViewModel canvas = args.Item1;
-            FrameworkElement? element = canvas.LatestElement;
-            if (element == null)
+            GraphicItem? item = canvas.LatestGraphicItem;
+            if (item == null)
             {
-                element = new SwitchItem();
-                canvas.AddElement(element);
+                item = new SwitchItem();
+                canvas.AddElement(item);
             }
-            else if (element is not SwitchItem)
+            else if (item is not SwitchItem)
             {
                 canvas.DeleteLatestElement();
-                element = new SwitchItem();
-                canvas.AddElement(element);
+                item = new SwitchItem();
+                canvas.AddElement(item);
             }
 
             Point mousePos = args.Item2;
-            SwitchItem switchItem = (SwitchItem)element;
+            SwitchItem switchItem = (SwitchItem)item;
             switch (switchItem.Status)
             {
                 case SwitchItem.PlacementStatus.NOT_PLACED:

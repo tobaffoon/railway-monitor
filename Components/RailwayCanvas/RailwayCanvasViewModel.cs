@@ -24,8 +24,8 @@ namespace railway_monitor.Components.RailwayCanvas
 
         public Port? DraggedPort;
 
-        public ObservableCollection<FrameworkElement> GraphicItems { get; }
-        public FrameworkElement? LatestElement { get; set; }
+        public ObservableCollection<GraphicItem> GraphicItems { get; }
+        public GraphicItem? LatestGraphicItem { get; set; }
         public int Len { get { return GraphicItems.Count; } }
 
         public RailwayCanvasViewModel()
@@ -34,18 +34,18 @@ namespace railway_monitor.Components.RailwayCanvas
             GraphicItems.Add(HighlightConnection);
         }
 
-        public void AddElement(FrameworkElement element)
+        public void AddElement(GraphicItem element)
         {
             GraphicItems.Add(element);
-            LatestElement = element;
+            LatestGraphicItem = element;
         }
 
-        public void DeleteElement(FrameworkElement element)
+        public void DeleteElement(GraphicItem element)
         {
             GraphicItems.Remove(element);
-            if(element == LatestElement)
+            if(element == LatestGraphicItem)
             {
-                LatestElement = null;
+                LatestGraphicItem = null;
             }
         }
         public void DeleteStraightRailTrack(StraightRailTrackItem srt)
@@ -62,9 +62,9 @@ namespace railway_monitor.Components.RailwayCanvas
 
         public void DeleteLatestElement()
         {
-            if(LatestElement != null)
+            if(LatestGraphicItem != null)
             {
-                switch (LatestElement)
+                switch (LatestGraphicItem)
                 {
                     case StraightRailTrackItem srt:
                         DeleteStraightRailTrack(srt);
@@ -73,7 +73,7 @@ namespace railway_monitor.Components.RailwayCanvas
                         DeleteSwitch(swtch);
                         break;
                 }
-                DeleteElement(LatestElement);
+                DeleteElement(LatestGraphicItem);
             }
         }
 
@@ -101,7 +101,7 @@ namespace railway_monitor.Components.RailwayCanvas
 
         public void ResetLatestElement()
         {
-            switch (LatestElement)
+            switch (LatestGraphicItem)
             {
                 case StraightRailTrackItem srt:
                     if (RailDuplicates(srt))
@@ -116,12 +116,12 @@ namespace railway_monitor.Components.RailwayCanvas
                     }
                     break;
             }
-            LatestElement = null;
+            LatestGraphicItem = null;
         }
 
         private HitTestResultBehavior RailHitTestResult(HitTestResult result)
         {
-            if (result.VisualHit != LatestElement)
+            if (result.VisualHit != LatestGraphicItem)
             {
                 ConnectionTrack = result.VisualHit as StraightRailTrackItem;
                 return HitTestResultBehavior.Stop;
