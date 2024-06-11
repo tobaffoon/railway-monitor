@@ -48,10 +48,6 @@ namespace railway_monitor.Components.GraphicItems
             PortEnd = new Port(this, new Point(0,0));
         }
 
-        public override void Move_OnPortMoved(object? sender, Point newPos)
-        {
-        }
-
         public override void Reassign_OnPortMerged(object? sender, Port oldPort)
         {
             if(sender == null || sender is not Port port || port.GraphicItems.Contains(this)) return;

@@ -212,10 +212,6 @@ namespace railway_monitor.Components.GraphicItems
             Status = PlacementStatus.CONNECTED;
         }
 
-        public override void Move_OnPortMoved(object? sender, Point newPos)
-        {
-        }
-
         public override void Reassign_OnPortMerged(object? sender, Port oldPort)
         {
             if (sender == null || sender is not Bases.Port) return;

@@ -23,7 +23,6 @@ namespace railway_monitor.Bases
             drawingContext.Close();
         }
 
-        public abstract void Move_OnPortMoved(object? sender, Point newPos);
         public abstract void Reassign_OnPortMerged(object? sender, Port oldPort);
     }
 }

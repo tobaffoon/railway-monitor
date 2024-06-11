@@ -4,24 +4,10 @@ namespace railway_monitor.Bases
 {
     public class Port
     {
-        public event EventHandler<Point>? OnPortMoved;
-
-        public event EventHandler<Port> OnPortMerged;
+        public event EventHandler<Port>? OnPortMerged;
 
         public HashSet<GraphicItem> GraphicItems { get; }
-        private Point _pos;
-        public Point Pos
-        {
-            get
-            {
-                return _pos;
-            }
-            set
-            {
-                _pos = value;
-                OnPortMoved?.Invoke(this, value);
-            }
-        }
+        public Point Pos { get; set; }
 
         public Port(GraphicItem parentItem, Point startPos)
         {
@@ -33,13 +19,11 @@ namespace railway_monitor.Bases
         public void AddItem(GraphicItem item)
         {
             GraphicItems.Add(item);
-            OnPortMoved += item.Move_OnPortMoved;
             OnPortMerged += item.Reassign_OnPortMerged;
         }
         public void RemoveItem(GraphicItem item)
         {
             GraphicItems.Remove(item);
-            OnPortMoved -= item.Move_OnPortMoved;
             OnPortMerged -= item.Reassign_OnPortMerged;
         }
 
@@ -58,6 +42,14 @@ namespace railway_monitor.Bases
                 other.RemoveItem(item);
             }
 
+        }
+
+        public void RenderGraphicItems()
+        {
+            foreach (GraphicItem item in GraphicItems)
+            {
+                item.Render();
+            }
         }
     }
 }

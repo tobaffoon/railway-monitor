@@ -81,7 +81,7 @@ namespace railway_monitor.Components.ToolButtons
                 GroupName = ToolsGroupName,
                 Content = "Drag",
             };
-            dragButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(ClickToolActions.CaptureDrag, MoveToolActions.MoveDrag);
+            dragButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(ClickToolActions.CaptureDrag, MoveToolActions.MoveDrag, ReleaseToolActions.ReleaseDrag);
 
             ToolButtonsList.Add(srtButton);
             ToolButtonsList.Add(switchButton);
