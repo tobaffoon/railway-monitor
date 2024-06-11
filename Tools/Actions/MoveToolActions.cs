@@ -115,7 +115,7 @@ namespace railway_monitor.Tools.Actions
             if (canvas.DraggedPort != null)
             {
                 canvas.DraggedPort.Pos = mousePos;
-                canvas.DraggedPort.RenderGraphicItems();
+                canvas.RenderDraggedPort();
             }
             else
             {

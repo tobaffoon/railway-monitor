@@ -10,41 +10,18 @@ namespace railway_monitor.Components.RailwayCanvas
 {
     public class RailwayCanvasViewModel : ViewModelBase
     {
-        # region HighlightConnection
-        private static readonly double _connectRadius = 15;
-        private static readonly Brush _highlightNormalBrush = new SolidColorBrush(Color.FromArgb(100, 51, 153, 255));
-        private static readonly Brush _highlightErrorBrush = new SolidColorBrush(Color.FromArgb(100, 230, 20, 20));
         private StraightRailTrackItem? ConnectionTrack { get; set; }
-        private Path HighlightConnection { get; set; } = new Path{
-            Fill = _highlightNormalBrush,
-            Visibility = Visibility.Collapsed,
-            Data = new EllipseGeometry
-            {
-                RadiusX = _connectRadius,
-                RadiusY = _connectRadius
-            }
-        };
-        private bool _connectionErrorOccured = false;
+        private HighlightConnection HighlightConnection = new HighlightConnection();
+        private double ConnectionRadius
+        {
+            get => HighlightConnection.ConnectRadius;
+        }
         public bool ConnectionErrorOccured
         {
-            get
-            {
-                return _connectionErrorOccured;
-            }
-            set
-            {
-                if (value == true)
-                {
-                    HighlightConnection.Fill = _highlightErrorBrush;
-                }
-                else
-                {
-                    HighlightConnection.Fill = _highlightNormalBrush;
-                }
-                _connectionErrorOccured = value;
-            }
+            get => HighlightConnection.ConnectionErrorOccured;
+            set => HighlightConnection.ConnectionErrorOccured = value;
         }
-        #endregion
+
         public Port? DraggedPort;
 
         public ObservableCollection<FrameworkElement> GraphicItems { get; }
@@ -158,7 +135,7 @@ namespace railway_monitor.Components.RailwayCanvas
         public Port? TryFindUnderlyingPort(Point mousePos)
         {
             // circle in which new srt tries to connect to an old srt
-            EllipseGeometry expandedHitTestArea = new EllipseGeometry(mousePos, _connectRadius, _connectRadius);
+            EllipseGeometry expandedHitTestArea = new EllipseGeometry(mousePos, ConnectionRadius, ConnectionRadius);
 
             foreach (StraightRailTrackItem srt in GraphicItems.OfType<StraightRailTrackItem>())
             {
@@ -173,23 +150,31 @@ namespace railway_monitor.Components.RailwayCanvas
                 // determine close enough vertex or make sure that there is no such vertex
                 double distance1 = (ConnectionTrack.Start - mousePos).Length;
                 double distance2 = (ConnectionTrack.End - mousePos).Length;
-                if (distance1 < _connectRadius || distance2 < _connectRadius)
+                if (distance1 < ConnectionRadius || distance2 < ConnectionRadius)
                 {
                     HighlightConnection.Visibility = Visibility.Visible;
                     if (distance2 < distance1)
                     {
-                        ((EllipseGeometry)HighlightConnection.Data).Center = ConnectionTrack.End;
+                        HighlightConnection.Pos = ConnectionTrack.End;
                         return ConnectionTrack.PortEnd;
                     }
-                    ((EllipseGeometry)HighlightConnection.Data).Center = ConnectionTrack.Start;
+                    HighlightConnection.Pos = ConnectionTrack.Start;
                     return ConnectionTrack.PortStart;
                 }
             }
 
             // hide highlighter when no track is close enough
             HighlightConnection.Visibility = Visibility.Collapsed;
-            ConnectionErrorOccured = false;
+            HighlightConnection.ConnectionErrorOccured = false;
             return null;
+        }
+
+        public void RenderDraggedPort()
+        {
+            if (DraggedPort == null) return;
+            DraggedPort.RenderGraphicItems();
+            HighlightConnection.Pos = DraggedPort.Pos;
+            HighlightConnection.Render();
         }
     }
 }
