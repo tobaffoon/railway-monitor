@@ -7,7 +7,7 @@ namespace railway_monitor.Bases
         public event EventHandler<Port>? OnPortMerged;
 
         public HashSet<GraphicItem> GraphicItems { get; }
-        public Point Pos { get; set; }
+        public Point Pos;
 
         public Port(GraphicItem parentItem, Point startPos)
         {

@@ -28,7 +28,8 @@ namespace railway_monitor.Components.GraphicItems
             get => PortStart.Pos;
             set
             {
-                PortStart.Pos = value;
+                PortStart.Pos.X = value.X;
+                PortStart.Pos.Y = value.Y;
             }
         }
         public Point End
@@ -36,7 +37,8 @@ namespace railway_monitor.Components.GraphicItems
             get => PortEnd.Pos;
             set
             {
-                PortEnd.Pos = value;
+                PortEnd.Pos.X = value.X;
+                PortEnd.Pos.Y = value.Y;
             }
         }
                 
