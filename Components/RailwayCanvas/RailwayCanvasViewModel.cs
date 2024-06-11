@@ -5,6 +5,7 @@ using System.Windows.Media;
 using railway_monitor.Components.GraphicItems;
 using System.Collections.ObjectModel;
 using railway_monitor.Bases;
+using System.Xml.Linq;
 
 namespace railway_monitor.Components.RailwayCanvas
 {
@@ -38,6 +39,11 @@ namespace railway_monitor.Components.RailwayCanvas
         {
             GraphicItems.Add(element);
             LatestGraphicItem = element;
+        }
+        public void AddElementBehind(GraphicItem item)
+        {
+            GraphicItems.Insert(1, item);
+            LatestGraphicItem = item;
         }
 
         public void DeleteElement(GraphicItem element)

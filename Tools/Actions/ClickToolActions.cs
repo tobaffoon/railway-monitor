@@ -15,13 +15,13 @@ namespace railway_monitor.Tools.Actions
             if (item == null)
             {
                 item = new StraightRailTrackItem();
-                canvas.AddElement(item);
+                canvas.AddElementBehind(item);
             }
             else if (item is not StraightRailTrackItem)
             {
                 canvas.DeleteLatestElement();
                 item = new StraightRailTrackItem();
-                canvas.AddElement(item);
+                canvas.AddElementBehind(item);
             }
 
             Point mousePos = args.Item2;

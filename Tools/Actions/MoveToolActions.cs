@@ -1,6 +1,7 @@
 ﻿using railway_monitor.Bases;
 using railway_monitor.Components.GraphicItems;
 using railway_monitor.Components.RailwayCanvas;
+using System.Diagnostics;
 using System.Windows;
 
 namespace railway_monitor.Tools.Actions
@@ -23,12 +24,12 @@ namespace railway_monitor.Tools.Actions
             if (item == null)
             {
                 item = new StraightRailTrackItem();
-                canvas.AddElement(item);
+                canvas.AddElementBehind(item);
             }
             else if (item is not StraightRailTrackItem)
             {
                 item = new StraightRailTrackItem();
-                canvas.AddElement(item);
+                canvas.AddElementBehind(item);
             }
 
             Point mousePos = args.Item2;
