@@ -35,38 +35,38 @@ namespace railway_monitor.Components.RailwayCanvas
             GraphicItems.Add(HighlightConnection);
         }
 
-        public void AddElement(GraphicItem element)
+        public void AddGraphicItem(GraphicItem item)
         {
-            GraphicItems.Add(element);
-            LatestGraphicItem = element;
+            GraphicItems.Add(item);
+            LatestGraphicItem = item;
         }
-        public void AddElementBehind(GraphicItem item)
+        public void AddGraphicItemBehind(GraphicItem item)
         {
             GraphicItems.Insert(1, item);
             LatestGraphicItem = item;
         }
 
-        public void DeleteElement(GraphicItem element)
+        public void DeleteGraphicItem(GraphicItem item)
         {
-            GraphicItems.Remove(element);
-            if(element == LatestGraphicItem)
+            GraphicItems.Remove(item);
+            if(item == LatestGraphicItem)
             {
                 LatestGraphicItem = null;
             }
         }
         public void DeleteStraightRailTrack(StraightRailTrackItem srt)
         {
-            DeleteElement(srt);
+            DeleteGraphicItem(srt);
             srt.PortStart.RemoveItem(srt);
             srt.PortEnd.RemoveItem(srt);
         }
         public void DeleteSwitch(SwitchItem swtch)
         {
-            DeleteElement(swtch);
+            DeleteGraphicItem(swtch);
             swtch.Port.RemoveItem(swtch);
         }
 
-        public void DeleteLatestElement()
+        public void DeleteLatestGraphicItem()
         {
             if(LatestGraphicItem != null)
             {
@@ -79,7 +79,7 @@ namespace railway_monitor.Components.RailwayCanvas
                         DeleteSwitch(swtch);
                         break;
                 }
-                DeleteElement(LatestGraphicItem);
+                DeleteGraphicItem(LatestGraphicItem);
             }
         }
 
@@ -105,7 +105,7 @@ namespace railway_monitor.Components.RailwayCanvas
             return false;
         }
 
-        public void ResetLatestElement()
+        public void ResetLatestGraphicItem()
         {
             switch (LatestGraphicItem)
             {

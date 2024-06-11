@@ -15,13 +15,13 @@ namespace railway_monitor.Tools.Actions
             if (item == null)
             {
                 item = new StraightRailTrackItem();
-                canvas.AddElementBehind(item);
+                canvas.AddGraphicItemBehind(item);
             }
             else if (item is not StraightRailTrackItem)
             {
-                canvas.DeleteLatestElement();
+                canvas.DeleteLatestGraphicItem();
                 item = new StraightRailTrackItem();
-                canvas.AddElementBehind(item);
+                canvas.AddGraphicItemBehind(item);
             }
 
             Point mousePos = args.Item2;
@@ -36,7 +36,7 @@ namespace railway_monitor.Tools.Actions
                 else
                 {
                     srt.PlaceEndPoint(connectionPort);
-                    canvas.ResetLatestElement();
+                    canvas.ResetLatestGraphicItem();
                 }
                 return;
             }
@@ -47,7 +47,7 @@ namespace railway_monitor.Tools.Actions
             else
             {
                 srt.PlaceEndPoint(mousePos);
-                canvas.ResetLatestElement();
+                canvas.ResetLatestGraphicItem();
             }
         }
         public static void PlaceSwitch(Tuple<RailwayCanvasViewModel, Point> args)
@@ -57,13 +57,13 @@ namespace railway_monitor.Tools.Actions
             if (item == null)
             {
                 item = new SwitchItem();
-                canvas.AddElement(item);
+                canvas.AddGraphicItem(item);
             }
             else if (item is not SwitchItem)
             {
-                canvas.DeleteLatestElement();
+                canvas.DeleteLatestGraphicItem();
                 item = new SwitchItem();
-                canvas.AddElement(item);
+                canvas.AddGraphicItem(item);
             }
 
             Point mousePos = args.Item2;
@@ -90,7 +90,7 @@ namespace railway_monitor.Tools.Actions
                         Trace.WriteLine("Can't set Exterior ports as Switch's source port");
                         return;
                     }
-                    canvas.ResetLatestElement();
+                    canvas.ResetLatestGraphicItem();
                     switchItem.Render();
                     break;
 

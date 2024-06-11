@@ -24,12 +24,12 @@ namespace railway_monitor.Tools.Actions
             if (item == null)
             {
                 item = new StraightRailTrackItem();
-                canvas.AddElementBehind(item);
+                canvas.AddGraphicItemBehind(item);
             }
             else if (item is not StraightRailTrackItem)
             {
                 item = new StraightRailTrackItem();
-                canvas.AddElementBehind(item);
+                canvas.AddGraphicItemBehind(item);
             }
 
             Point mousePos = args.Item2;
@@ -77,12 +77,12 @@ namespace railway_monitor.Tools.Actions
             if (item == null)
             {
                 item = new SwitchItem();
-                canvas.AddElement(item);
+                canvas.AddGraphicItem(item);
             }
             else if (item is not SwitchItem)
             {
                 item = new SwitchItem();
-                canvas.AddElement(item);
+                canvas.AddGraphicItem(item);
             }
 
             Point mousePos = args.Item2;
