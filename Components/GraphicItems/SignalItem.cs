@@ -59,7 +59,8 @@ namespace railway_monitor.Components.GraphicItems
             }
             set
             {
-                Port.Pos = value;
+                Port.Pos.X = value.X;
+                Port.Pos.Y = value.Y;
             }
         }
 

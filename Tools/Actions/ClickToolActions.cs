@@ -12,20 +12,20 @@ namespace railway_monitor.Tools.Actions
         public static void PlaceStraightRailTrack(Tuple<RailwayCanvasViewModel, Point> args)
         {
             RailwayCanvasViewModel canvas = args.Item1;
+            Point mousePos = args.Item2;
             GraphicItem? item = canvas.LatestGraphicItem;
             if (item == null)
             {
-                item = new StraightRailTrackItem();
+                item = new StraightRailTrackItem(mousePos);
                 canvas.AddGraphicItemBehind(item);
             }
             else if (item is not StraightRailTrackItem)
             {
                 canvas.DeleteLatestGraphicItem();
-                item = new StraightRailTrackItem();
+                item = new StraightRailTrackItem(mousePos);
                 canvas.AddGraphicItemBehind(item);
             }
 
-            Point mousePos = args.Item2;
             StraightRailTrackItem srt = (StraightRailTrackItem)item;
             Port? connectionPort = canvas.TryFindUnderlyingPort(mousePos);
             if (connectionPort != null && ConnectConditions.IsRailConnectable(connectionPort))
@@ -59,14 +59,14 @@ namespace railway_monitor.Tools.Actions
         public static void PlaceSwitch(Tuple<RailwayCanvasViewModel, Point> args)
         {
             RailwayCanvasViewModel canvas = args.Item1;
+            Point mousePos = args.Item2;
             GraphicItem? item = canvas.LatestGraphicItem;
             if (item is not SwitchItem)
             {
-                item = new SwitchItem();
+                item = new SwitchItem(mousePos);
                 canvas.AddGraphicItem(item);
             }
 
-            Point mousePos = args.Item2;
             SwitchItem switchItem = (SwitchItem)item;
             switch (switchItem.PlacementStatus)
             {

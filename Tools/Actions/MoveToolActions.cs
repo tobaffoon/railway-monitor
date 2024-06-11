@@ -12,19 +12,19 @@ namespace railway_monitor.Tools.Actions
         public static void MoveStraightRailTrack(Tuple<RailwayCanvasViewModel, Point> args)
         {
             RailwayCanvasViewModel canvas = args.Item1;
+            Point mousePos = args.Item2;
             GraphicItem? item = canvas.LatestGraphicItem;
             if (item == null)
             {
-                item = new StraightRailTrackItem();
+                item = new StraightRailTrackItem(mousePos);
                 canvas.AddGraphicItemBehind(item);
             }
             else if (item is not StraightRailTrackItem)
             {
-                item = new StraightRailTrackItem();
+                item = new StraightRailTrackItem(mousePos);
                 canvas.AddGraphicItemBehind(item);
             }
 
-            Point mousePos = args.Item2;
             StraightRailTrackItem srt = (StraightRailTrackItem)item;
             Port? connectionPort = canvas.TryFindUnderlyingPort(mousePos);
             
@@ -63,19 +63,19 @@ namespace railway_monitor.Tools.Actions
         public static void MoveSwitch(Tuple<RailwayCanvasViewModel, Point> args)
         {
             RailwayCanvasViewModel canvas = args.Item1;
+            Point mousePos = args.Item2;
             GraphicItem? item = canvas.LatestGraphicItem;
             if (item == null)
             {
-                item = new SwitchItem();
+                item = new SwitchItem(mousePos);
                 canvas.AddGraphicItem(item);
             }
             else if (item is not SwitchItem)
             {
-                item = new SwitchItem();
+                item = new SwitchItem(mousePos);
                 canvas.AddGraphicItem(item);
             }
 
-            Point mousePos = args.Item2;
             SwitchItem switchItem = (SwitchItem)item;
             Port? connectionPort = canvas.TryFindUnderlyingPort(mousePos);
             switch (switchItem.PlacementStatus)

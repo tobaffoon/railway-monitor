@@ -75,7 +75,6 @@ namespace railway_monitor.Components.GraphicItems
             }
         }
 
-        private Point _lineDirection = new Point(0, 0);
         private Point _lineHeadPos = new Point(0, 0);
         private Point LineHeadPos
         {
@@ -83,7 +82,7 @@ namespace railway_monitor.Components.GraphicItems
             {
                 if (PlacementStatus == SwitchPlacementStatus.SOURCE_SET)
                 {
-                    GraphicCalc.GetPointInDirection(ref _lineHeadPos, Pos, _lineDirection, _lineLength);
+                    GraphicCalc.GetPointInDirection(ref _lineHeadPos, Pos, DstPos, _lineLength);
                 }
                 else
                 {
@@ -105,12 +104,27 @@ namespace railway_monitor.Components.GraphicItems
             }
             set
             {
-                _portSrc.Pos = value;
+                _portSrc.Pos.X = value.X;
+                _portSrc.Pos.Y = value.Y;
             }
         }
 
         private Port _portDstOne { get; set; }
         private Port _portDstTwo { get; set; }
+        public Point DstPos
+        {
+            get
+            {
+                if (SwitchedToOne)
+                {
+                    return _portDstOne.Pos;
+                }
+                else
+                {
+                    return _portDstTwo.Pos;
+                }
+            }
+        }
 
         private bool _switchedToTwo = true;
         public bool SwitchedToOne
@@ -121,15 +135,6 @@ namespace railway_monitor.Components.GraphicItems
             }
             set
             {
-                if (value == true)
-                {
-                    _lineDirection = _portDstOne.Pos;
-                }
-                else
-                {
-                    _lineDirection = _portDstTwo.Pos;
-                }
-
                 _switchedToTwo = value;
                 Render();
             }
@@ -146,13 +151,14 @@ namespace railway_monitor.Components.GraphicItems
             }
             set
             {
-                Port.Pos = value;
+                Port.Pos.X = value.X;
+                Port.Pos.Y = value.Y;
             }
         }
 
-        public SwitchItem() : base()
+        public SwitchItem(Point initPos) : base()
         {
-            Port = new Port(this, new Point(0, 0));
+            Port = new Port(this, initPos);
 
             _portSrc = new Port(this, new Point(0, 0));
             _portDstOne = new Port(this, new Point(0, 0));
@@ -207,25 +213,11 @@ namespace railway_monitor.Components.GraphicItems
 
             // set first Destination Port
             StraightRailTrackItem dstOne = connectedRails.ElementAt(0);
-            if (dstOne.PortStart != Port)
-            {
-                _portDstOne = dstOne.PortStart;
-            }
-            else
-            {
-                _portDstOne = dstOne.PortEnd;
-            }
+            _portDstOne = dstOne.GetOtherPort(Port);
 
             // set second Destination Port
             StraightRailTrackItem dstTwo = connectedRails.ElementAt(1);
-            if (dstTwo.PortStart != Port)
-            {
-                _portDstTwo = dstTwo.PortStart;
-            }
-            else
-            {
-                _portDstTwo = dstTwo.PortEnd;
-            }
+            _portDstTwo = dstTwo.GetOtherPort(Port);
 
             SwitchedToOne = true;
 

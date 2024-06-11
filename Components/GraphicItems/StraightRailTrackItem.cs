@@ -28,7 +28,8 @@ namespace railway_monitor.Components.GraphicItems
             get => PortStart.Pos;
             set
             {
-                PortStart.Pos = value;
+                PortStart.Pos.X = value.X;
+                PortStart.Pos.Y = value.Y;
             }
         }
         public Point End
@@ -36,15 +37,23 @@ namespace railway_monitor.Components.GraphicItems
             get => PortEnd.Pos;
             set
             {
-                PortEnd.Pos = value;
+                PortEnd.Pos.X = value.X;
+                PortEnd.Pos.Y = value.Y;
             }
         }
                 
-        public StraightRailTrackItem() : base()
+        public StraightRailTrackItem(Point initPos) : base()
         {
             PlacementStatus = RailPlacementStatus.NOT_PLACED;
-            PortStart = new Port(this, new Point(0,0));
-            PortEnd = new Port(this, new Point(0,0));
+            PortStart = new Port(this, initPos);
+            PortEnd = new Port(this, initPos);
+        }
+
+        public Port GetOtherPort(Port wrongPort)
+        {
+            if (wrongPort == PortStart) return PortEnd;
+            if (wrongPort == PortEnd) return PortStart;
+            else throw new ArgumentException("SRT got wrong port: " + wrongPort + ". SRT only had: " + PortStart + " and " + PortEnd);
         }
 
         public override void Reassign_OnPortMerged(object? sender, Port oldPort)
