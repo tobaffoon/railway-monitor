@@ -1,12 +1,9 @@
 ﻿using railway_monitor.Bases;
 using railway_monitor.Components.GraphicItems;
 
-namespace railway_monitor.Utils
-{
-    public static class ConnectConditions
-    {
-        public static bool IsRailConnectable(Port connectionPort)
-        {
+namespace railway_monitor.Utils {
+    public static class ConnectConditions {
+        public static bool IsRailConnectable(Port connectionPort) {
             int switches = connectionPort.GraphicItems.OfType<SwitchItem>().Count();
             int srts = connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count();
 
@@ -14,13 +11,11 @@ namespace railway_monitor.Utils
             return true;
         }
 
-        public static bool IsSwitchConnectable(Port connectionPort)
-        {
+        public static bool IsSwitchConnectable(Port connectionPort) {
             return connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count() == 3 && connectionPort.GraphicItems.OfType<SwitchItem>().Count() == 0;
         }
 
-        public static bool IsSignalConnectable(Port connectionPort)
-        {
+        public static bool IsSignalConnectable(Port connectionPort) {
             return connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count() >= 2 && connectionPort.GraphicItems.OfType<SignalItem>().Count() == 0;
         }
     }

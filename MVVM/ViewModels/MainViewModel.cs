@@ -1,18 +1,9 @@
 ﻿using railway_monitor.Bases;
-using railway_monitor.Tools;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace railway_monitor.MVVM.ViewModels
-{
-    public class MainViewModel : ViewModelBase
-    {
-        public enum ViewModelName
-        {
+namespace railway_monitor.MVVM.ViewModels {
+    public class MainViewModel : ViewModelBase {
+        public enum ViewModelName {
             Undefined = 0, RailwayMonitor
         }
 
@@ -22,8 +13,7 @@ namespace railway_monitor.MVVM.ViewModels
 
         public ViewModelBase SelectedViewModel { get; set; }
 
-        public MainViewModel()
-        {
+        public MainViewModel() {
             ViewModels = new Dictionary<ViewModelName, ViewModelBase>
             {
                 { ViewModelName.RailwayMonitor, new RailwayMonitorViewModel() }
@@ -32,10 +22,8 @@ namespace railway_monitor.MVVM.ViewModels
             SelectedViewModel = ViewModels.First().Value;
         }
 
-        public void SelectView(ViewModelName viewModelName)
-        {
-            if (ViewModels.TryGetValue(viewModelName, out ViewModelBase? selectedViewModel))
-            {
+        public void SelectView(ViewModelName viewModelName) {
+            if (ViewModels.TryGetValue(viewModelName, out ViewModelBase? selectedViewModel)) {
                 this.SelectedViewModel = selectedViewModel;
             }
         }

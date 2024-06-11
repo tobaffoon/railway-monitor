@@ -1,11 +1,9 @@
 ﻿using railway_monitor.Bases;
-using System.Windows.Media;
 using System.Windows;
+using System.Windows.Media;
 
-namespace railway_monitor.Components.GraphicItems
-{
-    public class HighlightConnection : GraphicItem
-    {
+namespace railway_monitor.Components.GraphicItems {
+    public class HighlightConnection : GraphicItem {
         public static readonly double ConnectRadius = 15;
         private static readonly Brush _highlightNormalBrush = new SolidColorBrush(Color.FromArgb(100, 51, 153, 255));
         private static readonly Pen _highlightNormalPen = new Pen(_highlightNormalBrush, 0);
@@ -14,27 +12,22 @@ namespace railway_monitor.Components.GraphicItems
 
         public Point Pos = new Point(0, 0);
 
-        public HighlightConnection() : base()
-        {
+        public HighlightConnection() : base() {
             Visibility = Visibility.Collapsed;
         }
 
         public bool ConnectionErrorOccured = false;
-        public override void Reassign_OnPortMerged(object? sender, Port oldPort)
-        {
+        public override void Reassign_OnPortMerged(object? sender, Port oldPort) {
             throw new NotImplementedException();
         }
 
-        protected override void Render(DrawingContext dc)
-        {
+        protected override void Render(DrawingContext dc) {
             if (Visibility != Visibility.Visible) return;
 
-            if(ConnectionErrorOccured)
-            {
+            if (ConnectionErrorOccured) {
                 dc.DrawEllipse(_highlightErrorBrush, _highlightErrorPen, Pos, ConnectRadius, ConnectRadius);
             }
-            else
-            {
+            else {
                 dc.DrawEllipse(_highlightNormalBrush, _highlightNormalPen, Pos, ConnectRadius, ConnectRadius);
             }
         }

@@ -2,12 +2,9 @@
 using System.Windows;
 using System.Windows.Media;
 
-namespace railway_monitor.Components.GraphicItems
-{
-    public class StraightRailTrackItem : GraphicItem
-    {
-        public enum RailPlacementStatus
-        {
+namespace railway_monitor.Components.GraphicItems {
+    public class StraightRailTrackItem : GraphicItem {
+        public enum RailPlacementStatus {
             NOT_PLACED,
             PLACEMENT_STARTED,
             PLACED
@@ -23,82 +20,67 @@ namespace railway_monitor.Components.GraphicItems
 
         public Port PortStart { get; set; }
         public Port PortEnd { get; set; }
-        public Point Start
-        {
+        public Point Start {
             get => PortStart.Pos;
-            set
-            {
+            set {
                 PortStart.Pos.X = value.X;
                 PortStart.Pos.Y = value.Y;
             }
         }
-        public Point End
-        {
+        public Point End {
             get => PortEnd.Pos;
-            set
-            {
+            set {
                 PortEnd.Pos.X = value.X;
                 PortEnd.Pos.Y = value.Y;
             }
         }
-                
-        public StraightRailTrackItem(Point initPos) : base()
-        {
+
+        public StraightRailTrackItem(Point initPos) : base() {
             PlacementStatus = RailPlacementStatus.NOT_PLACED;
             PortStart = new Port(this, initPos);
             PortEnd = new Port(this, initPos);
         }
 
-        public Port GetOtherPort(Port wrongPort)
-        {
+        public Port GetOtherPort(Port wrongPort) {
             if (wrongPort == PortStart) return PortEnd;
             if (wrongPort == PortEnd) return PortStart;
             else throw new ArgumentException("SRT got wrong port: " + wrongPort + ". SRT only had: " + PortStart + " and " + PortEnd);
         }
 
-        public override void Reassign_OnPortMerged(object? sender, Port oldPort)
-        {
-            if(sender == null || sender is not Port port || port.GraphicItems.Contains(this)) return;
+        public override void Reassign_OnPortMerged(object? sender, Port oldPort) {
+            if (sender == null || sender is not Port port || port.GraphicItems.Contains(this)) return;
 
-            if(oldPort == PortStart)
-            {
+            if (oldPort == PortStart) {
                 PortStart = (Port)sender;
             }
-            else
-            {
+            else {
                 PortEnd = (Port)sender;
             }
         }
 
-        public void PlaceStartPoint(Point point)
-        {
+        public void PlaceStartPoint(Point point) {
             Start = point;
             PlacementStatus = RailPlacementStatus.PLACEMENT_STARTED;
         }
-        public void PlaceStartPoint(Port port)
-        {
+        public void PlaceStartPoint(Port port) {
             Start = port.Pos;
             port.Merge(PortStart);
             PlacementStatus = RailPlacementStatus.PLACEMENT_STARTED;
         }
-        public void PlaceEndPoint(Point point)
-        {
+        public void PlaceEndPoint(Point point) {
             End = point;
             PlacementStatus = RailPlacementStatus.PLACED;
         }
-        public void PlaceEndPoint(Port port)
-        {
+        public void PlaceEndPoint(Port port) {
             End = port.Pos;
             port.Merge(PortEnd);
             PlacementStatus = RailPlacementStatus.PLACED;
         }
 
-        protected override void Render(DrawingContext dc)
-        {
+        protected override void Render(DrawingContext dc) {
             dc.DrawEllipse(_railTrackBrush, _railTrackPen, Start, _circleRadius, _circleRadius);
 
-            if (PlacementStatus != RailPlacementStatus.NOT_PLACED)
-            {
+            if (PlacementStatus != RailPlacementStatus.NOT_PLACED) {
                 // main line
                 dc.DrawLine(_railTrackPen, Start, End);
 

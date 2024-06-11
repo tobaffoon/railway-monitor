@@ -1,24 +1,18 @@
-﻿using System.Windows.Shapes;
+﻿using railway_monitor.Bases;
+using railway_monitor.Components.GraphicItems;
 using railway_monitor.MVVM.ViewModels;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;
-using railway_monitor.Components.GraphicItems;
-using System.Collections.ObjectModel;
-using railway_monitor.Bases;
-using System.Xml.Linq;
 
-namespace railway_monitor.Components.RailwayCanvas
-{
-    public class RailwayCanvasViewModel : ViewModelBase
-    {
+namespace railway_monitor.Components.RailwayCanvas {
+    public class RailwayCanvasViewModel : ViewModelBase {
         private StraightRailTrackItem? ConnectionTrack { get; set; }
         private HighlightConnection HighlightConnection = new HighlightConnection();
-        private double ConnectionRadius
-        {
+        private double ConnectionRadius {
             get => HighlightConnection.ConnectRadius;
         }
-        public bool ConnectionErrorOccured
-        {
+        public bool ConnectionErrorOccured {
             get => HighlightConnection.ConnectionErrorOccured;
             set => HighlightConnection.ConnectionErrorOccured = value;
         }
@@ -29,49 +23,39 @@ namespace railway_monitor.Components.RailwayCanvas
         public GraphicItem? LatestGraphicItem { get; set; }
         public int Len { get { return GraphicItems.Count; } }
 
-        public RailwayCanvasViewModel()
-        {
+        public RailwayCanvasViewModel() {
             GraphicItems = [];
             GraphicItems.Add(HighlightConnection);
         }
 
-        public void AddGraphicItem(GraphicItem item)
-        {
+        public void AddGraphicItem(GraphicItem item) {
             GraphicItems.Add(item);
             LatestGraphicItem = item;
         }
-        public void AddGraphicItemBehind(GraphicItem item)
-        {
+        public void AddGraphicItemBehind(GraphicItem item) {
             GraphicItems.Insert(1, item);
             LatestGraphicItem = item;
         }
 
-        public void DeleteGraphicItem(GraphicItem item)
-        {
+        public void DeleteGraphicItem(GraphicItem item) {
             GraphicItems.Remove(item);
-            if(item == LatestGraphicItem)
-            {
+            if (item == LatestGraphicItem) {
                 LatestGraphicItem = null;
             }
         }
-        public void DeleteStraightRailTrack(StraightRailTrackItem srt)
-        {
+        public void DeleteStraightRailTrack(StraightRailTrackItem srt) {
             DeleteGraphicItem(srt);
             srt.PortStart.RemoveItem(srt);
             srt.PortEnd.RemoveItem(srt);
         }
-        public void DeleteSwitch(SwitchItem swtch)
-        {
+        public void DeleteSwitch(SwitchItem swtch) {
             DeleteGraphicItem(swtch);
             swtch.Port.RemoveItem(swtch);
         }
 
-        public void DeleteLatestGraphicItem()
-        {
-            if(LatestGraphicItem != null)
-            {
-                switch (LatestGraphicItem)
-                {
+        public void DeleteLatestGraphicItem() {
+            if (LatestGraphicItem != null) {
+                switch (LatestGraphicItem) {
                     case StraightRailTrackItem srt:
                         DeleteStraightRailTrack(srt);
                         break;
@@ -83,26 +67,20 @@ namespace railway_monitor.Components.RailwayCanvas
             }
         }
 
-        private bool RailDuplicates(StraightRailTrackItem srt)
-        {
+        private bool RailDuplicates(StraightRailTrackItem srt) {
             // search among all SRTs on the same starting port excluding newly added one
-            foreach (StraightRailTrackItem item in srt.PortStart.GraphicItems.OfType<StraightRailTrackItem>().Except<StraightRailTrackItem>([srt])) 
-            {
-                if (item.Start == srt.Start && item.End == srt.End || item.Start == srt.End && item.End == srt.Start)
-                {
+            foreach (StraightRailTrackItem item in srt.PortStart.GraphicItems.OfType<StraightRailTrackItem>().Except<StraightRailTrackItem>([srt])) {
+                if (item.Start == srt.Start && item.End == srt.End || item.Start == srt.End && item.End == srt.Start) {
                     return true;
                 }
             }
             return false;
         }
-        
-        public void ResetLatestGraphicItem()
-        {
-            switch (LatestGraphicItem)
-            {
+
+        public void ResetLatestGraphicItem() {
+            switch (LatestGraphicItem) {
                 case StraightRailTrackItem srt:
-                    if (RailDuplicates(srt))
-                    {
+                    if (RailDuplicates(srt)) {
                         DeleteStraightRailTrack(srt);
                     }
                     break;
@@ -110,42 +88,35 @@ namespace railway_monitor.Components.RailwayCanvas
             LatestGraphicItem = null;
         }
 
-        private HitTestResultBehavior RailHitTestResult(HitTestResult result)
-        {
-            if (result.VisualHit != LatestGraphicItem)
-            {
+        private HitTestResultBehavior RailHitTestResult(HitTestResult result) {
+            if (result.VisualHit != LatestGraphicItem) {
                 ConnectionTrack = result.VisualHit as StraightRailTrackItem;
                 return HitTestResultBehavior.Stop;
             }
-            else
-            {
+            else {
                 return HitTestResultBehavior.Continue;
             }
         }
 
-        public Port? TryFindUnderlyingPort(Point mousePos)
-        {
+        public Port? TryFindUnderlyingPort(Point mousePos) {
             // circle in which new srt tries to connect to an old srt
             EllipseGeometry expandedHitTestArea = new EllipseGeometry(mousePos, ConnectionRadius, ConnectionRadius);
 
-            foreach (StraightRailTrackItem srt in GraphicItems.OfType<StraightRailTrackItem>())
-            {
+            foreach (StraightRailTrackItem srt in GraphicItems.OfType<StraightRailTrackItem>()) {
                 // try finding close srt by hittesting
                 ConnectionTrack = null;
-                VisualTreeHelper.HitTest(srt, 
+                VisualTreeHelper.HitTest(srt,
                     null,
                     new HitTestResultCallback(RailHitTestResult),
                     new GeometryHitTestParameters(expandedHitTestArea));
-                if (ConnectionTrack == null) continue; 
+                if (ConnectionTrack == null) continue;
 
                 // determine close enough vertex or make sure that there is no such vertex
                 double distance1 = (ConnectionTrack.Start - mousePos).Length;
                 double distance2 = (ConnectionTrack.End - mousePos).Length;
-                if (distance1 < ConnectionRadius || distance2 < ConnectionRadius)
-                {
+                if (distance1 < ConnectionRadius || distance2 < ConnectionRadius) {
                     HighlightConnection.Visibility = Visibility.Visible;
-                    if (distance2 < distance1)
-                    {
+                    if (distance2 < distance1) {
                         HighlightConnection.Pos = ConnectionTrack.End;
                         return ConnectionTrack.PortEnd;
                     }
@@ -160,8 +131,7 @@ namespace railway_monitor.Components.RailwayCanvas
             return null;
         }
 
-        public void RenderDraggedPort()
-        {
+        public void RenderDraggedPort() {
             if (DraggedPort == null) return;
             DraggedPort.RenderGraphicItems();
             HighlightConnection.Pos = DraggedPort.Pos;

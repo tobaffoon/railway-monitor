@@ -2,20 +2,16 @@
 using System.Windows;
 using System.Windows.Media;
 
-namespace railway_monitor.Components.GraphicItems
-{
-    public class SignalItem : GraphicItem
-    {
-        public enum SignalPlacementStatus
-        {
+namespace railway_monitor.Components.GraphicItems {
+    public class SignalItem : GraphicItem {
+        public enum SignalPlacementStatus {
             ERROR,
             NOT_PLACED,
             PLACED
         }
         public SignalPlacementStatus PlacementStatus { get; set; } = SignalPlacementStatus.NOT_PLACED;
 
-        public enum SignalLightStatus
-        {
+        public enum SignalLightStatus {
             PASS,
             STOP
         }
@@ -33,17 +29,14 @@ namespace railway_monitor.Components.GraphicItems
         private static readonly double _circleRadius = 6;
         #endregion
 
-        static SignalItem()
-        {
+        static SignalItem() {
             _signalPolePen.StartLineCap = PenLineCap.Round;
             _signalPolePen.EndLineCap = PenLineCap.Round;
         }
 
         private Point _poleTop = new Point(0, 0);
-        private Point PoleTopPos
-        {
-            get
-            {
+        private Point PoleTopPos {
+            get {
                 _poleTop.X = Pos.X;
                 _poleTop.Y = Pos.Y - _poleLength;
                 return _poleTop;
@@ -51,45 +44,36 @@ namespace railway_monitor.Components.GraphicItems
         }
 
         public Port Port { get; private set; }
-        public Point Pos
-        {
-            get
-            {
+        public Point Pos {
+            get {
                 return Port.Pos;
             }
-            set
-            {
+            set {
                 Port.Pos.X = value.X;
                 Port.Pos.Y = value.Y;
             }
         }
 
-        public SignalItem(Point initPos) : base()
-        {
+        public SignalItem(Point initPos) : base() {
             Port = new Port(this, initPos);
         }
 
-        public void Place(Port mainPort)
-        {
+        public void Place(Port mainPort) {
             mainPort.Merge(Port);
             PlacementStatus = SignalPlacementStatus.PLACED;
         }
 
-        public override void Reassign_OnPortMerged(object? sender, Port oldPort)
-        {
+        public override void Reassign_OnPortMerged(object? sender, Port oldPort) {
             if (sender is not Port newPort) return;
             Port = newPort;
         }
 
-        protected override void Render(DrawingContext dc)
-        {
+        protected override void Render(DrawingContext dc) {
             dc.DrawLine(_signalPolePen, Pos, PoleTopPos);
-            if (LightStatus == SignalLightStatus.PASS)
-            {
+            if (LightStatus == SignalLightStatus.PASS) {
                 dc.DrawEllipse(_signalPassBrush, _signalPassPen, PoleTopPos, _circleRadius, _circleRadius);
             }
-            else if (LightStatus == SignalLightStatus.STOP)
-            {
+            else if (LightStatus == SignalLightStatus.STOP) {
                 dc.DrawEllipse(_signalStopBrush, _signalStopPen, PoleTopPos, _circleRadius, _circleRadius);
             }
         }

@@ -1,14 +1,10 @@
 ﻿using railway_monitor.Bases;
 using railway_monitor.Utils;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
-namespace railway_monitor.Components.GraphicItems
-{
-    public class SwitchItem : GraphicItem
-    {
-        public enum SwitchPlacementStatus
-        {
+namespace railway_monitor.Components.GraphicItems {
+    public class SwitchItem : GraphicItem {
+        public enum SwitchPlacementStatus {
             ERROR,
             NOT_PLACED,
             PLACED,
@@ -29,63 +25,50 @@ namespace railway_monitor.Components.GraphicItems
         private static readonly double _arrowTipsAngle = 0.524;  // radians = 30 deg
         #endregion
 
-        static SwitchItem()
-        {
+        static SwitchItem() {
             _switchArrowPen.StartLineCap = PenLineCap.Round;
             _switchArrowPen.EndLineCap = PenLineCap.Round;
         }
 
         #region Drawing points        
         private Point _arrowTailPos = new Point(0, 0);
-        private Point ArrowTailPos
-        {
-            get
-            {
+        private Point ArrowTailPos {
+            get {
                 GraphicCalc.GetPointInDirection(ref _arrowTailPos, Pos, _portSrc.Pos, _arrowDistance);
                 return _arrowTailPos;
             }
         }
 
         private Point _arrowHeadPos = new Point(0, 0);
-        private Point ArrowHeadPos
-        {
-            get
-            {
+        private Point ArrowHeadPos {
+            get {
                 GraphicCalc.GetPointInDirection(ref _arrowHeadPos, _arrowTailPos, Pos, _arrowLength);
                 return _arrowHeadPos;
             }
         }
 
         private Point _arrowTipOne = new Point(0, 0);
-        private Point ArrowTipOne
-        {
-            get
-            {
+        private Point ArrowTipOne {
+            get {
                 GraphicCalc.GetPointInDirection(ref _arrowTipOne, _arrowHeadPos, _arrowTailPos, _arrowTipsLength, _arrowTipsAngle);
                 return _arrowTipOne;
             }
         }
         private Point _arrowTipTwo = new Point(0, 0);
-        private Point ArrowTipTwo
-        {
-            get
-            {
+        private Point ArrowTipTwo {
+            get {
                 GraphicCalc.GetPointInDirection(ref _arrowTipTwo, _arrowHeadPos, _arrowTailPos, _arrowTipsLength, -_arrowTipsAngle);
                 return _arrowTipTwo;
             }
         }
 
         private Point _lineHeadPos = new Point(0, 0);
-        private Point LineHeadPos
-        {
-            get
-            {
-                if (PlacementStatus == SwitchPlacementStatus.SOURCE_SET)
-                {
+        private Point LineHeadPos {
+            get {
+                if (PlacementStatus == SwitchPlacementStatus.SOURCE_SET) {
                     GraphicCalc.GetPointInDirection(ref _lineHeadPos, Pos, DstPos, _lineLength);
                 }
-                else
-                {
+                else {
                     _lineHeadPos.X = Pos.X + _lineLength;
                     _lineHeadPos.Y = Pos.Y;
                 }
@@ -96,14 +79,11 @@ namespace railway_monitor.Components.GraphicItems
         #endregion
 
         private Port _portSrc { get; set; }
-        public Point SrcPos
-        {
-            get
-            {
+        public Point SrcPos {
+            get {
                 return _portSrc.Pos;
             }
-            set
-            {
+            set {
                 _portSrc.Pos.X = value.X;
                 _portSrc.Pos.Y = value.Y;
             }
@@ -111,30 +91,23 @@ namespace railway_monitor.Components.GraphicItems
 
         private Port _portDstOne { get; set; }
         private Port _portDstTwo { get; set; }
-        public Point DstPos
-        {
-            get
-            {
-                if (SwitchedToOne)
-                {
+        public Point DstPos {
+            get {
+                if (SwitchedToOne) {
                     return _portDstOne.Pos;
                 }
-                else
-                {
+                else {
                     return _portDstTwo.Pos;
                 }
             }
         }
 
         private bool _switchedToTwo = true;
-        public bool SwitchedToOne
-        {
-            get
-            {
+        public bool SwitchedToOne {
+            get {
                 return _switchedToTwo;
             }
-            set
-            {
+            set {
                 _switchedToTwo = value;
                 Render();
             }
@@ -143,21 +116,17 @@ namespace railway_monitor.Components.GraphicItems
         public SwitchPlacementStatus PlacementStatus { get; private set; } = SwitchPlacementStatus.NOT_PLACED;
 
         public Port Port { get; private set; }
-        public Point Pos
-        {
-            get
-            {
+        public Point Pos {
+            get {
                 return Port.Pos;
             }
-            set
-            {
+            set {
                 Port.Pos.X = value.X;
                 Port.Pos.Y = value.Y;
             }
         }
 
-        public SwitchItem(Point initPos) : base()
-        {
+        public SwitchItem(Point initPos) : base() {
             Port = new Port(this, initPos);
 
             _portSrc = new Port(this, new Point(0, 0));
@@ -165,23 +134,19 @@ namespace railway_monitor.Components.GraphicItems
             _portDstTwo = new Port(this, new Point(0, 0));
         }
 
-        public void Place(Port mainPort)
-        {
+        public void Place(Port mainPort) {
             mainPort.Merge(Port);
             PlacementStatus = SwitchPlacementStatus.PLACED;
         }
 
-        public bool IsSourceValid(Port source)
-        {
-            if (source == Port)
-            {
+        public bool IsSourceValid(Port source) {
+            if (source == Port) {
                 // user has chosen port where switch is placed
                 return false;
             }
             var connectedRails = Port.GraphicItems.OfType<StraightRailTrackItem>();
             var srcRail = connectedRails.Where((rail) => rail.PortStart == source || rail.PortEnd == source).FirstOrDefault();
-            if (srcRail == null)
-            {
+            if (srcRail == null) {
                 // user has chosen port not out of three connected ports
                 return false;
             }
@@ -192,17 +157,14 @@ namespace railway_monitor.Components.GraphicItems
         /// <summary>
         /// Tries to set port as switch's source of train flow. If it's not valid - doesn't set
         /// </summary>
-        public void SetSource(Port source)
-        {
-            if (source == Port)
-            {
+        public void SetSource(Port source) {
+            if (source == Port) {
                 // user has chosen port where switch is placed
                 return;
             }
             var connectedRails = Port.GraphicItems.OfType<StraightRailTrackItem>();
             var srcRail = connectedRails.Where((rail) => rail.PortStart == source || rail.PortEnd == source).FirstOrDefault();
-            if (srcRail == null)
-            {
+            if (srcRail == null) {
                 // user has chosen port not out of three connected ports
                 return;
             }
@@ -224,14 +186,12 @@ namespace railway_monitor.Components.GraphicItems
             PlacementStatus = SwitchPlacementStatus.SOURCE_SET;
         }
 
-        public override void Reassign_OnPortMerged(object? sender, Port oldPort)
-        {
+        public override void Reassign_OnPortMerged(object? sender, Port oldPort) {
             if (sender is not Port newPort) return;
             Port = newPort;
         }
 
-        protected override void Render(DrawingContext dc)
-        {
+        protected override void Render(DrawingContext dc) {
             // body
             dc.DrawEllipse(_switchBrush, _switchPen, Pos, _circleRadius, _circleRadius);
 
@@ -239,8 +199,7 @@ namespace railway_monitor.Components.GraphicItems
             dc.DrawLine(_switchPen, Pos, LineHeadPos);
 
             // source arrow
-            if (PlacementStatus >= SwitchPlacementStatus.PLACED)
-            {
+            if (PlacementStatus >= SwitchPlacementStatus.PLACED) {
                 dc.DrawLine(_switchArrowPen, ArrowTailPos, ArrowHeadPos);
                 dc.DrawLine(_switchArrowPen, _arrowHeadPos, ArrowTipOne);
                 dc.DrawLine(_switchArrowPen, _arrowHeadPos, ArrowTipTwo);

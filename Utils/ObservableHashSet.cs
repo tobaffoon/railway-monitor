@@ -16,8 +16,7 @@ namespace railway_monitor.Utils;
 /// </summary>
 /// <typeparam name="T">The type of elements in the hash set.</typeparam>
 public class ObservableHashSet<T>
-    : ISet<T>, IReadOnlyCollection<T>, INotifyCollectionChanged, INotifyPropertyChanged, INotifyPropertyChanging
-{
+    : ISet<T>, IReadOnlyCollection<T>, INotifyCollectionChanged, INotifyPropertyChanged, INotifyPropertyChanging {
     private HashSet<T> _set;
 
     /// <summary>
@@ -25,8 +24,7 @@ public class ObservableHashSet<T>
     ///     that is empty and uses the default equality comparer for the set type.
     /// </summary>
     public ObservableHashSet()
-        : this(EqualityComparer<T>.Default)
-    {
+        : this(EqualityComparer<T>.Default) {
     }
 
     /// <summary>
@@ -38,8 +36,7 @@ public class ObservableHashSet<T>
     ///     comparing values in the set, or null to use the default <see cref="IEqualityComparer{T}" />
     ///     implementation for the set type.
     /// </param>
-    public ObservableHashSet(IEqualityComparer<T> comparer)
-    {
+    public ObservableHashSet(IEqualityComparer<T> comparer) {
         _set = new HashSet<T>(comparer);
     }
 
@@ -51,8 +48,7 @@ public class ObservableHashSet<T>
     /// </summary>
     /// <param name="collection">The collection whose elements are copied to the new set.</param>
     public ObservableHashSet(IEnumerable<T> collection)
-        : this(collection, EqualityComparer<T>.Default)
-    {
+        : this(collection, EqualityComparer<T>.Default) {
     }
 
     /// <summary>
@@ -67,8 +63,7 @@ public class ObservableHashSet<T>
     ///     comparing values in the set, or null to use the default <see cref="IEqualityComparer{T}" />
     ///     implementation for the set type.
     /// </param>
-    public ObservableHashSet(IEnumerable<T> collection, IEqualityComparer<T> comparer)
-    {
+    public ObservableHashSet(IEnumerable<T> collection, IEqualityComparer<T> comparer) {
         _set = new HashSet<T>(collection, comparer);
     }
 
@@ -93,10 +88,8 @@ public class ObservableHashSet<T>
     /// <summary>
     ///     Removes all elements from the hash set.
     /// </summary>
-    public virtual void Clear()
-    {
-        if (_set.Count == 0)
-        {
+    public virtual void Clear() {
+        if (_set.Count == 0) {
             return;
         }
 
@@ -139,10 +132,8 @@ public class ObservableHashSet<T>
     /// <returns>
     ///     <see langword="true" /> if the element is successfully found and removed; otherwise, <see langword="false" />.
     /// </returns>
-    public virtual bool Remove(T item)
-    {
-        if (!_set.Contains(item))
-        {
+    public virtual bool Remove(T item) {
+        if (!_set.Contains(item)) {
             return false;
         }
 
@@ -193,10 +184,8 @@ public class ObservableHashSet<T>
     /// <returns>
     ///     <see langword="true" /> if the element is added to the hash set; <see langword="false" /> if the element is already present.
     /// </returns>
-    public virtual bool Add(T item)
-    {
-        if (_set.Contains(item))
-        {
+    public virtual bool Add(T item) {
+        if (_set.Contains(item)) {
             return false;
         }
 
@@ -215,14 +204,12 @@ public class ObservableHashSet<T>
     ///     Modifies the hash set to contain all elements that are present in itself, the specified collection, or both.
     /// </summary>
     /// <param name="other">The collection to compare to the current hash set.</param>
-    public virtual void UnionWith(IEnumerable<T> other)
-    {
+    public virtual void UnionWith(IEnumerable<T> other) {
         var copy = new HashSet<T>(_set, _set.Comparer);
 
         copy.UnionWith(other);
 
-        if (copy.Count == _set.Count)
-        {
+        if (copy.Count == _set.Count) {
             return;
         }
 
@@ -242,14 +229,12 @@ public class ObservableHashSet<T>
     ///     elements that are present in that object and in the specified collection.
     /// </summary>
     /// <param name="other">The collection to compare to the current hash set.</param>
-    public virtual void IntersectWith(IEnumerable<T> other)
-    {
+    public virtual void IntersectWith(IEnumerable<T> other) {
         var copy = new HashSet<T>(_set, _set.Comparer);
 
         copy.IntersectWith(other);
 
-        if (copy.Count == _set.Count)
-        {
+        if (copy.Count == _set.Count) {
             return;
         }
 
@@ -268,14 +253,12 @@ public class ObservableHashSet<T>
     ///     Removes all elements in the specified collection from the hash set.
     /// </summary>
     /// <param name="other">The collection of items to remove from the current hash set.</param>
-    public virtual void ExceptWith(IEnumerable<T> other)
-    {
+    public virtual void ExceptWith(IEnumerable<T> other) {
         var copy = new HashSet<T>(_set, _set.Comparer);
 
         copy.ExceptWith(other);
 
-        if (copy.Count == _set.Count)
-        {
+        if (copy.Count == _set.Count) {
             return;
         }
 
@@ -295,8 +278,7 @@ public class ObservableHashSet<T>
     ///     object or in the specified collection, but not both.
     /// </summary>
     /// <param name="other">The collection to compare to the current hash set.</param>
-    public virtual void SymmetricExceptWith(IEnumerable<T> other)
-    {
+    public virtual void SymmetricExceptWith(IEnumerable<T> other) {
         var copy = new HashSet<T>(_set, _set.Comparer);
 
         copy.SymmetricExceptWith(other);
@@ -305,8 +287,7 @@ public class ObservableHashSet<T>
         var added = copy.Where(i => !_set.Contains(i)).ToList();
 
         if (removed.Count == 0
-            && added.Count == 0)
-        {
+            && added.Count == 0) {
             return;
         }
 
@@ -409,14 +390,12 @@ public class ObservableHashSet<T>
     ///     The <see cref="Predicate{T}" /> delegate that defines the conditions of the elements to remove.
     /// </param>
     /// <returns>The number of elements that were removed from the hash set.</returns>
-    public virtual int RemoveWhere(Predicate<T> match)
-    {
+    public virtual int RemoveWhere(Predicate<T> match) {
         var copy = new HashSet<T>(_set, _set.Comparer);
 
         var removedCount = copy.RemoveWhere(match);
 
-        if (removedCount == 0)
-        {
+        if (removedCount == 0) {
             return 0;
         }
 
@@ -480,8 +459,7 @@ public class ObservableHashSet<T>
         => CollectionChanged?.Invoke(this, e);
 }
 
-internal static class ObservableHashSetSingletons
-{
+internal static class ObservableHashSetSingletons {
     public static readonly PropertyChangedEventArgs CountPropertyChanged = new("Count");
     public static readonly PropertyChangingEventArgs CountPropertyChanging = new("Count");
 
