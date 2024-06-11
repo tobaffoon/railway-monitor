@@ -31,7 +31,7 @@ namespace railway_monitor.Tools.Actions
             if (connectionPort != null && ConnectConditions.IsRailConnectable(connectionPort))
             {
                 // connection port is found and latest srt can be connected to it
-                if (srt.Status == StraightRailTrackItem.PlacementStatus.NOT_PLACED)
+                if (srt.PlacementStatus == StraightRailTrackItem.RailPlacementStatus.NOT_PLACED)
                 {
                     srt.PlaceStartPoint(connectionPort);
                 }
@@ -44,7 +44,7 @@ namespace railway_monitor.Tools.Actions
             else
             {
                 // connection port is not found or latest srt cannot be connected to it
-                if (srt.Status == StraightRailTrackItem.PlacementStatus.NOT_PLACED)
+                if (srt.PlacementStatus == StraightRailTrackItem.RailPlacementStatus.NOT_PLACED)
                 {
                     srt.PlaceStartPoint(mousePos);
                 }
@@ -74,9 +74,9 @@ namespace railway_monitor.Tools.Actions
 
             Point mousePos = args.Item2;
             SwitchItem switchItem = (SwitchItem)item;
-            switch (switchItem.Status)
+            switch (switchItem.PlacementStatus)
             {
-                case SwitchItem.PlacementStatus.NOT_PLACED:
+                case SwitchItem.SwitchPlacementStatus.NOT_PLACED:
                     Port? connectionPort = canvas.TryFindUnderlyingPort(mousePos); 
                     if (connectionPort == null || !ConnectConditions.IsSwitchConnectable(connectionPort))
                     {
@@ -85,7 +85,7 @@ namespace railway_monitor.Tools.Actions
                     }
                     switchItem.Place(connectionPort);
                     break;
-                case SwitchItem.PlacementStatus.PLACED:
+                case SwitchItem.SwitchPlacementStatus.PLACED:
                     connectionPort = canvas.TryFindUnderlyingPort(mousePos);
                     if (connectionPort == null || !switchItem.IsSourceValid(connectionPort))
                     {

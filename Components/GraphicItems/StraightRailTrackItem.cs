@@ -6,7 +6,7 @@ namespace railway_monitor.Components.GraphicItems
 {
     public class StraightRailTrackItem : GraphicItem
     {
-        public enum PlacementStatus
+        public enum RailPlacementStatus
         {
             NOT_PLACED,
             PLACEMENT_STARTED,
@@ -17,10 +17,9 @@ namespace railway_monitor.Components.GraphicItems
         private static readonly Pen _railTrackPen = new Pen(_railTrackBrush, 6);
         private static readonly double _circleRadius = 4.21;
 
-        // circle is two arcs (semicircle)
         private static Size circleSize = new Size(_circleRadius, _circleRadius);
 
-        public PlacementStatus Status { get; set; }
+        public RailPlacementStatus PlacementStatus { get; private set; }
 
         public Port PortStart { get; set; }
         public Port PortEnd { get; set; }
@@ -43,7 +42,7 @@ namespace railway_monitor.Components.GraphicItems
                 
         public StraightRailTrackItem() : base()
         {
-            Status = PlacementStatus.NOT_PLACED;
+            PlacementStatus = RailPlacementStatus.NOT_PLACED;
             PortStart = new Port(this, new Point(0,0));
             PortEnd = new Port(this, new Point(0,0));
         }
@@ -65,31 +64,31 @@ namespace railway_monitor.Components.GraphicItems
         public void PlaceStartPoint(Point point)
         {
             Start = point;
-            Status = PlacementStatus.PLACEMENT_STARTED;
+            PlacementStatus = RailPlacementStatus.PLACEMENT_STARTED;
         }
         public void PlaceStartPoint(Port port)
         {
             Start = port.Pos;
             port.Merge(PortStart);
-            Status = PlacementStatus.PLACEMENT_STARTED;
+            PlacementStatus = RailPlacementStatus.PLACEMENT_STARTED;
         }
         public void PlaceEndPoint(Point point)
         {
             End = point;
-            Status = PlacementStatus.PLACED;
+            PlacementStatus = RailPlacementStatus.PLACED;
         }
         public void PlaceEndPoint(Port port)
         {
             End = port.Pos;
             port.Merge(PortEnd);
-            Status = PlacementStatus.PLACED;
+            PlacementStatus = RailPlacementStatus.PLACED;
         }
 
         protected override void Render(DrawingContext dc)
         {
             dc.DrawEllipse(_railTrackBrush, _railTrackPen, Start, _circleRadius, _circleRadius);
 
-            if (Status != PlacementStatus.NOT_PLACED)
+            if (PlacementStatus != RailPlacementStatus.NOT_PLACED)
             {
                 // main line
                 dc.DrawLine(_railTrackPen, Start, End);

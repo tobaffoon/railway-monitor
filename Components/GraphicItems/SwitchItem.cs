@@ -7,12 +7,12 @@ namespace railway_monitor.Components.GraphicItems
 {
     public class SwitchItem : GraphicItem
     {
-        public enum PlacementStatus
+        public enum SwitchPlacementStatus
         {
             ERROR,
             NOT_PLACED,
             PLACED,
-            CONNECTED
+            SOURCE_SET
         }
 
 
@@ -29,7 +29,7 @@ namespace railway_monitor.Components.GraphicItems
         private static readonly double _arrowTipsAngle = 0.524;  // radians = 30 deg
         #endregion
 
-        static SwitchItem() 
+        static SwitchItem()
         {
             _switchArrowPen.StartLineCap = PenLineCap.Round;
             _switchArrowPen.EndLineCap = PenLineCap.Round;
@@ -81,7 +81,7 @@ namespace railway_monitor.Components.GraphicItems
         {
             get
             {
-                if (Status == PlacementStatus.CONNECTED)
+                if (PlacementStatus == SwitchPlacementStatus.SOURCE_SET)
                 {
                     GraphicCalc.GetPointInDirection(ref _lineHeadPos, Pos, _lineDirection, _lineLength);
                 }
@@ -135,7 +135,7 @@ namespace railway_monitor.Components.GraphicItems
             }
         }
 
-        public PlacementStatus Status { get; set; } = PlacementStatus.NOT_PLACED;
+        public SwitchPlacementStatus PlacementStatus { get; private set; } = SwitchPlacementStatus.NOT_PLACED;
 
         public Port Port { get; private set; }
         public Point Pos
@@ -162,8 +162,7 @@ namespace railway_monitor.Components.GraphicItems
         public void Place(Port mainPort)
         {
             mainPort.Merge(Port);
-            Port = mainPort;
-            Status = PlacementStatus.PLACED;
+            PlacementStatus = SwitchPlacementStatus.PLACED;
         }
 
         public bool IsSourceValid(Port source)
@@ -230,14 +229,13 @@ namespace railway_monitor.Components.GraphicItems
 
             SwitchedToOne = true;
 
-            Status = PlacementStatus.CONNECTED;
+            PlacementStatus = SwitchPlacementStatus.SOURCE_SET;
         }
 
         public override void Reassign_OnPortMerged(object? sender, Port oldPort)
         {
-            if (sender == null || sender is not Bases.Port) return;
-
-            Port = (Port)sender;
+            if (sender is not Port newPort) return;
+            Port = newPort;
         }
 
         protected override void Render(DrawingContext dc)
@@ -249,7 +247,7 @@ namespace railway_monitor.Components.GraphicItems
             dc.DrawLine(_switchPen, Pos, LineHeadPos);
 
             // source arrow
-            if (Status >= PlacementStatus.PLACED)
+            if (PlacementStatus >= SwitchPlacementStatus.PLACED)
             {
                 dc.DrawLine(_switchArrowPen, ArrowTailPos, ArrowHeadPos);
                 dc.DrawLine(_switchArrowPen, _arrowHeadPos, ArrowTipOne);

@@ -48,7 +48,7 @@ namespace railway_monitor.Tools.Actions
             }
 
             // place port
-            if (srt.Status == StraightRailTrackItem.PlacementStatus.NOT_PLACED)
+            if (srt.PlacementStatus == StraightRailTrackItem.RailPlacementStatus.NOT_PLACED)
             {
                 srt.Start = connectionPos;
             }
@@ -78,9 +78,9 @@ namespace railway_monitor.Tools.Actions
             Point mousePos = args.Item2;
             SwitchItem switchItem = (SwitchItem)item;
             Port? connectionPort = canvas.TryFindUnderlyingPort(mousePos);
-            switch (switchItem.Status)
+            switch (switchItem.PlacementStatus)
             {
-                case SwitchItem.PlacementStatus.NOT_PLACED:
+                case SwitchItem.SwitchPlacementStatus.NOT_PLACED:
                     Point connectionPos;
 
                     if (connectionPort == null)
@@ -103,7 +103,7 @@ namespace railway_monitor.Tools.Actions
                     switchItem.Pos = connectionPos;
                     switchItem.Render();
                     break;
-                case SwitchItem.PlacementStatus.PLACED:
+                case SwitchItem.SwitchPlacementStatus.PLACED:
                     if (connectionPort == null)
                     {
                         connectionPos = mousePos;
