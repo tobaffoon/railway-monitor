@@ -166,6 +166,27 @@ namespace railway_monitor.Components.GraphicItems
             Status = PlacementStatus.PLACED;
         }
 
+        public bool IsSourceValid(Port source)
+        {
+            if (source == Port)
+            {
+                // user has chosen port where switch is placed
+                return false;
+            }
+            var connectedRails = Port.GraphicItems.OfType<StraightRailTrackItem>();
+            var srcRail = connectedRails.Where((rail) => rail.PortStart == source || rail.PortEnd == source).FirstOrDefault();
+            if (srcRail == null)
+            {
+                // user has chosen port not out of three connected ports
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Tries to set port as switch's source of train flow. If it's not valid - doesn't set
+        /// </summary>
         public void SetSource(Port source)
         {
             if (source == Port)
