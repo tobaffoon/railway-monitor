@@ -11,7 +11,7 @@ namespace railway_monitor.Components.ToolButtons
     {
         private const string ToolsGroupName = "Tools";
 
-        public List<RadioButton> ToolButtonsList { get; } = new List<RadioButton>();
+        public List<RadioButton> ToolButtonsList { get; private set; }
 
         public UseToolCommand ClickCommand { get; private set; }
         public UseToolCommand MoveCommand { get; private set; }
@@ -35,7 +35,7 @@ namespace railway_monitor.Components.ToolButtons
 
         public ToolButtonsViewModel()
         {
-            ToolButtonsList.Clear();
+            ToolButtonsList = new List<RadioButton>();
 
             ClickCommand = new UseToolCommand(ClickToolActions.PlaceStraightRailTrack);
             MoveCommand = new UseToolCommand(MoveToolActions.MoveStraightRailTrack);
