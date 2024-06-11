@@ -213,25 +213,11 @@ namespace railway_monitor.Components.GraphicItems
 
             // set first Destination Port
             StraightRailTrackItem dstOne = connectedRails.ElementAt(0);
-            if (dstOne.PortStart != Port)
-            {
-                _portDstOne = dstOne.PortStart;
-            }
-            else
-            {
-                _portDstOne = dstOne.PortEnd;
-            }
+            _portDstOne = dstOne.GetOtherPort(Port);
 
             // set second Destination Port
             StraightRailTrackItem dstTwo = connectedRails.ElementAt(1);
-            if (dstTwo.PortStart != Port)
-            {
-                _portDstTwo = dstTwo.PortStart;
-            }
-            else
-            {
-                _portDstTwo = dstTwo.PortEnd;
-            }
+            _portDstTwo = dstTwo.GetOtherPort(Port);
 
             SwitchedToOne = true;
 

@@ -49,6 +49,13 @@ namespace railway_monitor.Components.GraphicItems
             PortEnd = new Port(this, initPos);
         }
 
+        public Port GetOtherPort(Port wrongPort)
+        {
+            if (wrongPort == PortStart) return PortEnd;
+            if (wrongPort == PortEnd) return PortStart;
+            else throw new ArgumentException("SRT got wrong port: " + wrongPort + ". SRT only had: " + PortStart + " and " + PortEnd);
+        }
+
         public override void Reassign_OnPortMerged(object? sender, Port oldPort)
         {
             if(sender == null || sender is not Port port || port.GraphicItems.Contains(this)) return;
