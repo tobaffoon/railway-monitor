@@ -12,7 +12,7 @@ namespace railway_monitor.MVVM.ViewModels
     {
         private void PreprocessButtonChecked()
         {
-            RailwayCanvas.DeleteLatestElement();
+            RailwayCanvas.DeleteLatestGraphicItem();
         }
 
         private void AddPreprocessButtonChecked(IEnumerable<RadioButton> buttons)

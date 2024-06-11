@@ -3,6 +3,7 @@ using System.Windows;
 using railway_monitor.Bases;
 using railway_monitor.Components.GraphicItems;
 using railway_monitor.Components.RailwayCanvas;
+using railway_monitor.Utils;
 
 namespace railway_monitor.Tools.Actions
 {
@@ -15,20 +16,21 @@ namespace railway_monitor.Tools.Actions
             if (item == null)
             {
                 item = new StraightRailTrackItem();
-                canvas.AddElement(item);
+                canvas.AddGraphicItemBehind(item);
             }
             else if (item is not StraightRailTrackItem)
             {
-                canvas.DeleteLatestElement();
+                canvas.DeleteLatestGraphicItem();
                 item = new StraightRailTrackItem();
-                canvas.AddElement(item);
+                canvas.AddGraphicItemBehind(item);
             }
 
             Point mousePos = args.Item2;
             StraightRailTrackItem srt = (StraightRailTrackItem)item;
             Port? connectionPort = canvas.TryFindUnderlyingPort(mousePos);
-            if(connectionPort != null)
+            if (connectionPort != null && ConnectConditions.IsRailConnectable(connectionPort))
             {
+                // connection port is found and latest srt can be connected to it
                 if (srt.Status == StraightRailTrackItem.PlacementStatus.NOT_PLACED)
                 {
                     srt.PlaceStartPoint(connectionPort);
@@ -36,20 +38,24 @@ namespace railway_monitor.Tools.Actions
                 else
                 {
                     srt.PlaceEndPoint(connectionPort);
-                    canvas.ResetLatestElement();
+                    canvas.ResetLatestGraphicItem();
                 }
-                return;
-            }
-
-            if (srt.Status == StraightRailTrackItem.PlacementStatus.NOT_PLACED) {
-                srt.PlaceStartPoint(mousePos);
             }
             else
             {
-                srt.PlaceEndPoint(mousePos);
-                canvas.ResetLatestElement();
+                // connection port is not found or latest srt cannot be connected to it
+                if (srt.Status == StraightRailTrackItem.PlacementStatus.NOT_PLACED)
+                {
+                    srt.PlaceStartPoint(mousePos);
+                }
+                else
+                {
+                    srt.PlaceEndPoint(mousePos);
+                    canvas.ResetLatestGraphicItem();
+                }
             }
         }
+
         public static void PlaceSwitch(Tuple<RailwayCanvasViewModel, Point> args)
         {
             RailwayCanvasViewModel canvas = args.Item1;
@@ -57,13 +63,13 @@ namespace railway_monitor.Tools.Actions
             if (item == null)
             {
                 item = new SwitchItem();
-                canvas.AddElement(item);
+                canvas.AddGraphicItem(item);
             }
             else if (item is not SwitchItem)
             {
-                canvas.DeleteLatestElement();
+                canvas.DeleteLatestGraphicItem();
                 item = new SwitchItem();
-                canvas.AddElement(item);
+                canvas.AddGraphicItem(item);
             }
 
             Point mousePos = args.Item2;
@@ -71,26 +77,23 @@ namespace railway_monitor.Tools.Actions
             switch (switchItem.Status)
             {
                 case SwitchItem.PlacementStatus.NOT_PLACED:
-                    Port? connectionPort = canvas.TryFindUnderlyingPort(mousePos);
-                    if (connectionPort == null || connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count() != 3 || connectionPort.GraphicItems.OfType<SwitchItem>().Count() != 0)
+                    Port? connectionPort = canvas.TryFindUnderlyingPort(mousePos); 
+                    if (connectionPort == null || !ConnectConditions.IsSwitchConnectable(connectionPort))
                     {
+                        // no port found for connection
                         return;
                     }
                     switchItem.Place(connectionPort);
                     break;
                 case SwitchItem.PlacementStatus.PLACED:
                     connectionPort = canvas.TryFindUnderlyingPort(mousePos);
-                    if (connectionPort == null)
+                    if (connectionPort == null || !switchItem.IsSourceValid(connectionPort))
                     {
+                        // no valid source port found
                         return;
                     }
                     switchItem.SetSource(connectionPort);
-                    if(switchItem.Status == SwitchItem.PlacementStatus.PLACED)
-                    {
-                        Trace.WriteLine("Can't set Exterior ports as Switch's source port");
-                        return;
-                    }
-                    canvas.ResetLatestElement();
+                    canvas.ResetLatestGraphicItem();
                     switchItem.Render();
                     break;
 

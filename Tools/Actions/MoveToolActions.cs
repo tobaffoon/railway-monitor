@@ -1,6 +1,8 @@
 ﻿using railway_monitor.Bases;
 using railway_monitor.Components.GraphicItems;
 using railway_monitor.Components.RailwayCanvas;
+using railway_monitor.Utils;
+using System.Diagnostics;
 using System.Windows;
 
 namespace railway_monitor.Tools.Actions
@@ -14,18 +16,38 @@ namespace railway_monitor.Tools.Actions
             if (item == null)
             {
                 item = new StraightRailTrackItem();
-                canvas.AddElement(item);
+                canvas.AddGraphicItemBehind(item);
             }
             else if (item is not StraightRailTrackItem)
             {
                 item = new StraightRailTrackItem();
-                canvas.AddElement(item);
+                canvas.AddGraphicItemBehind(item);
             }
 
             Point mousePos = args.Item2;
             StraightRailTrackItem srt = (StraightRailTrackItem)item;
             Port? connectionPort = canvas.TryFindUnderlyingPort(mousePos);
-            Point connectionPos = connectionPort == null ? mousePos : connectionPort.Pos;
+            
+            // calculate proper point for port placement
+            Point connectionPos;
+            if (connectionPort == null)
+            {
+                connectionPos = mousePos;
+            }
+            else
+            {
+                if (!ConnectConditions.IsRailConnectable(connectionPort))
+                {
+                    connectionPos = mousePos;
+                    canvas.ConnectionErrorOccured = true;
+                }
+                else
+                {
+                    connectionPos = connectionPort.Pos;
+                }
+            }
+
+            // place port
             if (srt.Status == StraightRailTrackItem.PlacementStatus.NOT_PLACED)
             {
                 srt.Start = connectionPos;
@@ -38,11 +60,6 @@ namespace railway_monitor.Tools.Actions
             srt.Render();
         }
 
-        private static bool IsSwitchConnectable(Port connectionPort)
-        {
-            return connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count() == 3 && connectionPort.GraphicItems.OfType<SwitchItem>().Count() == 0;
-        }
-
         public static void MoveSwitch(Tuple<RailwayCanvasViewModel, Point> args)
         {
             RailwayCanvasViewModel canvas = args.Item1;
@@ -50,12 +67,12 @@ namespace railway_monitor.Tools.Actions
             if (item == null)
             {
                 item = new SwitchItem();
-                canvas.AddElement(item);
+                canvas.AddGraphicItem(item);
             }
             else if (item is not SwitchItem)
             {
                 item = new SwitchItem();
-                canvas.AddElement(item);
+                canvas.AddGraphicItem(item);
             }
 
             Point mousePos = args.Item2;
@@ -72,7 +89,7 @@ namespace railway_monitor.Tools.Actions
                     }
                     else 
                     {
-                        if (!IsSwitchConnectable(connectionPort)) 
+                        if (!ConnectConditions.IsSwitchConnectable(connectionPort)) 
                         {
                             connectionPos = mousePos;
                             canvas.ConnectionErrorOccured = true;
@@ -87,7 +104,22 @@ namespace railway_monitor.Tools.Actions
                     switchItem.Render();
                     break;
                 case SwitchItem.PlacementStatus.PLACED:
-                    connectionPos = connectionPort == null ? mousePos : connectionPort.Pos;
+                    if (connectionPort == null)
+                    {
+                        connectionPos = mousePos;
+                    }
+                    else
+                    {
+                        if (!switchItem.IsSourceValid(connectionPort))
+                        {
+                            connectionPos = mousePos;
+                            canvas.ConnectionErrorOccured = true;
+                        }
+                        else
+                        {
+                            connectionPos = connectionPort.Pos;
+                        }
+                    }
                     switchItem.SrcPos = connectionPos;
                     switchItem.Render();
                     break;
