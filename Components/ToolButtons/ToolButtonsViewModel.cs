@@ -64,7 +64,7 @@ namespace railway_monitor.Components.ToolButtons {
                 GroupName = ToolsGroupName,
                 Content = "External Track",
             };
-            externalTrackButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(ClickToolActions.PlaceExternalTrack, MoveToolActions.MoveDeadend);
+            externalTrackButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(ClickToolActions.PlaceExternalTrack, MoveToolActions.MoveExternalTrack);
 
             RadioButton dragButton = new RadioButton {
                 GroupName = ToolsGroupName,
