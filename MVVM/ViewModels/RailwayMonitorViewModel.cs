@@ -42,13 +42,22 @@ namespace railway_monitor.MVVM.ViewModels {
             set { SetValue(LeftClickCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty ReleaseCommandProperty =
+        public static readonly DependencyProperty RightClickCommandProperty =
             DependencyProperty.Register(
-            "ReleaseCommand", typeof(UseToolCommand),
+            "RightClickCommand", typeof(UseToolCommand),
             typeof(RailwayMonitorViewModel));
-        public UseToolCommand ReleaseCommand {
-            get { return (UseToolCommand)GetValue(ReleaseCommandProperty); }
-            set { SetValue(ReleaseCommandProperty, value); }
+        public UseToolCommand RightClickCommand {
+            get { return (UseToolCommand)GetValue(RightClickCommandProperty); }
+            set { SetValue(RightClickCommandProperty, value); }
+        }
+
+        public static readonly DependencyProperty LeftReleaseCommandProperty =
+            DependencyProperty.Register(
+            "LeftReleaseCommand", typeof(UseToolCommand),
+            typeof(RailwayMonitorViewModel));
+        public UseToolCommand LeftReleaseCommand {
+            get { return (UseToolCommand)GetValue(LeftReleaseCommandProperty); }
+            set { SetValue(LeftReleaseCommandProperty, value); }
         }
 
         public static readonly DependencyProperty EscapeCommandProperty =
@@ -71,14 +80,18 @@ namespace railway_monitor.MVVM.ViewModels {
                 Source = ToolButtons
             };
             BindingOperations.SetBinding(this, LeftClickCommandProperty, leftClickBinding);
+            var rightClickBinding = new Binding("RightClickCommand") {
+                Source = ToolButtons
+            };
+            BindingOperations.SetBinding(this, RightClickCommandProperty, rightClickBinding);
             var moveBinding = new Binding("MoveCommand") {
                 Source = ToolButtons
             };
             BindingOperations.SetBinding(this, MoveCommandProperty, moveBinding);
-            var releaseBinding = new Binding("ReleaseCommand") {
+            var leftReleaseBinding = new Binding("LeftReleaseCommand") {
                 Source = ToolButtons
             };
-            BindingOperations.SetBinding(this, ReleaseCommandProperty, releaseBinding);
+            BindingOperations.SetBinding(this, LeftReleaseCommandProperty, leftReleaseBinding);
         }
     }
 }
