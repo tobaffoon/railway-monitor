@@ -4,7 +4,7 @@ using railway_monitor.Components.RailwayCanvas;
 using System.Windows;
 
 namespace railway_monitor.Tools.Actions {
-    public class RightClickToolActions {
+    public static class RightClickToolActions {
         public static void ToggleExternalTrackType(Tuple<RailwayCanvasViewModel, Point> args) {
             RailwayCanvasViewModel canvas = args.Item1;
             ExternalTrackItem? externalTrackItem = canvas.LatestGraphicItem as ExternalTrackItem;
