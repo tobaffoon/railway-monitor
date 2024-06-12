@@ -7,12 +7,11 @@ namespace railway_monitor.Tools.Actions {
     public class RightClickToolActions {
         public static void ToggleExternalTrackType(Tuple<RailwayCanvasViewModel, Point> args) {
             RailwayCanvasViewModel canvas = args.Item1;
-            GraphicItem? item = canvas.LatestGraphicItem;
-            if (item is not ExternalTrackItem) {
+            ExternalTrackItem? externalTrackItem = canvas.LatestGraphicItem as ExternalTrackItem;
+            if (externalTrackItem == null) {
                 return;
             }
 
-            ExternalTrackItem externalTrackItem = (ExternalTrackItem)item;
             switch (externalTrackItem.Type) {
                 case ExternalTrackItem.ExternalTrackType.IN:
                     externalTrackItem.Type = ExternalTrackItem.ExternalTrackType.OUT;
