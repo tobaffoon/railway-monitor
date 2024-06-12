@@ -103,7 +103,27 @@ namespace railway_monitor.Tools.Actions {
             throw new NotImplementedException("Deadend");
         }
         public static void PlaceExternalTrack(Tuple<RailwayCanvasViewModel, Point> args) {
-            throw new NotImplementedException("External track");
+            RailwayCanvasViewModel canvas = args.Item1;
+            Point mousePos = args.Item2;
+            GraphicItem? item = canvas.LatestGraphicItem;
+            if (item is not ExternalTrackItem) {
+                item = new ExternalTrackItem(mousePos);
+                canvas.AddGraphicItem(item);
+            }
+
+            ExternalTrackItem externalTrackItem = (ExternalTrackItem)item;
+            switch (externalTrackItem.PlacementStatus) {
+                case ExternalTrackItem.ExternalTrackPlacementStatus.NOT_PLACED:
+                    Port? connectionPort = canvas.TryFindUnderlyingPort(mousePos);
+                    if (connectionPort == null || !ConnectConditions.IsExternalTrackConnectable(connectionPort)) {
+                        // no port found for connection
+                        return;
+                    }
+                    externalTrackItem.Place(connectionPort);
+                    canvas.ResetLatestGraphicItem();
+                    externalTrackItem.Render();
+                    break;
+            }
         }
         public static void CaptureDrag(Tuple<RailwayCanvasViewModel, Point> args) {
             RailwayCanvasViewModel canvas = args.Item1;
