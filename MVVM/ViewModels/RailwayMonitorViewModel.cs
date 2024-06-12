@@ -33,13 +33,13 @@ namespace railway_monitor.MVVM.ViewModels {
             set { SetValue(MoveCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty ClickCommandProperty =
+        public static readonly DependencyProperty LeftClickCommandProperty =
             DependencyProperty.Register(
-            "ClickCommand", typeof(UseToolCommand),
+            "LeftClickCommand", typeof(UseToolCommand),
             typeof(RailwayMonitorViewModel));
-        public UseToolCommand ClickCommand {
-            get { return (UseToolCommand)GetValue(ClickCommandProperty); }
-            set { SetValue(ClickCommandProperty, value); }
+        public UseToolCommand LeftClickCommand {
+            get { return (UseToolCommand)GetValue(LeftClickCommandProperty); }
+            set { SetValue(LeftClickCommandProperty, value); }
         }
 
         public static readonly DependencyProperty ReleaseCommandProperty =
@@ -67,10 +67,10 @@ namespace railway_monitor.MVVM.ViewModels {
             InitializeViewModels();
             EscapeCommand = new UseToolCommand(KeyboardActions.RemoveLatestShape);
 
-            var clickBinding = new Binding("ClickCommand") {
+            var leftClickBinding = new Binding("LeftClickCommand") {
                 Source = ToolButtons
             };
-            BindingOperations.SetBinding(this, ClickCommandProperty, clickBinding);
+            BindingOperations.SetBinding(this, LeftClickCommandProperty, leftClickBinding);
             var moveBinding = new Binding("MoveCommand") {
                 Source = ToolButtons
             };
