@@ -135,7 +135,6 @@ namespace railway_monitor.Components.RailwayCanvas {
             if (DraggedPort == null) return;
             DraggedPort.RenderGraphicItems();
             HighlightConnection.Pos = DraggedPort.Pos;
-            HighlightConnection.Render();
         }
     }
 }

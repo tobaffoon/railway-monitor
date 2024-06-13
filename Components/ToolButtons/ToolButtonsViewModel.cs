@@ -1,83 +1,130 @@
-﻿using railway_monitor.Components.RailwayCanvas;
+﻿using railway_monitor.Bases;
+using railway_monitor.Components.RailwayCanvas;
 using railway_monitor.MVVM.ViewModels;
 using railway_monitor.Tools;
 using railway_monitor.Tools.Actions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
-namespace railway_monitor.Components.ToolButtons {
+namespace railway_monitor.Components.ToolButtons
+{
     public class ToolButtonsViewModel : ViewModelBase {
         private const string ToolsGroupName = "Tools";
 
         public List<RadioButton> ToolButtonsList { get; private set; }
 
-        public UseToolCommand ClickCommand { get; private set; }
+        public UseToolCommand LeftClickCommand { get; private set; }
+        public CanvasCommand RightClickCommand { get; private set; }
         public UseToolCommand MoveCommand { get; private set; }
-        public UseToolCommand ReleaseCommand { get; private set; }
+        public CanvasCommand LeftReleaseCommand { get; private set; }
+        public WheelCommand WheelCommand { get; private set; }
+        public KeyboardCommand ArrowsCommand { get; private set; }
 
-        private void ToolButtonChecked(Action<Tuple<RailwayCanvasViewModel, Point>> newClickFunc,
-            Action<Tuple<RailwayCanvasViewModel, Point>> newMoveFunc) {
-            ClickCommand.ExecuteDelegate = newClickFunc;
-            MoveCommand.ExecuteDelegate = newMoveFunc;
-            ReleaseCommand.ExecuteDelegate = UtilToolActions.NoAction;
-        }
-        private void ToolButtonChecked(Action<Tuple<RailwayCanvasViewModel, Point>> newClickFunc,
-            Action<Tuple<RailwayCanvasViewModel, Point>> newMoveFunc,
-            Action<Tuple<RailwayCanvasViewModel, Point>> newReleaseFunc) {
-            ClickCommand.ExecuteDelegate = newClickFunc;
-            MoveCommand.ExecuteDelegate = newMoveFunc;
-            ReleaseCommand.ExecuteDelegate = newReleaseFunc;
+        private void SetCommands(Action<Tuple<RailwayCanvasViewModel, Point>> leftClickAction,
+            Action<Tuple<RailwayCanvasViewModel, Point>> moveAction, 
+            Action<RailwayCanvasViewModel> rightClickAction,
+            Action<RailwayCanvasViewModel> leftReleaseAction,
+            Action<Tuple<RailwayCanvasViewModel, bool>> wheelAction,
+            Action<Tuple<RailwayCanvasViewModel, Key>> arrowsAction) {
+            LeftClickCommand.ExecuteDelegate = leftClickAction;
+            MoveCommand.ExecuteDelegate = moveAction;
+            RightClickCommand.ExecuteDelegate = rightClickAction;
+            LeftReleaseCommand.ExecuteDelegate = leftReleaseAction;
+            WheelCommand.ExecuteDelegate = wheelAction;
+            ArrowsCommand.ExecuteDelegate = arrowsAction;
         }
 
         public ToolButtonsViewModel() {
             ToolButtonsList = new List<RadioButton>();
 
-            ClickCommand = new UseToolCommand(ClickToolActions.PlaceStraightRailTrack);
+            LeftClickCommand = new UseToolCommand(LeftClickToolActions.PlaceStraightRailTrack);
+            RightClickCommand = new CanvasCommand(UtilToolActions.NoCanvasAction);
             MoveCommand = new UseToolCommand(MoveToolActions.MoveStraightRailTrack);
-            ReleaseCommand = new UseToolCommand(UtilToolActions.NoAction);
+            LeftReleaseCommand = new CanvasCommand(UtilToolActions.NoCanvasAction);
+            WheelCommand = new WheelCommand(UtilToolActions.NoWheelAction);
+            ArrowsCommand = new KeyboardCommand(UtilToolActions.NoKeyboardAction);
 
             RadioButton srtButton = new RadioButton {
                 GroupName = ToolsGroupName,
                 Content = "SRT",
             };
-            srtButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(ClickToolActions.PlaceStraightRailTrack, MoveToolActions.MoveStraightRailTrack);
+            srtButton.Checked += (object sender, RoutedEventArgs e) => SetCommands(
+                LeftClickToolActions.PlaceStraightRailTrack, 
+                MoveToolActions.MoveStraightRailTrack, 
+                UtilToolActions.NoCanvasAction, 
+                UtilToolActions.NoCanvasAction,
+                UtilToolActions.NoWheelAction,
+                UtilToolActions.NoKeyboardAction);
 
             RadioButton switchButton = new RadioButton {
                 GroupName = ToolsGroupName,
                 Content = "Switch",
             };
-            switchButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(ClickToolActions.PlaceSwitch, MoveToolActions.MoveSwitch);
+            switchButton.Checked += (object sender, RoutedEventArgs e) => SetCommands(
+                LeftClickToolActions.PlaceSwitch, 
+                MoveToolActions.MoveSwitch, 
+                UtilToolActions.NoCanvasAction, 
+                UtilToolActions.NoCanvasAction,
+                UtilToolActions.NoWheelAction,
+                UtilToolActions.NoKeyboardAction);
 
             RadioButton signalButton = new RadioButton {
                 GroupName = ToolsGroupName,
                 Content = "Signal",
             };
-            signalButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(ClickToolActions.PlaceSignal, MoveToolActions.MoveSignal);
+            signalButton.Checked += (object sender, RoutedEventArgs e) => SetCommands(
+                LeftClickToolActions.PlaceSignal, 
+                MoveToolActions.MoveSignal, 
+                UtilToolActions.NoCanvasAction, 
+                UtilToolActions.NoCanvasAction,
+                UtilToolActions.NoWheelAction,
+                UtilToolActions.NoKeyboardAction);
 
             RadioButton deadEndButton = new RadioButton {
                 GroupName = ToolsGroupName,
                 Content = "Dead-end",
             };
-            deadEndButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(ClickToolActions.PlaceDeadend, MoveToolActions.MoveDeadend);
+            deadEndButton.Checked += (object sender, RoutedEventArgs e) => SetCommands(
+                LeftClickToolActions.PlaceDeadend, 
+                MoveToolActions.MoveDeadend, 
+                UtilToolActions.NoCanvasAction, 
+                UtilToolActions.NoCanvasAction,
+                UtilToolActions.NoWheelAction,
+                UtilToolActions.NoKeyboardAction);
 
             RadioButton externalTrackButton = new RadioButton {
                 GroupName = ToolsGroupName,
                 Content = "External Track",
             };
-            externalTrackButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(ClickToolActions.PlaceExternalTrack, MoveToolActions.MoveExternalTrack);
+            externalTrackButton.Checked += (object sender, RoutedEventArgs e) => SetCommands(
+                LeftClickToolActions.PlaceExternalTrack, 
+                MoveToolActions.MoveExternalTrack, 
+                RightClickToolActions.ToggleExternalTrackType,
+                UtilToolActions.NoCanvasAction,
+                WheelToolActions.RotateExternalTrack,
+                KeyboardActions.RotateExternalTrack);
 
             RadioButton dragButton = new RadioButton {
                 GroupName = ToolsGroupName,
                 Content = "Drag",
             };
-            dragButton.Checked += (object sender, RoutedEventArgs e) => ToolButtonChecked(ClickToolActions.CaptureDrag, MoveToolActions.MoveDrag, ReleaseToolActions.ReleaseDrag);
+            dragButton.Checked += (object sender, RoutedEventArgs e) => SetCommands(
+                LeftClickToolActions.CaptureDrag, 
+                MoveToolActions.MoveDrag, 
+                UtilToolActions.NoCanvasAction, 
+                LeftReleaseToolActions.ReleaseDrag,
+                UtilToolActions.NoWheelAction,
+                UtilToolActions.NoKeyboardAction);
 
-            ToolButtonsList.Add(srtButton);
-            ToolButtonsList.Add(switchButton);
-            ToolButtonsList.Add(signalButton);
-            ToolButtonsList.Add(deadEndButton);
-            ToolButtonsList.Add(externalTrackButton);
-            ToolButtonsList.Add(dragButton);
+            ToolButtonsList.AddRange([
+                srtButton,
+                switchButton,
+                signalButton,
+                deadEndButton,
+                externalTrackButton,
+                dragButton
+                ]);
 
             srtButton.IsChecked = true;
         }
