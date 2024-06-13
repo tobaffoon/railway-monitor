@@ -44,28 +44,28 @@ namespace railway_monitor.MVVM.ViewModels {
 
         public static readonly DependencyProperty RightClickCommandProperty =
             DependencyProperty.Register(
-            "RightClickCommand", typeof(UseToolCommand),
+            "RightClickCommand", typeof(CanvasCommand),
             typeof(RailwayMonitorViewModel));
-        public UseToolCommand RightClickCommand {
-            get { return (UseToolCommand)GetValue(RightClickCommandProperty); }
+        public CanvasCommand RightClickCommand {
+            get { return (CanvasCommand)GetValue(RightClickCommandProperty); }
             set { SetValue(RightClickCommandProperty, value); }
         }
 
         public static readonly DependencyProperty LeftReleaseCommandProperty =
             DependencyProperty.Register(
-            "LeftReleaseCommand", typeof(UseToolCommand),
+            "LeftReleaseCommand", typeof(CanvasCommand),
             typeof(RailwayMonitorViewModel));
-        public UseToolCommand LeftReleaseCommand {
-            get { return (UseToolCommand)GetValue(LeftReleaseCommandProperty); }
+        public CanvasCommand LeftReleaseCommand {
+            get { return (CanvasCommand)GetValue(LeftReleaseCommandProperty); }
             set { SetValue(LeftReleaseCommandProperty, value); }
         }
 
         public static readonly DependencyProperty EscapeCommandProperty =
             DependencyProperty.Register(
-            "EscapeCommand", typeof(UseToolCommand),
+            "EscapeCommand", typeof(CanvasCommand),
             typeof(RailwayMonitorViewModel));
-        public UseToolCommand EscapeCommand {
-            get { return (UseToolCommand)GetValue(EscapeCommandProperty); }
+        public CanvasCommand EscapeCommand {
+            get { return (CanvasCommand)GetValue(EscapeCommandProperty); }
             set { SetValue(EscapeCommandProperty, value); }
         }
 
@@ -74,7 +74,7 @@ namespace railway_monitor.MVVM.ViewModels {
 
         public RailwayMonitorViewModel() {
             InitializeViewModels();
-            EscapeCommand = new UseToolCommand(KeyboardActions.RemoveLatestShape);
+            EscapeCommand = new CanvasCommand(KeyboardActions.RemoveLatestShape);
 
             var leftClickBinding = new Binding("LeftClickCommand") {
                 Source = ToolButtons

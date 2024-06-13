@@ -1,4 +1,5 @@
 ﻿using railway_monitor.MVVM.ViewModels;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -27,13 +28,20 @@ namespace railway_monitor.Components.RailwayCanvas {
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e) {
             RailwayMonitorViewModel contex = (RailwayMonitorViewModel)DataContext;
             Point cursor = e.MouseDevice.GetPosition(this);
-            contex.LeftReleaseCommand.Execute(Tuple.Create(contex.RailwayCanvas, cursor));
+            contex.LeftReleaseCommand.Execute(contex.RailwayCanvas);
         }
 
         protected override void OnMouseRightButtonDown(MouseButtonEventArgs e) {
             RailwayMonitorViewModel contex = (RailwayMonitorViewModel)DataContext;
             Point cursor = e.MouseDevice.GetPosition(this);
-            contex.RightClickCommand.Execute(Tuple.Create(contex.RailwayCanvas, cursor));
+            contex.RightClickCommand.Execute(contex.RailwayCanvas);
+        }
+
+        protected override void OnMouseWheel(MouseWheelEventArgs e) {
+            RailwayMonitorViewModel contex = (RailwayMonitorViewModel)DataContext;
+            Point cursor = e.MouseDevice.GetPosition(this);
+            Trace.WriteLine(e.Delta);
+            //contex.RightClickCommand.Execute(Tuple.Create(contex.RailwayCanvas, cursor)); // nonono
         }
     }
 }

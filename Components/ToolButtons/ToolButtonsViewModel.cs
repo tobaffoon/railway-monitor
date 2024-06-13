@@ -1,4 +1,5 @@
-﻿using railway_monitor.Components.RailwayCanvas;
+﻿using railway_monitor.Bases;
+using railway_monitor.Components.RailwayCanvas;
 using railway_monitor.MVVM.ViewModels;
 using railway_monitor.Tools;
 using railway_monitor.Tools.Actions;
@@ -12,17 +13,17 @@ namespace railway_monitor.Components.ToolButtons {
         public List<RadioButton> ToolButtonsList { get; private set; }
 
         public UseToolCommand LeftClickCommand { get; private set; }
-        public UseToolCommand RightClickCommand { get; private set; }
+        public CanvasCommand RightClickCommand { get; private set; }
         public UseToolCommand MoveCommand { get; private set; }
-        public UseToolCommand LeftReleaseCommand { get; private set; }
+        public CanvasCommand LeftReleaseCommand { get; private set; }
 
         public ToolButtonsViewModel() {
             ToolButtonsList = new List<RadioButton>();
 
             LeftClickCommand = new UseToolCommand(LeftClickToolActions.PlaceStraightRailTrack);
-            RightClickCommand = new UseToolCommand(UtilToolActions.NoAction);
+            RightClickCommand = new CanvasCommand(UtilToolActions.NoAction);
             MoveCommand = new UseToolCommand(MoveToolActions.MoveStraightRailTrack);
-            LeftReleaseCommand = new UseToolCommand(UtilToolActions.NoAction);
+            LeftReleaseCommand = new CanvasCommand(UtilToolActions.NoAction);
 
             RadioButton srtButton = new RadioButton {
                 GroupName = ToolsGroupName,

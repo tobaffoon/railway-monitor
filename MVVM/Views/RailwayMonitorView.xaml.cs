@@ -1,5 +1,4 @@
 ﻿using railway_monitor.MVVM.ViewModels;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -24,7 +23,7 @@ namespace railway_monitor.MVVM.Views {
             RailwayMonitorViewModel contex = (RailwayMonitorViewModel)DataContext;
             switch (e.Key) {
                 case Key.Escape:
-                    contex.EscapeCommand.Execute(Tuple.Create(contex.RailwayCanvas, new Point(0, 0)));
+                    contex.EscapeCommand.Execute(contex.RailwayCanvas);
                     return;
             }
         }

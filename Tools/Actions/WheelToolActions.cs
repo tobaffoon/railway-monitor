@@ -1,10 +1,9 @@
-﻿using railway_monitor.Bases;
-using railway_monitor.Components.GraphicItems;
+﻿using railway_monitor.Components.GraphicItems;
 using railway_monitor.Components.RailwayCanvas;
 
 namespace railway_monitor.Tools.Actions {
-    public static class RightClickToolActions {
-        public static void ToggleExternalTrackType(RailwayCanvasViewModel canvas) {
+    public static class WheelToolActions {
+        public static void RotateExternalTrack(RailwayCanvasViewModel canvas) {
             ExternalTrackItem? externalTrackItem = canvas.LatestGraphicItem as ExternalTrackItem;
             if (externalTrackItem == null) {
                 return;

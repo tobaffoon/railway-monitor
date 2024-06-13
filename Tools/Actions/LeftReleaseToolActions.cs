@@ -1,10 +1,8 @@
 ﻿using railway_monitor.Components.RailwayCanvas;
-using System.Windows;
 
 namespace railway_monitor.Tools.Actions {
     public static class LeftReleaseToolActions {
-        public static void ReleaseDrag(Tuple<RailwayCanvasViewModel, Point> args) {
-            RailwayCanvasViewModel canvas = args.Item1;
+        public static void ReleaseDrag(RailwayCanvasViewModel canvas) {
             canvas.DraggedPort = null;
         }
     }
