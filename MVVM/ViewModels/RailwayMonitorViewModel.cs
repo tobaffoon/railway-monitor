@@ -61,14 +61,6 @@ namespace railway_monitor.MVVM.ViewModels
             set { SetValue(LeftReleaseCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty EscapeCommandProperty =
-            DependencyProperty.Register(
-            "EscapeCommand", typeof(CanvasCommand),
-            typeof(RailwayMonitorViewModel));
-        public CanvasCommand EscapeCommand {
-            get { return (CanvasCommand)GetValue(EscapeCommandProperty); }
-            set { SetValue(EscapeCommandProperty, value); }
-        }
 
         public static readonly DependencyProperty WheelCommandProperty =
             DependencyProperty.Register(
@@ -79,12 +71,30 @@ namespace railway_monitor.MVVM.ViewModels
             set { SetValue(WheelCommandProperty, value); }
         }
 
+        public static readonly DependencyProperty ArrowsCommandProperty =
+            DependencyProperty.Register(
+            "ArrowsCommand", typeof(KeyboardCommand),
+            typeof(RailwayMonitorViewModel));
+        public KeyboardCommand ArrowsCommand {
+            get { return (KeyboardCommand)GetValue(ArrowsCommandProperty); }
+            set { SetValue(ArrowsCommandProperty, value); }
+        }
+
+        public static readonly DependencyProperty CanvasKeyboardProperty =
+            DependencyProperty.Register(
+            "EscapeCommand", typeof(KeyboardCommand),
+            typeof(RailwayMonitorViewModel));
+        public KeyboardCommand CanvasKeyboardCommand {
+            get { return (KeyboardCommand)GetValue(CanvasKeyboardProperty); }
+            set { SetValue(CanvasKeyboardProperty, value); }
+        }
+
         public ToolButtonsViewModel ToolButtons { get; private set; }
         public RailwayCanvasViewModel RailwayCanvas { get; private set; }
 
         public RailwayMonitorViewModel() {
             InitializeViewModels();
-            EscapeCommand = new CanvasCommand(KeyboardActions.RemoveLatestItem);
+            CanvasKeyboardCommand = new KeyboardCommand(KeyboardActions.CanvasKeyDown);
 
             var leftClickBinding = new Binding("LeftClickCommand") {
                 Source = ToolButtons
@@ -106,6 +116,10 @@ namespace railway_monitor.MVVM.ViewModels
                 Source = ToolButtons
             };
             BindingOperations.SetBinding(this, WheelCommandProperty, wheelBinding);
+            var arrowsBinding = new Binding("ArrowsCommand") {
+                Source = ToolButtons
+            };
+            BindingOperations.SetBinding(this, ArrowsCommandProperty, arrowsBinding);
         }
     }
 }

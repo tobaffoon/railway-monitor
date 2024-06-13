@@ -41,10 +41,10 @@ namespace railway_monitor.Components.RailwayCanvas {
             RailwayMonitorViewModel contex = (RailwayMonitorViewModel)DataContext;
             Point cursor = e.MouseDevice.GetPosition(this);
             if (e.Delta > 0) {
-                contex.WheelCommand.Execute(Tuple.Create(contex.RailwayCanvas, true)); // nonono
+                contex.WheelCommand.Execute(Tuple.Create(contex.RailwayCanvas, true));
             }
             else if (e.Delta < 0) {
-                contex.WheelCommand.Execute(Tuple.Create(contex.RailwayCanvas, false)); // nonono
+                contex.WheelCommand.Execute(Tuple.Create(contex.RailwayCanvas, false));
             }
         }
     }
