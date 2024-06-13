@@ -74,7 +74,7 @@ namespace railway_monitor.MVVM.ViewModels {
 
         public RailwayMonitorViewModel() {
             InitializeViewModels();
-            EscapeCommand = new CanvasCommand(KeyboardActions.RemoveLatestShape);
+            EscapeCommand = new CanvasCommand(KeyboardActions.RemoveLatestItem);
 
             var leftClickBinding = new Binding("LeftClickCommand") {
                 Source = ToolButtons

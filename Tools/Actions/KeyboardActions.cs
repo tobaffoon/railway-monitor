@@ -2,7 +2,7 @@
 
 namespace railway_monitor.Tools.Actions {
     public sealed class KeyboardActions {
-        public static void RemoveLatestShape(RailwayCanvasViewModel canvas) {
+        public static void RemoveLatestItem(RailwayCanvasViewModel canvas) {
             canvas.DeleteLatestGraphicItem();
         }
     }
