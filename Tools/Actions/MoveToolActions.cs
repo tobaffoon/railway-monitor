@@ -38,8 +38,6 @@ namespace railway_monitor.Tools.Actions {
             else {
                 srtItem.End = connectionPos;
             }
-
-            srtItem.Render();
         }
         public static void MoveSwitch(Tuple<RailwayCanvasViewModel, Point> args) {
             RailwayCanvasViewModel canvas = args.Item1;
@@ -69,7 +67,6 @@ namespace railway_monitor.Tools.Actions {
                     }
 
                     switchItem.Pos = connectionPos;
-                    switchItem.Render();
                     break;
                 case SwitchItem.SwitchPlacementStatus.PLACED:
                     if (connectionPort == null) {
@@ -85,7 +82,6 @@ namespace railway_monitor.Tools.Actions {
                         }
                     }
                     switchItem.SrcPos = connectionPos;
-                    switchItem.Render();
                     break;
             }
         }
@@ -117,7 +113,6 @@ namespace railway_monitor.Tools.Actions {
                     }
 
                     signalItem.Pos = connectionPos;
-                    signalItem.Render();
                     break;
             }
         }
@@ -152,7 +147,6 @@ namespace railway_monitor.Tools.Actions {
                     }
 
                     externalTrackItem.Pos = connectionPos;
-                    externalTrackItem.Render();
                     break;
             }
         }

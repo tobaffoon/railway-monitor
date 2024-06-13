@@ -64,7 +64,6 @@ namespace railway_monitor.Tools.Actions {
                     }
                     switchItem.SetSource(connectionPort);
                     canvas.ResetLatestGraphicItem();
-                    switchItem.Render();
                     break;
 
             }
@@ -87,7 +86,6 @@ namespace railway_monitor.Tools.Actions {
                     }
                     signalItem.Place(connectionPort);
                     canvas.ResetLatestGraphicItem();
-                    signalItem.Render();
                     break;
             }
         }
@@ -112,7 +110,6 @@ namespace railway_monitor.Tools.Actions {
                     }
                     externalTrackItem.Place(connectionPort);
                     canvas.ResetLatestGraphicItem();
-                    externalTrackItem.Render();
                     break;
             }
         }

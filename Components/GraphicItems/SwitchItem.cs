@@ -86,6 +86,7 @@ namespace railway_monitor.Components.GraphicItems {
             set {
                 _portSrc.Pos.X = value.X;
                 _portSrc.Pos.Y = value.Y;
+                Render();
             }
         }
 
@@ -123,6 +124,7 @@ namespace railway_monitor.Components.GraphicItems {
             set {
                 Port.Pos.X = value.X;
                 Port.Pos.Y = value.Y;
+                Render();
             }
         }
 
@@ -137,6 +139,7 @@ namespace railway_monitor.Components.GraphicItems {
         public void Place(Port mainPort) {
             mainPort.Merge(Port);
             PlacementStatus = SwitchPlacementStatus.PLACED;
+            Render();
         }
 
         public bool IsSourceValid(Port source) {
@@ -184,6 +187,7 @@ namespace railway_monitor.Components.GraphicItems {
             SwitchedToOne = true;
 
             PlacementStatus = SwitchPlacementStatus.SOURCE_SET;
+            Render();
         }
 
         public override void Reassign_OnPortMerged(object? sender, Port oldPort) {

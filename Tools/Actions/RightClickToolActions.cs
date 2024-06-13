@@ -18,8 +18,6 @@ namespace railway_monitor.Tools.Actions {
                     externalTrackItem.Type = ExternalTrackItem.ExternalTrackType.IN;
                     break;
             }
-
-            externalTrackItem.Render();
         }
     }
 }

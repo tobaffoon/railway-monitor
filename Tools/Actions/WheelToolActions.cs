@@ -43,8 +43,6 @@ namespace railway_monitor.Tools.Actions {
                         break;
                 }
             }
-
-            externalTrackItem.Render();
         }
     }
 }

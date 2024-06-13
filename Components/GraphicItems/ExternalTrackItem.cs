@@ -16,7 +16,16 @@ namespace railway_monitor.Components.GraphicItems {
             IN,
             OUT
         }
-        public ExternalTrackType Type = ExternalTrackType.IN;
+        private ExternalTrackType _type = ExternalTrackType.IN;
+        public ExternalTrackType Type {
+            get {
+                return _type;
+            }
+            set {
+                _type = value;
+                Render();
+            }
+        }
 
         public enum ExternalTrackOrientation {
             RIGHT,
@@ -24,7 +33,16 @@ namespace railway_monitor.Components.GraphicItems {
             LEFT,
             UP
         }
-        public ExternalTrackOrientation Orientation = ExternalTrackOrientation.RIGHT;
+        private ExternalTrackOrientation _orientation = ExternalTrackOrientation.RIGHT;
+        public ExternalTrackOrientation Orientation {
+            get {
+                return _orientation;
+            }
+            set {
+                _orientation = value;
+                Render();
+            }
+        }
 
         private static readonly Brush _externalTrackBrush = new SolidColorBrush(Colors.Black);
         private static readonly Pen _externalTrackPen = new Pen(_externalTrackBrush, 0);
@@ -153,6 +171,7 @@ namespace railway_monitor.Components.GraphicItems {
             set {
                 Port.Pos.X = value.X;
                 Port.Pos.Y = value.Y;
+                Render();
             }
         }
 
@@ -163,6 +182,7 @@ namespace railway_monitor.Components.GraphicItems {
         public void Place(Port mainPort) {
             mainPort.Merge(Port);
             PlacementStatus = ExternalTrackPlacementStatus.PLACED;
+            Render();
         }
 
         public override void Reassign_OnPortMerged(object? sender, Port oldPort) {
