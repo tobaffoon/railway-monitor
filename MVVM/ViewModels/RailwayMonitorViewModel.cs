@@ -6,7 +6,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace railway_monitor.MVVM.ViewModels {
+namespace railway_monitor.MVVM.ViewModels
+{
     public class RailwayMonitorViewModel : ViewModelBase {
         private void PreprocessButtonChecked() {
             RailwayCanvas.DeleteLatestGraphicItem();
@@ -33,31 +34,59 @@ namespace railway_monitor.MVVM.ViewModels {
             set { SetValue(MoveCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty ClickCommandProperty =
+        public static readonly DependencyProperty LeftClickCommandProperty =
             DependencyProperty.Register(
-            "ClickCommand", typeof(UseToolCommand),
+            "LeftClickCommand", typeof(UseToolCommand),
             typeof(RailwayMonitorViewModel));
-        public UseToolCommand ClickCommand {
-            get { return (UseToolCommand)GetValue(ClickCommandProperty); }
-            set { SetValue(ClickCommandProperty, value); }
+        public UseToolCommand LeftClickCommand {
+            get { return (UseToolCommand)GetValue(LeftClickCommandProperty); }
+            set { SetValue(LeftClickCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty ReleaseCommandProperty =
+        public static readonly DependencyProperty RightClickCommandProperty =
             DependencyProperty.Register(
-            "ReleaseCommand", typeof(UseToolCommand),
+            "RightClickCommand", typeof(CanvasCommand),
             typeof(RailwayMonitorViewModel));
-        public UseToolCommand ReleaseCommand {
-            get { return (UseToolCommand)GetValue(ReleaseCommandProperty); }
-            set { SetValue(ReleaseCommandProperty, value); }
+        public CanvasCommand RightClickCommand {
+            get { return (CanvasCommand)GetValue(RightClickCommandProperty); }
+            set { SetValue(RightClickCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty EscapeCommandProperty =
+        public static readonly DependencyProperty LeftReleaseCommandProperty =
             DependencyProperty.Register(
-            "EscapeCommand", typeof(UseToolCommand),
+            "LeftReleaseCommand", typeof(CanvasCommand),
             typeof(RailwayMonitorViewModel));
-        public UseToolCommand EscapeCommand {
-            get { return (UseToolCommand)GetValue(EscapeCommandProperty); }
-            set { SetValue(EscapeCommandProperty, value); }
+        public CanvasCommand LeftReleaseCommand {
+            get { return (CanvasCommand)GetValue(LeftReleaseCommandProperty); }
+            set { SetValue(LeftReleaseCommandProperty, value); }
+        }
+
+
+        public static readonly DependencyProperty WheelCommandProperty =
+            DependencyProperty.Register(
+            "WheelCommand", typeof(WheelCommand),
+            typeof(RailwayMonitorViewModel));
+        public WheelCommand WheelCommand {
+            get { return (WheelCommand)GetValue(WheelCommandProperty); }
+            set { SetValue(WheelCommandProperty, value); }
+        }
+
+        public static readonly DependencyProperty ArrowsCommandProperty =
+            DependencyProperty.Register(
+            "ArrowsCommand", typeof(KeyboardCommand),
+            typeof(RailwayMonitorViewModel));
+        public KeyboardCommand ArrowsCommand {
+            get { return (KeyboardCommand)GetValue(ArrowsCommandProperty); }
+            set { SetValue(ArrowsCommandProperty, value); }
+        }
+
+        public static readonly DependencyProperty CanvasKeyboardProperty =
+            DependencyProperty.Register(
+            "EscapeCommand", typeof(KeyboardCommand),
+            typeof(RailwayMonitorViewModel));
+        public KeyboardCommand CanvasKeyboardCommand {
+            get { return (KeyboardCommand)GetValue(CanvasKeyboardProperty); }
+            set { SetValue(CanvasKeyboardProperty, value); }
         }
 
         public ToolButtonsViewModel ToolButtons { get; private set; }
@@ -65,20 +94,32 @@ namespace railway_monitor.MVVM.ViewModels {
 
         public RailwayMonitorViewModel() {
             InitializeViewModels();
-            EscapeCommand = new UseToolCommand(KeyboardActions.RemoveLatestShape);
+            CanvasKeyboardCommand = new KeyboardCommand(KeyboardActions.CanvasKeyDown);
 
-            var clickBinding = new Binding("ClickCommand") {
+            var leftClickBinding = new Binding("LeftClickCommand") {
                 Source = ToolButtons
             };
-            BindingOperations.SetBinding(this, ClickCommandProperty, clickBinding);
+            BindingOperations.SetBinding(this, LeftClickCommandProperty, leftClickBinding);
+            var rightClickBinding = new Binding("RightClickCommand") {
+                Source = ToolButtons
+            };
+            BindingOperations.SetBinding(this, RightClickCommandProperty, rightClickBinding);
             var moveBinding = new Binding("MoveCommand") {
                 Source = ToolButtons
             };
             BindingOperations.SetBinding(this, MoveCommandProperty, moveBinding);
-            var releaseBinding = new Binding("ReleaseCommand") {
+            var leftReleaseBinding = new Binding("LeftReleaseCommand") {
                 Source = ToolButtons
             };
-            BindingOperations.SetBinding(this, ReleaseCommandProperty, releaseBinding);
+            BindingOperations.SetBinding(this, LeftReleaseCommandProperty, leftReleaseBinding);
+            var wheelBinding = new Binding("WheelCommand") {
+                Source = ToolButtons
+            };
+            BindingOperations.SetBinding(this, WheelCommandProperty, wheelBinding);
+            var arrowsBinding = new Binding("ArrowsCommand") {
+                Source = ToolButtons
+            };
+            BindingOperations.SetBinding(this, ArrowsCommandProperty, arrowsBinding);
         }
     }
 }

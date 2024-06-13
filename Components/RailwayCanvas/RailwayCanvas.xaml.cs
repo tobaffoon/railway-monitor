@@ -1,4 +1,5 @@
 ﻿using railway_monitor.MVVM.ViewModels;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -21,13 +22,30 @@ namespace railway_monitor.Components.RailwayCanvas {
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e) {
             RailwayMonitorViewModel contex = (RailwayMonitorViewModel)DataContext;
             Point cursor = e.MouseDevice.GetPosition(this);
-            contex.ClickCommand.Execute(Tuple.Create(contex.RailwayCanvas, cursor));
+            contex.LeftClickCommand.Execute(Tuple.Create(contex.RailwayCanvas, cursor));
         }
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e) {
             RailwayMonitorViewModel contex = (RailwayMonitorViewModel)DataContext;
             Point cursor = e.MouseDevice.GetPosition(this);
-            contex.ReleaseCommand.Execute(Tuple.Create(contex.RailwayCanvas, cursor));
+            contex.LeftReleaseCommand.Execute(contex.RailwayCanvas);
+        }
+
+        protected override void OnMouseRightButtonDown(MouseButtonEventArgs e) {
+            RailwayMonitorViewModel contex = (RailwayMonitorViewModel)DataContext;
+            Point cursor = e.MouseDevice.GetPosition(this);
+            contex.RightClickCommand.Execute(contex.RailwayCanvas);
+        }
+
+        protected override void OnMouseWheel(MouseWheelEventArgs e) {
+            RailwayMonitorViewModel contex = (RailwayMonitorViewModel)DataContext;
+            Point cursor = e.MouseDevice.GetPosition(this);
+            if (e.Delta > 0) {
+                contex.WheelCommand.Execute(Tuple.Create(contex.RailwayCanvas, true));
+            }
+            else if (e.Delta < 0) {
+                contex.WheelCommand.Execute(Tuple.Create(contex.RailwayCanvas, false));
+            }
         }
     }
 }

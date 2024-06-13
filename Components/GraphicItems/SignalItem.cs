@@ -15,7 +15,16 @@ namespace railway_monitor.Components.GraphicItems {
             PASS,
             STOP
         }
-        public SignalLightStatus LightStatus { get; set; } = SignalLightStatus.PASS;
+        private SignalLightStatus _lightStatus = SignalLightStatus.PASS;
+        public SignalLightStatus LightStatus {
+            get {
+                return _lightStatus;
+            }
+            set {
+                _lightStatus = value;
+                Render();
+            }
+        }
 
         private static readonly Brush _signalPoleBrush = new SolidColorBrush(Colors.DarkGray);
         private static readonly Pen _signalPolePen = new Pen(_signalPoleBrush, 4);
@@ -51,6 +60,7 @@ namespace railway_monitor.Components.GraphicItems {
             set {
                 Port.Pos.X = value.X;
                 Port.Pos.Y = value.Y;
+                Render();
             }
         }
 
@@ -61,6 +71,7 @@ namespace railway_monitor.Components.GraphicItems {
         public void Place(Port mainPort) {
             mainPort.Merge(Port);
             PlacementStatus = SignalPlacementStatus.PLACED;
+            Render();
         }
 
         public override void Reassign_OnPortMerged(object? sender, Port oldPort) {
