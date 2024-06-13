@@ -69,6 +69,15 @@ namespace railway_monitor.MVVM.ViewModels {
             set { SetValue(EscapeCommandProperty, value); }
         }
 
+        public static readonly DependencyProperty WheelCommandProperty =
+            DependencyProperty.Register(
+            "WheelCommand", typeof(WheelCommand),
+            typeof(RailwayMonitorViewModel));
+        public WheelCommand WheelCommand {
+            get { return (WheelCommand)GetValue(WheelCommandProperty); }
+            set { SetValue(WheelCommandProperty, value); }
+        }
+
         public ToolButtonsViewModel ToolButtons { get; private set; }
         public RailwayCanvasViewModel RailwayCanvas { get; private set; }
 
@@ -92,6 +101,10 @@ namespace railway_monitor.MVVM.ViewModels {
                 Source = ToolButtons
             };
             BindingOperations.SetBinding(this, LeftReleaseCommandProperty, leftReleaseBinding);
+            var wheelBinding = new Binding("WheelCommand") {
+                Source = ToolButtons
+            };
+            BindingOperations.SetBinding(this, WheelCommandProperty, wheelBinding);
         }
     }
 }

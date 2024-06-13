@@ -40,8 +40,12 @@ namespace railway_monitor.Components.RailwayCanvas {
         protected override void OnMouseWheel(MouseWheelEventArgs e) {
             RailwayMonitorViewModel contex = (RailwayMonitorViewModel)DataContext;
             Point cursor = e.MouseDevice.GetPosition(this);
-            Trace.WriteLine(e.Delta);
-            //contex.RightClickCommand.Execute(Tuple.Create(contex.RailwayCanvas, cursor)); // nonono
+            if (e.Delta > 0) {
+                contex.WheelCommand.Execute(Tuple.Create(contex.RailwayCanvas, true)); // nonono
+            }
+            else if (e.Delta < 0) {
+                contex.WheelCommand.Execute(Tuple.Create(contex.RailwayCanvas, false)); // nonono
+            }
         }
     }
 }
