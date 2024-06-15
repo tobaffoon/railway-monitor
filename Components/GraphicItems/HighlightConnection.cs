@@ -32,8 +32,6 @@ namespace railway_monitor.Components.GraphicItems {
         }
 
         protected override void Render(DrawingContext dc) {
-            if (Visibility != Visibility.Visible) return;
-
             if (ConnectionErrorOccured) {
                 dc.DrawEllipse(_highlightErrorBrush, _highlightErrorPen, Pos, ConnectRadius, ConnectRadius);
             }
