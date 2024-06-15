@@ -1,6 +1,7 @@
 ﻿using railway_monitor.Bases;
 using railway_monitor.Components.GraphicItems;
 using railway_monitor.Components.RailwayCanvas;
+using System.Diagnostics;
 
 namespace railway_monitor.Tools.Actions {
     public static class RightClickToolActions {
@@ -18,6 +19,26 @@ namespace railway_monitor.Tools.Actions {
                     externalTrackItem.Type = ExternalTrackItem.ExternalTrackType.IN;
                     break;
             }
+        }
+        public static void ScrollPlatformType(RailwayCanvasViewModel canvas) {
+            StraightRailTrackItem? srtItem = canvas.LatestGraphicItem as StraightRailTrackItem;
+            if (srtItem == null) {
+                return;
+            }
+
+            switch (srtItem.PlatformType) {
+                case StraightRailTrackItem.TrainType.NONE:
+                    srtItem.PlatformType = StraightRailTrackItem.TrainType.CARGO;
+                    break;
+                case StraightRailTrackItem.TrainType.CARGO:
+                    srtItem.PlatformType = StraightRailTrackItem.TrainType.PASSENGER;
+                    break;
+                case StraightRailTrackItem.TrainType.PASSENGER:
+                    srtItem.PlatformType = StraightRailTrackItem.TrainType.NONE;
+                    break;
+            }
+
+            Trace.WriteLine(srtItem.PlatformType);
         }
     }
 }

@@ -54,10 +54,10 @@ namespace railway_monitor.Components.GraphicItems {
         }
 
         public StraightRailTrackItem(Point initPos) : base() {
-            PlacementStatus = RailPlacementStatus.NOT_PLACED;
-            PlatformType = TrainType.NONE;
             PortStart = new Port(this, initPos);
             PortEnd = new Port(this, initPos);
+            PlacementStatus = RailPlacementStatus.NOT_PLACED;
+            PlatformType = TrainType.NONE;
         }
 
         public Port GetOtherPort(Port wrongPort) {
