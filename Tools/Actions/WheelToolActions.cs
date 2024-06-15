@@ -44,5 +44,46 @@ namespace railway_monitor.Tools.Actions {
                 }
             }
         }
+        public static void RotateDeadend(Tuple<RailwayCanvasViewModel, bool> args) {
+            RailwayCanvasViewModel canvas = args.Item1;
+            bool IsRotationClockwise = args.Item2;
+            DeadendItem? deadendItem = canvas.LatestGraphicItem as DeadendItem;
+            if (deadendItem == null) {
+                return;
+            }
+
+            if (IsRotationClockwise) {
+                switch (deadendItem.Orientation) {
+                    case DeadendItem.DeadendOrientation.RIGHT:
+                        deadendItem.Orientation = DeadendItem.DeadendOrientation.DOWN;
+                        break;
+                    case DeadendItem.DeadendOrientation.DOWN:
+                        deadendItem.Orientation = DeadendItem.DeadendOrientation.LEFT;
+                        break;
+                    case DeadendItem.DeadendOrientation.LEFT:
+                        deadendItem.Orientation = DeadendItem.DeadendOrientation.UP;
+                        break;
+                    case DeadendItem.DeadendOrientation.UP:
+                        deadendItem.Orientation = DeadendItem.DeadendOrientation.RIGHT;
+                        break;
+                }
+            }
+            else {
+                switch (deadendItem.Orientation) {
+                    case DeadendItem.DeadendOrientation.RIGHT:
+                        deadendItem.Orientation = DeadendItem.DeadendOrientation.UP;
+                        break;
+                    case DeadendItem.DeadendOrientation.UP:
+                        deadendItem.Orientation = DeadendItem.DeadendOrientation.LEFT;
+                        break;
+                    case DeadendItem.DeadendOrientation.LEFT:
+                        deadendItem.Orientation = DeadendItem.DeadendOrientation.DOWN;
+                        break;
+                    case DeadendItem.DeadendOrientation.DOWN:
+                        deadendItem.Orientation = DeadendItem.DeadendOrientation.RIGHT;
+                        break;
+                }
+            }
+        }
     }
 }
