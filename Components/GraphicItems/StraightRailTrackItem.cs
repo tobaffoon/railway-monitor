@@ -1,5 +1,6 @@
 ﻿using railway_monitor.Bases;
 using railway_monitor.Utils;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 
@@ -29,6 +30,7 @@ namespace railway_monitor.Components.GraphicItems {
         private static readonly double _platformTiltAngle = 1.048;  // radians = 60 deg
         private static readonly double _platformSideLength = 11;
         #endregion
+        private static readonly double _minDrawablePlatformLength = 2 * _platformOffset + 2 * _platformSideLength * Math.Cos(_platformTiltAngle);
 
         private static Size circleSize = new Size(_circleRadius, _circleRadius);
 
@@ -61,6 +63,11 @@ namespace railway_monitor.Components.GraphicItems {
                 PortEnd.Pos.X = value.X;
                 PortEnd.Pos.Y = value.Y;
                 Render();
+            }
+        }
+        public double Length {
+            get {
+                return GraphicCalc.GetDistance(Start, End);
             }
         }
 
@@ -142,23 +149,26 @@ namespace railway_monitor.Components.GraphicItems {
         }
 
         protected override void Render(DrawingContext dc) {
+            // first circle
             dc.DrawEllipse(_railTrackBrush, _railTrackPen, Start, _circleRadius, _circleRadius);
 
             if (PlacementStatus != RailPlacementStatus.NOT_PLACED) {
-                // platform. NOTE: it's drawn before other parts to avoid boresome calculations of main line edge (it is replace with simple wide pen)
-                PathFigure platform = new PathFigure(PlatfromCornerOne, [
-                    new LineSegment(PlatfromCornerTwo, true),
+                if (Length >= _minDrawablePlatformLength) {
+                    // platform. NOTE: it's drawn before other parts to avoid boresome calculations of main line edge (it is replace with simple wide pen)
+                    PathFigure platform = new PathFigure(PlatfromCornerOne, [
+                        new LineSegment(PlatfromCornerTwo, true),
                     new LineSegment(PlatfromCornerThree, true),
                     new LineSegment(PlatfromCornerFour, true),
                     ], true);
-                PathGeometry platformGeometry = new PathGeometry([platform]);
-                switch (PlatformType) {
-                    case TrainType.PASSENGER:
-                        dc.DrawGeometry(_passengerTrackBrush, _passengerTrackPen, platformGeometry);
-                        break;
-                    case TrainType.CARGO:
-                        dc.DrawGeometry(_cargoTrackBrush, _cargoTrackPen, platformGeometry);
-                        break;
+                    PathGeometry platformGeometry = new PathGeometry([platform]);
+                    switch (PlatformType) {
+                        case TrainType.PASSENGER:
+                            dc.DrawGeometry(_passengerTrackBrush, _passengerTrackPen, platformGeometry);
+                            break;
+                        case TrainType.CARGO:
+                            dc.DrawGeometry(_cargoTrackBrush, _cargoTrackPen, platformGeometry);
+                            break;
+                    }
                 }
 
                 // main line

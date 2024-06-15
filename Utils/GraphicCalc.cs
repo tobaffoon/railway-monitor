@@ -7,5 +7,8 @@ namespace railway_monitor.Utils {
             outPnt.X = src.X + length * Math.Cos(angleToDst);
             outPnt.Y = src.Y + length * Math.Sin(angleToDst);
         }
+        public static double GetDistance(Point one, Point two) {
+            return Math.Sqrt(Math.Pow(one.X - two.X, 2) + Math.Pow(one.Y - two.Y, 2));
+        }
     }
 }
