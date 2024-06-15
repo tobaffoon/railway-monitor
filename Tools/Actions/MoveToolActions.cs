@@ -39,6 +39,51 @@ namespace railway_monitor.Tools.Actions {
                 srtItem.End = connectionPos;
             }
         }
+        public static void MovePlatform(Tuple<RailwayCanvasViewModel, Point> args) {
+            RailwayCanvasViewModel canvas = args.Item1;
+            Point mousePos = args.Item2;
+            PlatformItem? platformItem = canvas.LatestGraphicItem as PlatformItem;
+            if (platformItem == null) {
+                platformItem = new PlatformItem(mousePos);
+                canvas.AddGraphicItemBehind(platformItem);
+            }
+
+            platformItem.Visibility = Visibility.Visible;
+            platformItem.ConnectionErrorOccured = false;
+            StraightRailTrackItem? previousSrt = canvas.ConnectionPlatformTrack;
+            StraightRailTrackItem? connectionSrt = canvas.TryFindRailForPlatform(mousePos);
+            Point connectionPos;
+            if (connectionSrt == null) {
+                connectionPos = mousePos;
+            }
+            else if (ConnectConditions.RailHasPlatform(connectionSrt)) {
+                // srt already has platform 
+                connectionPos = mousePos;
+                platformItem.ConnectionErrorOccured = true;
+            }
+            else {
+                platformItem.Visibility = Visibility.Collapsed;
+
+                connectionPos = connectionSrt.Center;
+                switch (platformItem.PlatformType) {
+                    case PlatformItem.MiniPlatformType.PASSENGER:
+                        connectionSrt.PlatformType = StraightRailTrackItem.RailPlatformType.PASSENGER_HOVER;
+                        break;
+                    case PlatformItem.MiniPlatformType.CARGO:
+                        connectionSrt.PlatformType = StraightRailTrackItem.RailPlatformType.CARGO_HOVER;
+                        break;
+                }
+            }
+
+            // previously connected srt was left
+            if (previousSrt != null && previousSrt != connectionSrt
+                && (previousSrt.PlatformType == StraightRailTrackItem.RailPlatformType.PASSENGER_HOVER
+                    || previousSrt.PlatformType == StraightRailTrackItem.RailPlatformType.CARGO_HOVER)) {
+                    previousSrt.PlatformType = StraightRailTrackItem.RailPlatformType.NONE;
+            }
+
+            platformItem.Pos = connectionPos;
+        }
         public static void MoveSwitch(Tuple<RailwayCanvasViewModel, Point> args) {
             RailwayCanvasViewModel canvas = args.Item1;
             Point mousePos = args.Item2;

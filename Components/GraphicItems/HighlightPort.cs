@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Media;
 
 namespace railway_monitor.Components.GraphicItems {
-    public class HighlightConnection : GraphicItem {
+    public class HighlightPort : GraphicItem {
         public static readonly double ConnectRadius = 15;
         private static readonly Brush _highlightNormalBrush = new SolidColorBrush(Color.FromArgb(100, 51, 153, 255));
         private static readonly Pen _highlightNormalPen = new Pen(_highlightNormalBrush, 0);
@@ -22,7 +22,7 @@ namespace railway_monitor.Components.GraphicItems {
             }
         }
 
-        public HighlightConnection() : base() {
+        public HighlightPort() : base() {
             Visibility = Visibility.Collapsed;
         }
 
@@ -32,8 +32,6 @@ namespace railway_monitor.Components.GraphicItems {
         }
 
         protected override void Render(DrawingContext dc) {
-            if (Visibility != Visibility.Visible) return;
-
             if (ConnectionErrorOccured) {
                 dc.DrawEllipse(_highlightErrorBrush, _highlightErrorPen, Pos, ConnectRadius, ConnectRadius);
             }

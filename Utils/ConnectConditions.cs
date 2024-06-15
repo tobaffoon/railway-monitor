@@ -22,5 +22,8 @@ namespace railway_monitor.Utils {
         public static bool IsDeadendConnectable(Port connectionPort) {
             return connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count() == 1 && connectionPort.GraphicItems.OfType<DeadendItem>().Count() == 0;
         }
+        public static bool RailHasPlatform(StraightRailTrackItem srt) {
+            return srt.PlatformType == StraightRailTrackItem.RailPlatformType.PASSENGER || srt.PlatformType == StraightRailTrackItem.RailPlatformType.CARGO;
+        }
     }
 }
