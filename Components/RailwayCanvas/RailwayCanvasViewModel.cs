@@ -162,7 +162,7 @@ namespace railway_monitor.Components.RailwayCanvas {
                 ConnectionPlatformTrack = null;
                 VisualTreeHelper.HitTest(srt,
                     null,
-                    new HitTestResultCallback(PortRailHitTestResult),
+                    new HitTestResultCallback(PlatformRailHitTestResult),
                     new GeometryHitTestParameters(expandedHitTestArea));
                 if (ConnectionPlatformTrack == null) continue;
 

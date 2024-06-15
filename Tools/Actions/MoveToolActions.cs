@@ -45,10 +45,17 @@ namespace railway_monitor.Tools.Actions {
             MiniPlatform miniPlatform = canvas.MiniPlatform;
             miniPlatform.Visibility = Visibility.Visible;
 
+            StraightRailTrackItem? previousSrt = canvas.ConnectionPlatformTrack;
             StraightRailTrackItem? connectionSrt = canvas.TryFindRailForPlatform(mousePos);
             Point connectionPos;
             if (connectionSrt == null) {
                 connectionPos = mousePos;
+                if (previousSrt != null 
+                    && (previousSrt.PlatformType == StraightRailTrackItem.RailPlatformType.PASSENGER_HOVER 
+                        || previousSrt.PlatformType == StraightRailTrackItem.RailPlatformType.CARGO_HOVER)) {
+                    // we left previously connected srt
+                    previousSrt.PlatformType = StraightRailTrackItem.RailPlatformType.NONE;
+                }
             }
             else {
                 connectionPos = connectionSrt.Center;
