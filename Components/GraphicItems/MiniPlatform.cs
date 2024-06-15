@@ -10,7 +10,7 @@ namespace railway_monitor.Components.GraphicItems {
             CARGO
         }
 
-        public static readonly double ConnectRadius = 15;
+        public static readonly double ConnectRadius = 7;
 
         private static readonly Brush _passengerPlatformBrush = new SolidColorBrush(Color.FromRgb(185, 111, 92));
         private static readonly Pen _passengerPlatformPen = new Pen(_passengerPlatformBrush, 0);
