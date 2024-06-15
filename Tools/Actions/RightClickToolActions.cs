@@ -37,8 +37,6 @@ namespace railway_monitor.Tools.Actions {
                     srtItem.PlatformType = StraightRailTrackItem.TrainType.NONE;
                     break;
             }
-
-            Trace.WriteLine(srtItem.PlatformType);
         }
     }
 }
