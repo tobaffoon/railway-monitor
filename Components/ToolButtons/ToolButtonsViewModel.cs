@@ -57,10 +57,23 @@ namespace railway_monitor.Components.ToolButtons
                 UtilToolActions.NoWheelAction,
                 UtilToolActions.NoKeyboardAction);
 
+            RadioButton platformButton = new RadioButton {
+                GroupName = ToolsGroupName,
+                Content = "Platform",
+            };
+            platformButton.Checked += (object sender, RoutedEventArgs e) => SetCommands(
+                LeftClickToolActions.PlaceStraightRailTrack,
+                MoveToolActions.MoveStraightRailTrack,
+                RightClickToolActions.ScrollPlatformType,
+                UtilToolActions.NoCanvasAction,
+                UtilToolActions.NoWheelAction,
+                UtilToolActions.NoKeyboardAction);
+
             RadioButton switchButton = new RadioButton {
                 GroupName = ToolsGroupName,
                 Content = "Switch",
             };
+
             switchButton.Checked += (object sender, RoutedEventArgs e) => SetCommands(
                 LeftClickToolActions.PlaceSwitch, 
                 MoveToolActions.MoveSwitch, 
@@ -119,6 +132,7 @@ namespace railway_monitor.Components.ToolButtons
 
             ToolButtonsList.AddRange([
                 srtButton,
+                platformButton,
                 switchButton,
                 signalButton,
                 deadEndButton,

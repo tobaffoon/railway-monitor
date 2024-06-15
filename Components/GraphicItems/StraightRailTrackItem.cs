@@ -13,7 +13,9 @@ namespace railway_monitor.Components.GraphicItems {
         }
         public enum RailPlatformType {
             PASSENGER,
+            PASSENGER_HOVER,
             CARGO,
+            CARGO_HOVER,
             NONE
         }
 
@@ -21,8 +23,12 @@ namespace railway_monitor.Components.GraphicItems {
         private static readonly Pen _railTrackPen = new Pen(_railTrackBrush, 6);
         private static readonly Brush _passengerTrackBrush = new SolidColorBrush(Color.FromRgb(185, 111, 92));
         private static readonly Pen _passengerTrackPen = new Pen(_passengerTrackBrush, 0);
+        private static readonly Brush _passengerHoverBrush = new SolidColorBrush(Color.FromArgb(100, 185, 111, 92));
+        private static readonly Pen _passengerHoverPen = new Pen(_passengerHoverBrush, 0);
         private static readonly Brush _cargoTrackBrush = new SolidColorBrush(Color.FromRgb(112, 146, 189));
         private static readonly Pen _cargoTrackPen = new Pen(_cargoTrackBrush, 0);
+        private static readonly Brush _cargoHoverBrush = new SolidColorBrush(Color.FromArgb(100, 112, 146, 189));
+        private static readonly Pen _cargoHoverPen = new Pen(_cargoHoverBrush, 0);
 
         #region Draw params
         private static readonly double _circleRadius = 4.21;
@@ -167,16 +173,22 @@ namespace railway_monitor.Components.GraphicItems {
                     // platform. NOTE: it's drawn before other parts to avoid boresome calculations of main line edge (it is replace with simple wide pen)
                     PathFigure platform = new PathFigure(PlatfromCornerOne, [
                         new LineSegment(PlatfromCornerTwo, true),
-                    new LineSegment(PlatfromCornerThree, true),
-                    new LineSegment(PlatfromCornerFour, true),
+                        new LineSegment(PlatfromCornerThree, true),
+                        new LineSegment(PlatfromCornerFour, true),
                     ], true);
                     PathGeometry platformGeometry = new PathGeometry([platform]);
                     switch (PlatformType) {
                         case RailPlatformType.PASSENGER:
                             dc.DrawGeometry(_passengerTrackBrush, _passengerTrackPen, platformGeometry);
                             break;
+                        case RailPlatformType.PASSENGER_HOVER:
+                            dc.DrawGeometry(_passengerHoverBrush, _passengerHoverPen, platformGeometry);
+                            break;
                         case RailPlatformType.CARGO:
                             dc.DrawGeometry(_cargoTrackBrush, _cargoTrackPen, platformGeometry);
+                            break;
+                        case RailPlatformType.CARGO_HOVER:
+                            dc.DrawGeometry(_cargoHoverBrush, _cargoHoverPen, platformGeometry);
                             break;
                     }
                 }

@@ -7,15 +7,22 @@ using System.Windows.Media;
 
 namespace railway_monitor.Components.RailwayCanvas {
     public class RailwayCanvasViewModel : ViewModelBase {
-        private StraightRailTrackItem? ConnectionTrack { get; set; }
-        private HighlightConnection HighlightConnection = new HighlightConnection();
-        private double ConnectionRadius {
-            get => HighlightConnection.ConnectRadius;
-        }
+        #region Highlight connection
+        private StraightRailTrackItem? ConnectionPortTrack { get; set; }
+        private HighlightPort HighlightPort = new HighlightPort();
+        private double PortConnectionRadius = HighlightPort.ConnectRadius;
+        
         public bool ConnectionErrorOccured {
-            get => HighlightConnection.ConnectionErrorOccured;
-            set => HighlightConnection.ConnectionErrorOccured = value;
+            get => HighlightPort.ConnectionErrorOccured;
+            set => HighlightPort.ConnectionErrorOccured = value;
         }
+        #endregion
+
+        #region Add platform
+        private StraightRailTrackItem? ConnectionPlatformTrack { get; set; }
+        private MiniPlatform MiniPlatform = new MiniPlatform();
+        private double PlatformConnectionRadius = MiniPlatform.ConnectRadius;
+        #endregion
 
         public Port? DraggedPort;
 
@@ -25,7 +32,7 @@ namespace railway_monitor.Components.RailwayCanvas {
 
         public RailwayCanvasViewModel() {
             GraphicItems = [];
-            GraphicItems.Add(HighlightConnection);
+            GraphicItems.Add(HighlightPort);
         }
 
         public void AddGraphicItem(GraphicItem item) {
@@ -88,9 +95,19 @@ namespace railway_monitor.Components.RailwayCanvas {
             LatestGraphicItem = null;
         }
 
-        private HitTestResultBehavior RailHitTestResult(HitTestResult result) {
+        private HitTestResultBehavior PortRailHitTestResult(HitTestResult result) {
             if (result.VisualHit != LatestGraphicItem) {
-                ConnectionTrack = result.VisualHit as StraightRailTrackItem;
+                ConnectionPortTrack = result.VisualHit as StraightRailTrackItem;
+                return HitTestResultBehavior.Stop;
+            }
+            else {
+                return HitTestResultBehavior.Continue;
+            }
+        }
+
+        private HitTestResultBehavior PlatformRailHitTestResult(HitTestResult result) {
+            if (result.VisualHit != LatestGraphicItem) {
+                ConnectionPlatformTrack = result.VisualHit as StraightRailTrackItem;
                 return HitTestResultBehavior.Stop;
             }
             else {
@@ -100,41 +117,71 @@ namespace railway_monitor.Components.RailwayCanvas {
 
         public Port? TryFindUnderlyingPort(Point mousePos) {
             // circle in which new srt tries to connect to an old srt
-            EllipseGeometry expandedHitTestArea = new EllipseGeometry(mousePos, ConnectionRadius, ConnectionRadius);
+            EllipseGeometry expandedHitTestArea = new EllipseGeometry(mousePos, PortConnectionRadius, PortConnectionRadius);
 
             foreach (StraightRailTrackItem srt in GraphicItems.OfType<StraightRailTrackItem>()) {
                 // try finding close srt by hittesting
-                ConnectionTrack = null;
+                ConnectionPortTrack = null;
                 VisualTreeHelper.HitTest(srt,
                     null,
-                    new HitTestResultCallback(RailHitTestResult),
+                    new HitTestResultCallback(PortRailHitTestResult),
                     new GeometryHitTestParameters(expandedHitTestArea));
-                if (ConnectionTrack == null) continue;
+                if (ConnectionPortTrack == null) continue;
 
                 // determine close enough vertex or make sure that there is no such vertex
-                double distance1 = (ConnectionTrack.Start - mousePos).Length;
-                double distance2 = (ConnectionTrack.End - mousePos).Length;
-                if (distance1 < ConnectionRadius || distance2 < ConnectionRadius) {
-                    HighlightConnection.Visibility = Visibility.Visible;
+                double distance1 = (ConnectionPortTrack.Start - mousePos).Length;
+                double distance2 = (ConnectionPortTrack.End - mousePos).Length;
+                if (distance1 < PortConnectionRadius || distance2 < PortConnectionRadius) {
+                    HighlightPort.Visibility = Visibility.Visible;
                     if (distance2 < distance1) {
-                        HighlightConnection.Pos = ConnectionTrack.End;
-                        return ConnectionTrack.PortEnd;
+                        HighlightPort.Pos = ConnectionPortTrack.End;
+                        return ConnectionPortTrack.PortEnd;
                     }
-                    HighlightConnection.Pos = ConnectionTrack.Start;
-                    return ConnectionTrack.PortStart;
+                    HighlightPort.Pos = ConnectionPortTrack.Start;
+                    return ConnectionPortTrack.PortStart;
                 }
             }
 
             // hide highlighter when no track is close enough
-            HighlightConnection.Visibility = Visibility.Collapsed;
-            HighlightConnection.ConnectionErrorOccured = false;
+            HighlightPort.Visibility = Visibility.Collapsed;
+            HighlightPort.ConnectionErrorOccured = false;
+            return null;
+        }
+
+        public StraightRailTrackItem? TryFindRailForPlatform(Point mousePos) {
+            // circle in which new srt tries to connect to an old srt
+            EllipseGeometry expandedHitTestArea = new EllipseGeometry(mousePos, PlatformConnectionRadius, PlatformConnectionRadius);
+
+            foreach (StraightRailTrackItem srt in GraphicItems.OfType<StraightRailTrackItem>()) {
+                // try finding close srt by hittesting
+                ConnectionPlatformTrack = null;
+                VisualTreeHelper.HitTest(srt,
+                    null,
+                    new HitTestResultCallback(PortRailHitTestResult),
+                    new GeometryHitTestParameters(expandedHitTestArea));
+                if (ConnectionPlatformTrack == null) continue;
+
+                if (ConnectionPlatformTrack.PlatformType != StraightRailTrackItem.RailPlatformType.NONE) {
+                    // rail already has a platform
+                    MiniPlatform.ConnectionErrorOccured = true;
+                    return null;
+                }
+
+                MiniPlatform.Visibility = Visibility.Collapsed;
+                MiniPlatform.ConnectionErrorOccured = false;
+                return ConnectionPlatformTrack;
+            }
+
+            // hide highlighter when no track is close enough
+            MiniPlatform.Visibility = Visibility.Visible;
+            MiniPlatform.ConnectionErrorOccured = false;
             return null;
         }
 
         public void RenderDraggedPort() {
             if (DraggedPort == null) return;
             DraggedPort.RenderGraphicItems();
-            HighlightConnection.Pos = DraggedPort.Pos;
+            HighlightPort.Pos = DraggedPort.Pos;
         }
     }
 }
