@@ -91,7 +91,12 @@ namespace railway_monitor.Components.GraphicItems {
         private Point _platfromCornerThree = new Point(0, 0);
         public Point PlatfromCornerThree {
             get {
-                GraphicCalc.GetPointInDirection(ref _platfromCornerThree, _platfromCornerTwo, End, _platformSideLength, -_platformTiltAngle);
+                if (Start.X < End.X) {
+                    GraphicCalc.GetPointInDirection(ref _platfromCornerThree, _platfromCornerTwo, End, _platformSideLength, -_platformTiltAngle);
+                }
+                else {
+                    GraphicCalc.GetPointInDirection(ref _platfromCornerThree, _platfromCornerTwo, End, _platformSideLength, _platformTiltAngle);
+                }
                 return _platfromCornerThree;
             }
         } 
@@ -99,7 +104,12 @@ namespace railway_monitor.Components.GraphicItems {
         private Point _platfromCornerFour = new Point(0, 0);
         public Point PlatfromCornerFour {
             get {
-                GraphicCalc.GetPointInDirection(ref _platfromCornerFour, _platfromCornerOne, Start, _platformSideLength, _platformTiltAngle);
+                if (Start.X < End.X) {
+                    GraphicCalc.GetPointInDirection(ref _platfromCornerFour, _platfromCornerOne, Start, _platformSideLength, _platformTiltAngle);
+                }
+                else {
+                    GraphicCalc.GetPointInDirection(ref _platfromCornerFour, _platfromCornerOne, Start, _platformSideLength, -_platformTiltAngle);
+                }
                 return _platfromCornerFour;
             }
         }
