@@ -1,6 +1,7 @@
 ﻿using railway_monitor.Bases;
 using railway_monitor.Components.GraphicItems;
 using railway_monitor.Components.RailwayCanvas;
+using railway_monitor.Utils;
 using System.Diagnostics;
 
 namespace railway_monitor.Tools.Actions {
@@ -39,24 +40,29 @@ namespace railway_monitor.Tools.Actions {
             }
         }
         public static void ScrollMiniPlatformType(RailwayCanvasViewModel canvas) {
-            MiniPlatform miniPlatform = canvas.MiniPlatform; 
             StraightRailTrackItem? connectionSrt = canvas.ConnectionPlatformTrack;
+            PlatformItem? platformItem = canvas.LatestGraphicItem as PlatformItem;
+            if (platformItem == null) return;
 
-            switch (miniPlatform.PlatformType) {
-                case MiniPlatform.MiniPlatformType.PASSENGER:
-                    miniPlatform.PlatformType = MiniPlatform.MiniPlatformType.CARGO;
-                    if(connectionSrt != null) {
-                        connectionSrt.PlatformType = StraightRailTrackItem.RailPlatformType.CARGO_HOVER;
-                    }
+            switch (platformItem.PlatformType) {
+                case PlatformItem.MiniPlatformType.PASSENGER:
+                    platformItem.PlatformType = PlatformItem.MiniPlatformType.CARGO;
                     break;
-                case MiniPlatform.MiniPlatformType.CARGO:
-                    miniPlatform.PlatformType = MiniPlatform.MiniPlatformType.PASSENGER;
-                    if (connectionSrt != null) {
-                        connectionSrt.PlatformType = StraightRailTrackItem.RailPlatformType.PASSENGER_HOVER;
-                    }
+                case PlatformItem.MiniPlatformType.CARGO:
+                    platformItem.PlatformType = PlatformItem.MiniPlatformType.PASSENGER;
                     break;
             }
 
+            if (connectionSrt == null || ConnectConditions.RailHasPlatform(connectionSrt)) return;
+            // Change underlying platform type if there is one
+            switch (platformItem.PlatformType) {
+                case PlatformItem.MiniPlatformType.PASSENGER:
+                    connectionSrt.PlatformType = StraightRailTrackItem.RailPlatformType.PASSENGER_HOVER;
+                    break;
+                case PlatformItem.MiniPlatformType.CARGO:
+                    connectionSrt.PlatformType = StraightRailTrackItem.RailPlatformType.CARGO_HOVER;
+                    break;
+            }
         }
     }
 }

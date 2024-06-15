@@ -42,34 +42,47 @@ namespace railway_monitor.Tools.Actions {
         public static void MovePlatform(Tuple<RailwayCanvasViewModel, Point> args) {
             RailwayCanvasViewModel canvas = args.Item1;
             Point mousePos = args.Item2;
-            MiniPlatform miniPlatform = canvas.MiniPlatform;
-            miniPlatform.Visibility = Visibility.Visible;
+            PlatformItem? platformItem = canvas.LatestGraphicItem as PlatformItem;
+            if (platformItem == null) {
+                platformItem = new PlatformItem(mousePos);
+                canvas.AddGraphicItemBehind(platformItem);
+            }
 
+            platformItem.Visibility = Visibility.Visible;
+            platformItem.ConnectionErrorOccured = false;
             StraightRailTrackItem? previousSrt = canvas.ConnectionPlatformTrack;
             StraightRailTrackItem? connectionSrt = canvas.TryFindRailForPlatform(mousePos);
             Point connectionPos;
             if (connectionSrt == null) {
                 connectionPos = mousePos;
-                if (previousSrt != null 
-                    && (previousSrt.PlatformType == StraightRailTrackItem.RailPlatformType.PASSENGER_HOVER 
-                        || previousSrt.PlatformType == StraightRailTrackItem.RailPlatformType.CARGO_HOVER)) {
-                    // we left previously connected srt
-                    previousSrt.PlatformType = StraightRailTrackItem.RailPlatformType.NONE;
-                }
+            }
+            else if (ConnectConditions.RailHasPlatform(connectionSrt)) {
+                // srt already has platform 
+                connectionPos = mousePos;
+                platformItem.ConnectionErrorOccured = true;
             }
             else {
+                platformItem.Visibility = Visibility.Collapsed;
+
                 connectionPos = connectionSrt.Center;
-                switch (miniPlatform.PlatformType) {
-                    case MiniPlatform.MiniPlatformType.PASSENGER:
+                switch (platformItem.PlatformType) {
+                    case PlatformItem.MiniPlatformType.PASSENGER:
                         connectionSrt.PlatformType = StraightRailTrackItem.RailPlatformType.PASSENGER_HOVER;
                         break;
-                    case MiniPlatform.MiniPlatformType.CARGO:
+                    case PlatformItem.MiniPlatformType.CARGO:
                         connectionSrt.PlatformType = StraightRailTrackItem.RailPlatformType.CARGO_HOVER;
                         break;
                 }
             }
 
-            miniPlatform.Pos = connectionPos;
+            // previously connected srt was left
+            if (previousSrt != null && previousSrt != connectionSrt
+                && (previousSrt.PlatformType == StraightRailTrackItem.RailPlatformType.PASSENGER_HOVER
+                    || previousSrt.PlatformType == StraightRailTrackItem.RailPlatformType.CARGO_HOVER)) {
+                    previousSrt.PlatformType = StraightRailTrackItem.RailPlatformType.NONE;
+            }
+
+            platformItem.Pos = connectionPos;
         }
         public static void MoveSwitch(Tuple<RailwayCanvasViewModel, Point> args) {
             RailwayCanvasViewModel canvas = args.Item1;

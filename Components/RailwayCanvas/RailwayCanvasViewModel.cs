@@ -20,8 +20,7 @@ namespace railway_monitor.Components.RailwayCanvas {
 
         #region Add platform
         public StraightRailTrackItem? ConnectionPlatformTrack { get; private set; }
-        public MiniPlatform MiniPlatform { get; } = new MiniPlatform();
-        private double PlatformConnectionRadius = MiniPlatform.ConnectRadius;
+        private double PlatformConnectionRadius = PlatformItem.ConnectRadius;
         #endregion
 
         public Port? DraggedPort;
@@ -33,7 +32,7 @@ namespace railway_monitor.Components.RailwayCanvas {
         private GraphicItem[] permanentItems;
 
         public RailwayCanvasViewModel() {
-            permanentItems = [HighlightPort, MiniPlatform];
+            permanentItems = [HighlightPort];
             GraphicItems = [];
             foreach (var item in permanentItems) {
                 GraphicItems.Add(item);
@@ -166,21 +165,10 @@ namespace railway_monitor.Components.RailwayCanvas {
                     new GeometryHitTestParameters(expandedHitTestArea));
                 if (ConnectionPlatformTrack == null) continue;
 
-                if (ConnectionPlatformTrack.PlatformType == StraightRailTrackItem.RailPlatformType.PASSENGER 
-                    || ConnectionPlatformTrack.PlatformType == StraightRailTrackItem.RailPlatformType.CARGO) {
-                    // rail already has a platform
-                    MiniPlatform.ConnectionErrorOccured = true;
-                    return null;
-                }
-
-                MiniPlatform.Visibility = Visibility.Collapsed;
-                MiniPlatform.ConnectionErrorOccured = false;
                 return ConnectionPlatformTrack;
             }
 
             // hide highlighter when no track is close enough
-            MiniPlatform.Visibility = Visibility.Visible;
-            MiniPlatform.ConnectionErrorOccured = false;
             return null;
         }
 

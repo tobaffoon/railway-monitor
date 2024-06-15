@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Media;
 
 namespace railway_monitor.Components.GraphicItems {
-    public class MiniPlatform : GraphicItem {
+    public class PlatformItem : GraphicItem {
         public enum MiniPlatformType {
             PASSENGER,
             CARGO
@@ -51,7 +51,16 @@ namespace railway_monitor.Components.GraphicItems {
             }
         }
 
-        public bool ConnectionErrorOccured = false;
+        private bool _connectionErrorOccured = false;
+        public bool ConnectionErrorOccured {
+            get {
+                return _connectionErrorOccured;
+            }
+            set {
+                _connectionErrorOccured = value;
+                Render();
+            }
+        }
 
         #region Drawing points 
         private Point _platfromCornerOne = new Point(0, 0);
@@ -125,7 +134,8 @@ namespace railway_monitor.Components.GraphicItems {
         }
         #endregion
 
-        public MiniPlatform() : base() {
+        public PlatformItem(Point initPos) : base() {
+            Pos = initPos;
             Visibility = Visibility.Collapsed;
             PlatformType = MiniPlatformType.PASSENGER;
         }
