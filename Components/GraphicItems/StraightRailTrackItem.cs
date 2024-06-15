@@ -73,7 +73,7 @@ namespace railway_monitor.Components.GraphicItems {
 
         #region Drawing points 
         private Point _platfromCornerOne = new Point(0, 0);
-        public Point PlatfromCornerOne {
+        private Point PlatfromCornerOne {
             get {
                 GraphicCalc.GetPointInDirection(ref _platfromCornerOne, End, Start, _platformOffset);
                 return _platfromCornerOne;
@@ -81,7 +81,7 @@ namespace railway_monitor.Components.GraphicItems {
         }
 
         private Point _platfromCornerTwo = new Point(0, 0);
-        public Point PlatfromCornerTwo {
+        private Point PlatfromCornerTwo {
             get {
                 GraphicCalc.GetPointInDirection(ref _platfromCornerTwo, Start, End, _platformOffset);
                 return _platfromCornerTwo;
@@ -89,7 +89,7 @@ namespace railway_monitor.Components.GraphicItems {
         } 
 
         private Point _platfromCornerThree = new Point(0, 0);
-        public Point PlatfromCornerThree {
+        private Point PlatfromCornerThree {
             get {
                 if (Start.X < End.X) {
                     GraphicCalc.GetPointInDirection(ref _platfromCornerThree, _platfromCornerTwo, End, _platformSideLength, -_platformTiltAngle);
@@ -102,7 +102,7 @@ namespace railway_monitor.Components.GraphicItems {
         } 
 
         private Point _platfromCornerFour = new Point(0, 0);
-        public Point PlatfromCornerFour {
+        private Point PlatfromCornerFour {
             get {
                 if (Start.X < End.X) {
                     GraphicCalc.GetPointInDirection(ref _platfromCornerFour, _platfromCornerOne, Start, _platformSideLength, _platformTiltAngle);
