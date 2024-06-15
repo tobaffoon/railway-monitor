@@ -11,7 +11,7 @@ namespace railway_monitor.Components.GraphicItems {
             PLACEMENT_STARTED,
             PLACED
         }
-        public enum TrainType {
+        public enum RailPlatformType {
             PASSENGER,
             CARGO,
             NONE
@@ -36,8 +36,8 @@ namespace railway_monitor.Components.GraphicItems {
 
         public RailPlacementStatus PlacementStatus { get; private set; }
         
-        private TrainType _platformType;
-        public TrainType PlatformType {
+        private RailPlatformType _platformType;
+        public RailPlatformType PlatformType {
             get {
                 return _platformType;
             }
@@ -109,7 +109,7 @@ namespace railway_monitor.Components.GraphicItems {
             PortStart = new Port(this, initPos);
             PortEnd = new Port(this, initPos);
             PlacementStatus = RailPlacementStatus.NOT_PLACED;
-            PlatformType = TrainType.NONE;
+            PlatformType = RailPlatformType.NONE;
         }
 
         public Port GetOtherPort(Port wrongPort) {
@@ -162,10 +162,10 @@ namespace railway_monitor.Components.GraphicItems {
                     ], true);
                     PathGeometry platformGeometry = new PathGeometry([platform]);
                     switch (PlatformType) {
-                        case TrainType.PASSENGER:
+                        case RailPlatformType.PASSENGER:
                             dc.DrawGeometry(_passengerTrackBrush, _passengerTrackPen, platformGeometry);
                             break;
-                        case TrainType.CARGO:
+                        case RailPlatformType.CARGO:
                             dc.DrawGeometry(_cargoTrackBrush, _cargoTrackPen, platformGeometry);
                             break;
                     }

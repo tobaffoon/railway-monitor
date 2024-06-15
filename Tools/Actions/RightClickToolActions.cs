@@ -27,14 +27,14 @@ namespace railway_monitor.Tools.Actions {
             }
 
             switch (srtItem.PlatformType) {
-                case StraightRailTrackItem.TrainType.NONE:
-                    srtItem.PlatformType = StraightRailTrackItem.TrainType.CARGO;
+                case StraightRailTrackItem.RailPlatformType.NONE:
+                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.CARGO;
                     break;
-                case StraightRailTrackItem.TrainType.CARGO:
-                    srtItem.PlatformType = StraightRailTrackItem.TrainType.PASSENGER;
+                case StraightRailTrackItem.RailPlatformType.CARGO:
+                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.PASSENGER;
                     break;
-                case StraightRailTrackItem.TrainType.PASSENGER:
-                    srtItem.PlatformType = StraightRailTrackItem.TrainType.NONE;
+                case StraightRailTrackItem.RailPlatformType.PASSENGER:
+                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.NONE;
                     break;
             }
         }
