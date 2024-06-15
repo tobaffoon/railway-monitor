@@ -9,6 +9,11 @@ namespace railway_monitor.Components.GraphicItems {
             PLACEMENT_STARTED,
             PLACED
         }
+        public enum TrainType {
+            PASSENGER,
+            CARGO,
+            NONE
+        }
 
         private static readonly Brush _railTrackBrush = new SolidColorBrush(Color.FromRgb(153, 255, 51));
         private static readonly Pen _railTrackPen = new Pen(_railTrackBrush, 6);
@@ -17,6 +22,17 @@ namespace railway_monitor.Components.GraphicItems {
         private static Size circleSize = new Size(_circleRadius, _circleRadius);
 
         public RailPlacementStatus PlacementStatus { get; private set; }
+        
+        private TrainType _platformType;
+        public TrainType PlatformType {
+            get {
+                return _platformType;
+            }
+            set { 
+                _platformType = value;
+                Render();
+            }
+        }
 
         public Port PortStart { get; set; }
         public Port PortEnd { get; set; }
@@ -39,6 +55,7 @@ namespace railway_monitor.Components.GraphicItems {
 
         public StraightRailTrackItem(Point initPos) : base() {
             PlacementStatus = RailPlacementStatus.NOT_PLACED;
+            PlatformType = TrainType.NONE;
             PortStart = new Port(this, initPos);
             PortEnd = new Port(this, initPos);
         }
