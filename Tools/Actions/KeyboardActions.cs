@@ -36,5 +36,28 @@ namespace railway_monitor.Tools.Actions {
                     break;
             }
         }
+        public static void RotateDeadend(Tuple<RailwayCanvasViewModel, Key> args) {
+            RailwayCanvasViewModel canvas = args.Item1;
+            Key pressedKey = args.Item2;
+            DeadendItem? deadendItem = canvas.LatestGraphicItem as DeadendItem;
+            if (deadendItem == null) {
+                return;
+            }
+
+            switch (pressedKey) {
+                case Key.Left:
+                    deadendItem.Orientation = DeadendItem.DeadendOrientation.LEFT;
+                    break;
+                case Key.Up:
+                    deadendItem.Orientation = DeadendItem.DeadendOrientation.UP;
+                    break;
+                case Key.Right:
+                    deadendItem.Orientation = DeadendItem.DeadendOrientation.RIGHT;
+                    break;
+                case Key.Down:
+                    deadendItem.Orientation = DeadendItem.DeadendOrientation.DOWN;
+                    break;
+            }
+        }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using railway_monitor.Bases;
 using System.Windows;
 using System.Windows.Media;
-using static railway_monitor.Components.GraphicItems.SwitchItem;
 
 namespace railway_monitor.Components.GraphicItems {
     public class ExternalTrackItem : GraphicItem {

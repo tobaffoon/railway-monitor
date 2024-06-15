@@ -90,8 +90,8 @@ namespace railway_monitor.Components.ToolButtons
                 MoveToolActions.MoveDeadend, 
                 UtilToolActions.NoCanvasAction, 
                 UtilToolActions.NoCanvasAction,
-                UtilToolActions.NoWheelAction,
-                UtilToolActions.NoKeyboardAction);
+                WheelToolActions.RotateDeadend,
+                KeyboardActions.RotateDeadend);
 
             RadioButton externalTrackButton = new RadioButton {
                 GroupName = ToolsGroupName,

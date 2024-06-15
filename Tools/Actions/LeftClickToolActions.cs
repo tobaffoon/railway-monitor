@@ -37,7 +37,6 @@ namespace railway_monitor.Tools.Actions {
                 }
             }
         }
-
         public static void PlaceSwitch(Tuple<RailwayCanvasViewModel, Point> args) {
             RailwayCanvasViewModel canvas = args.Item1;
             Point mousePos = args.Item2;
@@ -90,7 +89,25 @@ namespace railway_monitor.Tools.Actions {
             }
         }
         public static void PlaceDeadend(Tuple<RailwayCanvasViewModel, Point> args) {
-            throw new NotImplementedException("Deadend");
+            RailwayCanvasViewModel canvas = args.Item1;
+            Point mousePos = args.Item2;
+            DeadendItem? deadendItem = canvas.LatestGraphicItem as DeadendItem;
+            if (deadendItem == null) {
+                deadendItem = new DeadendItem(mousePos);
+                canvas.AddGraphicItem(deadendItem);
+            }
+
+            switch (deadendItem.PlacementStatus) {
+                case DeadendItem.DeadendPlacementStatus.NOT_PLACED:
+                    Port? connectionPort = canvas.TryFindUnderlyingPort(mousePos);
+                    if (connectionPort == null || !ConnectConditions.IsDeadendConnectable(connectionPort)) {
+                        // no port found for connection
+                        return;
+                    }
+                    deadendItem.Place(connectionPort);
+                    canvas.ResetLatestGraphicItem();
+                    break;
+            }
         }
         public static void PlaceExternalTrack(Tuple<RailwayCanvasViewModel, Point> args) {
             RailwayCanvasViewModel canvas = args.Item1;
