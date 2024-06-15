@@ -38,5 +38,25 @@ namespace railway_monitor.Tools.Actions {
                     break;
             }
         }
+        public static void ScrollMiniPlatformType(RailwayCanvasViewModel canvas) {
+            MiniPlatform miniPlatform = canvas.MiniPlatform; 
+            StraightRailTrackItem? connectionSrt = canvas.ConnectionPlatformTrack;
+
+            switch (miniPlatform.PlatformType) {
+                case MiniPlatform.MiniPlatformType.PASSENGER:
+                    miniPlatform.PlatformType = MiniPlatform.MiniPlatformType.CARGO;
+                    if(connectionSrt != null) {
+                        connectionSrt.PlatformType = StraightRailTrackItem.RailPlatformType.CARGO_HOVER;
+                    }
+                    break;
+                case MiniPlatform.MiniPlatformType.CARGO:
+                    miniPlatform.PlatformType = MiniPlatform.MiniPlatformType.PASSENGER;
+                    if (connectionSrt != null) {
+                        connectionSrt.PlatformType = StraightRailTrackItem.RailPlatformType.PASSENGER_HOVER;
+                    }
+                    break;
+            }
+
+        }
     }
 }

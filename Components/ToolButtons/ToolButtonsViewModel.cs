@@ -62,9 +62,9 @@ namespace railway_monitor.Components.ToolButtons
                 Content = "Platform",
             };
             platformButton.Checked += (object sender, RoutedEventArgs e) => SetCommands(
-                LeftClickToolActions.PlaceStraightRailTrack,
-                MoveToolActions.MoveStraightRailTrack,
-                RightClickToolActions.ScrollPlatformType,
+                LeftClickToolActions.AddPlatform,
+                MoveToolActions.MovePlatform,
+                RightClickToolActions.ScrollMiniPlatformType,
                 UtilToolActions.NoCanvasAction,
                 UtilToolActions.NoWheelAction,
                 UtilToolActions.NoKeyboardAction);

@@ -77,6 +77,14 @@ namespace railway_monitor.Components.GraphicItems {
             }
         }
 
+        private Point _center = new Point(0, 0);
+        public Point Center {
+            get {
+                GraphicCalc.GetPointInDirection(ref _center, Start, End, Length / 2);
+                return _center;
+            }
+        }
+
         #region Drawing points 
         private Point _platfromCornerOne = new Point(0, 0);
         private Point PlatfromCornerOne {

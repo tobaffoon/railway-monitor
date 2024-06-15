@@ -39,6 +39,31 @@ namespace railway_monitor.Tools.Actions {
                 srtItem.End = connectionPos;
             }
         }
+        public static void MovePlatform(Tuple<RailwayCanvasViewModel, Point> args) {
+            RailwayCanvasViewModel canvas = args.Item1;
+            Point mousePos = args.Item2;
+            MiniPlatform miniPlatform = canvas.MiniPlatform;
+            miniPlatform.Visibility = Visibility.Visible;
+
+            StraightRailTrackItem? connectionSrt = canvas.TryFindRailForPlatform(mousePos);
+            Point connectionPos;
+            if (connectionSrt == null) {
+                connectionPos = mousePos;
+            }
+            else {
+                connectionPos = connectionSrt.Center;
+                switch (miniPlatform.PlatformType) {
+                    case MiniPlatform.MiniPlatformType.PASSENGER:
+                        connectionSrt.PlatformType = StraightRailTrackItem.RailPlatformType.PASSENGER_HOVER;
+                        break;
+                    case MiniPlatform.MiniPlatformType.CARGO:
+                        connectionSrt.PlatformType = StraightRailTrackItem.RailPlatformType.CARGO_HOVER;
+                        break;
+                }
+            }
+
+            miniPlatform.Pos = connectionPos;
+        }
         public static void MoveSwitch(Tuple<RailwayCanvasViewModel, Point> args) {
             RailwayCanvasViewModel canvas = args.Item1;
             Point mousePos = args.Item2;

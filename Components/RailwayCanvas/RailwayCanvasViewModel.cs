@@ -19,8 +19,8 @@ namespace railway_monitor.Components.RailwayCanvas {
         #endregion
 
         #region Add platform
-        private StraightRailTrackItem? ConnectionPlatformTrack { get; set; }
-        private MiniPlatform MiniPlatform = new MiniPlatform();
+        public StraightRailTrackItem? ConnectionPlatformTrack { get; private set; }
+        public MiniPlatform MiniPlatform { get; } = new MiniPlatform();
         private double PlatformConnectionRadius = MiniPlatform.ConnectRadius;
         #endregion
 
@@ -30,9 +30,14 @@ namespace railway_monitor.Components.RailwayCanvas {
         public GraphicItem? LatestGraphicItem { get; set; }
         public int Len { get { return GraphicItems.Count; } }
 
+        private GraphicItem[] permanentItems;
+
         public RailwayCanvasViewModel() {
+            permanentItems = [HighlightPort, MiniPlatform];
             GraphicItems = [];
-            GraphicItems.Add(HighlightPort);
+            foreach (var item in permanentItems) {
+                GraphicItems.Add(item);
+            }
         }
 
         public void AddGraphicItem(GraphicItem item) {
@@ -40,7 +45,7 @@ namespace railway_monitor.Components.RailwayCanvas {
             LatestGraphicItem = item;
         }
         public void AddGraphicItemBehind(GraphicItem item) {
-            GraphicItems.Insert(1, item);
+            GraphicItems.Insert(permanentItems.Length, item);
             LatestGraphicItem = item;
         }
 
@@ -161,7 +166,8 @@ namespace railway_monitor.Components.RailwayCanvas {
                     new GeometryHitTestParameters(expandedHitTestArea));
                 if (ConnectionPlatformTrack == null) continue;
 
-                if (ConnectionPlatformTrack.PlatformType != StraightRailTrackItem.RailPlatformType.NONE) {
+                if (ConnectionPlatformTrack.PlatformType == StraightRailTrackItem.RailPlatformType.PASSENGER 
+                    || ConnectionPlatformTrack.PlatformType == StraightRailTrackItem.RailPlatformType.CARGO) {
                     // rail already has a platform
                     MiniPlatform.ConnectionErrorOccured = true;
                     return null;

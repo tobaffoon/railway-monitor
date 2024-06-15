@@ -37,6 +37,20 @@ namespace railway_monitor.Tools.Actions {
                 }
             }
         }
+        public static void AddPlatform(Tuple<RailwayCanvasViewModel, Point> args) {
+            RailwayCanvasViewModel canvas = args.Item1;
+            if (canvas.ConnectionPlatformTrack == null) return;
+
+            StraightRailTrackItem srtItem = canvas.ConnectionPlatformTrack;
+            switch (srtItem.PlatformType) {
+                case StraightRailTrackItem.RailPlatformType.PASSENGER_HOVER:
+                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.PASSENGER; 
+                    break;
+                case StraightRailTrackItem.RailPlatformType.CARGO_HOVER:
+                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.CARGO; 
+                    break;
+            }
+        }
         public static void PlaceSwitch(Tuple<RailwayCanvasViewModel, Point> args) {
             RailwayCanvasViewModel canvas = args.Item1;
             Point mousePos = args.Item2;

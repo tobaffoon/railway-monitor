@@ -126,6 +126,7 @@ namespace railway_monitor.Components.GraphicItems {
         #endregion
 
         public MiniPlatform() : base() {
+            Visibility = Visibility.Collapsed;
             PlatformType = MiniPlatformType.PASSENGER;
         }
 
