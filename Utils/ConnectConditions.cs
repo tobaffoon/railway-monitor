@@ -12,7 +12,7 @@ namespace railway_monitor.Utils {
         }
         private static bool OtherItemsPresent(Port connectionPort) {
             int srtItems = connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count();
-            return connectionPort.GraphicItems.Count() - srtItems > 0;
+            return connectionPort.GraphicItems.Count - srtItems > 0;
         }
         public static bool IsSwitchConnectable(Port connectionPort) {
             return connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count() == 3 && !OtherItemsPresent(connectionPort);
