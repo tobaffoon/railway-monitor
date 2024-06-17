@@ -26,7 +26,7 @@ namespace railway_monitor.Components.RailwayCanvas {
         public Port? DraggedPort;
 
         private HashSet<Port> _ports;
-        public HashSet<Port> Ports { 
+        public List<Port> Ports { 
             get {
                 _ports.Clear();
 
@@ -51,7 +51,7 @@ namespace railway_monitor.Components.RailwayCanvas {
                     }
                 }
 
-                return _ports;
+                return _ports.ToList();
             }
         }
         public ObservableCollection<GraphicItem> GraphicItems { get; }
