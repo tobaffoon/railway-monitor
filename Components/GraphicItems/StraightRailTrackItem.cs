@@ -16,7 +16,8 @@ namespace railway_monitor.Components.GraphicItems {
             PASSENGER_HOVER,
             CARGO,
             CARGO_HOVER,
-            NONE
+            NONE,
+            NONE_HOVER
         }
 
         private static readonly Brush _railTrackBrush = new SolidColorBrush(Color.FromRgb(153, 255, 51));
@@ -29,6 +30,8 @@ namespace railway_monitor.Components.GraphicItems {
         private static readonly Pen _cargoTrackPen = new Pen(_cargoTrackBrush, 0);
         private static readonly Brush _cargoHoverBrush = new SolidColorBrush(Color.FromArgb(100, 112, 146, 189));
         private static readonly Pen _cargoHoverPen = new Pen(_cargoHoverBrush, 0);
+        private static readonly Brush _noneHoverBrush = new SolidColorBrush(Color.FromArgb(100, 235, 220, 185));
+        private static readonly Pen _noneHoverPen = new Pen(_noneHoverBrush, 0);
 
         #region Draw params
         private static readonly double _circleRadius = 4.21;
@@ -197,6 +200,9 @@ namespace railway_monitor.Components.GraphicItems {
                             break;
                         case RailPlatformType.CARGO_HOVER:
                             dc.DrawGeometry(_cargoHoverBrush, _cargoHoverPen, platformGeometry);
+                            break;
+                        case RailPlatformType.NONE_HOVER:
+                            dc.DrawGeometry(_noneHoverBrush, _noneHoverPen, platformGeometry);
                             break;
                     }
                 }

@@ -56,7 +56,7 @@ namespace railway_monitor.Tools.Actions {
             if (connectionSrt == null) {
                 connectionPos = mousePos;
             }
-            else if (ConnectConditions.RailHasPlatform(connectionSrt)) {
+            else if (ConnectConditions.RailHasPlatform(connectionSrt) && platformItem.PlatformType != PlatformItem.PlatformItemType.NONE) {
                 // srt already has platform 
                 connectionPos = mousePos;
                 platformItem.ConnectionErrorOccured = true;
@@ -66,11 +66,14 @@ namespace railway_monitor.Tools.Actions {
 
                 connectionPos = connectionSrt.Center;
                 switch (platformItem.PlatformType) {
-                    case PlatformItem.MiniPlatformType.PASSENGER:
+                    case PlatformItem.PlatformItemType.PASSENGER:
                         connectionSrt.PlatformType = StraightRailTrackItem.RailPlatformType.PASSENGER_HOVER;
                         break;
-                    case PlatformItem.MiniPlatformType.CARGO:
+                    case PlatformItem.PlatformItemType.CARGO:
                         connectionSrt.PlatformType = StraightRailTrackItem.RailPlatformType.CARGO_HOVER;
+                        break;
+                    case PlatformItem.PlatformItemType.NONE:
+                        connectionSrt.PlatformType = StraightRailTrackItem.RailPlatformType.NONE_HOVER;
                         break;
                 }
             }
@@ -78,8 +81,9 @@ namespace railway_monitor.Tools.Actions {
             // previously connected srt was left
             if (previousSrt != null && previousSrt != connectionSrt
                 && (previousSrt.PlatformType == StraightRailTrackItem.RailPlatformType.PASSENGER_HOVER
-                    || previousSrt.PlatformType == StraightRailTrackItem.RailPlatformType.CARGO_HOVER)) {
-                    previousSrt.PlatformType = StraightRailTrackItem.RailPlatformType.NONE;
+                    || previousSrt.PlatformType == StraightRailTrackItem.RailPlatformType.CARGO_HOVER
+                    || previousSrt.PlatformType == StraightRailTrackItem.RailPlatformType.NONE_HOVER)) {
+                previousSrt.PlatformType = StraightRailTrackItem.RailPlatformType.NONE;
             }
 
             platformItem.Pos = connectionPos;

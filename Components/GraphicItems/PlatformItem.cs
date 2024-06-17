@@ -5,9 +5,10 @@ using System.Windows.Media;
 
 namespace railway_monitor.Components.GraphicItems {
     public class PlatformItem : GraphicItem {
-        public enum MiniPlatformType {
+        public enum PlatformItemType {
             PASSENGER,
-            CARGO
+            CARGO,
+            NONE
         }
 
         public static readonly double ConnectRadius = 7;
@@ -16,6 +17,8 @@ namespace railway_monitor.Components.GraphicItems {
         private static readonly Pen _passengerPlatformPen = new Pen(_passengerPlatformBrush, 0);
         private static readonly Brush _cargoPlatformBrush = new SolidColorBrush(Color.FromRgb(112, 146, 189));
         private static readonly Pen _cargoPlatformPen = new Pen(_cargoPlatformBrush, 0);
+        private static readonly Brush _nonePlatformBrush = new SolidColorBrush(Color.FromRgb(235, 220, 185));
+        private static readonly Pen _nonePlatformPen = new Pen(_nonePlatformBrush, 0);
         private static readonly Brush _errorCrossBrush = new SolidColorBrush(Colors.DarkRed);
         private static readonly Pen _errorCrossPen = new Pen(_errorCrossBrush, 4);
 
@@ -28,8 +31,8 @@ namespace railway_monitor.Components.GraphicItems {
         private static readonly double _crossHandLength = 10;
         #endregion
 
-        private MiniPlatformType _platformType;
-        public MiniPlatformType PlatformType {
+        private PlatformItemType _platformType;
+        public PlatformItemType PlatformType {
             get {
                 return _platformType;
             }
@@ -137,7 +140,7 @@ namespace railway_monitor.Components.GraphicItems {
         public PlatformItem(Point initPos) : base() {
             Pos = initPos;
             Visibility = Visibility.Collapsed;
-            PlatformType = MiniPlatformType.PASSENGER;
+            PlatformType = PlatformItemType.PASSENGER;
         }
 
         public override void Reassign_OnPortMerged(object? sender, Port oldPort) {
@@ -153,11 +156,14 @@ namespace railway_monitor.Components.GraphicItems {
             PathGeometry platformGeometry = new PathGeometry([platform]);
 
             switch (PlatformType) {
-                case MiniPlatformType.PASSENGER:
+                case PlatformItemType.PASSENGER:
                     dc.DrawGeometry(_passengerPlatformBrush, _passengerPlatformPen, platformGeometry);
                     break;
-                case MiniPlatformType.CARGO:
+                case PlatformItemType.CARGO:
                     dc.DrawGeometry(_cargoPlatformBrush, _cargoPlatformPen, platformGeometry);
+                    break;
+                case PlatformItemType.NONE:
+                    dc.DrawGeometry(_nonePlatformBrush, _nonePlatformPen, platformGeometry);
                     break;
             }
             

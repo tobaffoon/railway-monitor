@@ -42,25 +42,17 @@ namespace railway_monitor.Tools.Actions {
         public static void ScrollMiniPlatformType(RailwayCanvasViewModel canvas) {
             StraightRailTrackItem? connectionSrt = canvas.ConnectionPlatformTrack;
             PlatformItem? platformItem = canvas.LatestGraphicItem as PlatformItem;
-            if (platformItem == null) return;
+            if (platformItem == null || connectionSrt != null && !platformItem.ConnectionErrorOccured) return;
 
             switch (platformItem.PlatformType) {
-                case PlatformItem.MiniPlatformType.PASSENGER:
-                    platformItem.PlatformType = PlatformItem.MiniPlatformType.CARGO;
+                case PlatformItem.PlatformItemType.PASSENGER:
+                    platformItem.PlatformType = PlatformItem.PlatformItemType.CARGO;
                     break;
-                case PlatformItem.MiniPlatformType.CARGO:
-                    platformItem.PlatformType = PlatformItem.MiniPlatformType.PASSENGER;
+                case PlatformItem.PlatformItemType.CARGO:
+                    platformItem.PlatformType = PlatformItem.PlatformItemType.NONE;
                     break;
-            }
-
-            if (connectionSrt == null || ConnectConditions.RailHasPlatform(connectionSrt)) return;
-            // Change underlying platform type if there is one
-            switch (platformItem.PlatformType) {
-                case PlatformItem.MiniPlatformType.PASSENGER:
-                    connectionSrt.PlatformType = StraightRailTrackItem.RailPlatformType.PASSENGER_HOVER;
-                    break;
-                case PlatformItem.MiniPlatformType.CARGO:
-                    connectionSrt.PlatformType = StraightRailTrackItem.RailPlatformType.CARGO_HOVER;
+                case PlatformItem.PlatformItemType.NONE:
+                    platformItem.PlatformType = PlatformItem.PlatformItemType.PASSENGER;
                     break;
             }
         }
