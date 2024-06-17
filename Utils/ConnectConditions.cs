@@ -10,6 +10,10 @@ namespace railway_monitor.Utils {
             if (switches != 0 && srts >= 3) return false;
             return true;
         }
+        private static bool OtherItemsPresent(Port connectionPort) {
+            int srtItems = connectionPort.GraphicItems.OfType<StraightRailTrackItem>().Count();
+            return connectionPort.GraphicItems.Count() - srtItems > 0;
+        }
         public static bool IsSwitchConnectable(Port connectionPort) {
             return connectionPort.TopologyItems.OfType<StraightRailTrackItem>().Count() == 3 && connectionPort.TopologyItems.OfType<SwitchItem>().Count() == 0;
         }
