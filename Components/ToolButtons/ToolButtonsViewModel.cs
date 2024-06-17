@@ -52,7 +52,7 @@ namespace railway_monitor.Components.ToolButtons
             srtButton.Checked += (object sender, RoutedEventArgs e) => SetCommands(
                 LeftClickToolActions.PlaceStraightRailTrack, 
                 MoveToolActions.MoveStraightRailTrack, 
-                RightClickToolActions.ScrollPlatformType, 
+                RightClickToolActions.ChangeRailDirection, 
                 UtilToolActions.NoCanvasAction,
                 UtilToolActions.NoWheelAction,
                 UtilToolActions.NoKeyboardAction);

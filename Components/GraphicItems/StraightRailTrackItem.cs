@@ -94,7 +94,17 @@ namespace railway_monitor.Components.GraphicItems {
                 return GraphicCalc.GetDistance(Start, End);
             }
         }
-        public bool StartsFromStart = true;
+
+        private bool _startsFromStart = true;
+        public bool StartsFromStart {
+            get {
+                return _startsFromStart;
+            }
+            set {
+                _startsFromStart = value;
+                Render();
+            }
+        }
 
         private Point _center = new Point(0, 0);
         public Point Center {
