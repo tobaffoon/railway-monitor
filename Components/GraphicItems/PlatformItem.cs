@@ -13,12 +13,13 @@ namespace railway_monitor.Components.GraphicItems {
 
         public static readonly double ConnectRadius = 7;
 
+        private static readonly Brush _platformOutlineBrush = new SolidColorBrush(Colors.Black);
         private static readonly Brush _passengerPlatformBrush = new SolidColorBrush(Color.FromRgb(185, 111, 92));
-        private static readonly Pen _passengerPlatformPen = new Pen(_passengerPlatformBrush, 0);
+        private static readonly Pen _passengerPlatformPen = new Pen(_platformOutlineBrush, 0.5);
         private static readonly Brush _cargoPlatformBrush = new SolidColorBrush(Color.FromRgb(112, 146, 189));
-        private static readonly Pen _cargoPlatformPen = new Pen(_cargoPlatformBrush, 0);
+        private static readonly Pen _cargoPlatformPen = new Pen(_platformOutlineBrush, 0.5);
         private static readonly Brush _nonePlatformBrush = new SolidColorBrush(Color.FromRgb(235, 220, 185));
-        private static readonly Pen _nonePlatformPen = new Pen(_nonePlatformBrush, 0);
+        private static readonly Pen _nonePlatformPen = new Pen(_platformOutlineBrush, 0.5);
         private static readonly Brush _errorCrossBrush = new SolidColorBrush(Colors.DarkRed);
         private static readonly Pen _errorCrossPen = new Pen(_errorCrossBrush, 4);
 
