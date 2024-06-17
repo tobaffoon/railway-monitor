@@ -13,8 +13,9 @@ namespace railway_monitor.Components.GraphicItems {
 
 
         private static readonly Brush _switchBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+        private static readonly Brush _switchArrowBrush = new SolidColorBrush(Colors.ForestGreen);
         private static readonly Pen _switchPen = new Pen(_switchBrush, 3);
-        private static readonly Pen _switchArrowPen = new Pen(_switchBrush, 1);
+        private static readonly Pen _switchArrowPen = new Pen(_switchArrowBrush, 1);
         private static readonly double _circleRadius = 3.0;
         private static readonly double _lineLength = 14.0;
 
