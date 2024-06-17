@@ -3,6 +3,7 @@ using railway_monitor.Utils;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
+using static railway_monitor.Components.GraphicItems.SwitchItem;
 
 namespace railway_monitor.Components.GraphicItems {
     public class StraightRailTrackItem : GraphicItem {
@@ -21,6 +22,8 @@ namespace railway_monitor.Components.GraphicItems {
 
         private static readonly Brush _railTrackBrush = new SolidColorBrush(Color.FromRgb(153, 255, 51));
         private static readonly Pen _railTrackPen = new Pen(_railTrackBrush, 6);
+        private static readonly Brush _railArrowBrush = new SolidColorBrush(Colors.Black);
+        private static readonly Pen _railArrowPen = new Pen(_railArrowBrush, 1);
         private static readonly Brush _passengerTrackBrush = new SolidColorBrush(Color.FromRgb(185, 111, 92));
         private static readonly Pen _passengerTrackPen = new Pen(_passengerTrackBrush, 0);
         private static readonly Brush _passengerHoverBrush = new SolidColorBrush(Color.FromArgb(100, 185, 111, 92));
@@ -30,13 +33,28 @@ namespace railway_monitor.Components.GraphicItems {
         private static readonly Brush _cargoHoverBrush = new SolidColorBrush(Color.FromArgb(100, 112, 146, 189));
         private static readonly Pen _cargoHoverPen = new Pen(_cargoHoverBrush, 0);
 
-        #region Draw params
+        static StraightRailTrackItem() {
+            _railArrowPen.StartLineCap = PenLineCap.Round;
+            _railArrowPen.EndLineCap = PenLineCap.Round;
+        }
+
+        #region Main line params
         private static readonly double _circleRadius = 4.21;
         private static readonly double _platformOffset = 10; // must be bigger than circle radius
         private static readonly double _platformTiltAngle = 1.048;  // radians = 60 deg
         private static readonly double _platformSideLength = 11;
         #endregion
-        private static readonly double _minDrawablePlatformLength = 2 * _platformOffset + 2 * _platformSideLength * Math.Cos(_platformTiltAngle);
+
+        #region Arrow params
+        private static readonly double _arrowDistance = 40.0;
+        private static readonly double _arrowLength = 10.0;
+        private static readonly double _arrowTipsLength = 4.0;
+        private static readonly double _arrowTipsAngle = 0.524;  // radians = 30 deg
+        #endregion
+
+        private static readonly double _minDrawableLength = Math.Min(
+            2 * _platformOffset + 2 * _platformSideLength * Math.Cos(_platformTiltAngle),
+            _arrowLength);
 
         private static Size circleSize = new Size(_circleRadius, _circleRadius);
 
@@ -76,6 +94,7 @@ namespace railway_monitor.Components.GraphicItems {
                 return GraphicCalc.GetDistance(Start, End);
             }
         }
+        public bool StartsFromStart = true;
 
         private Point _center = new Point(0, 0);
         public Point Center {
@@ -127,6 +146,48 @@ namespace railway_monitor.Components.GraphicItems {
                 return _platfromCornerFour;
             }
         }
+
+        private Point _arrowTailPos = new Point(0, 0);
+        private Point ArrowTailPos {
+            get {
+                if (StartsFromStart) {
+                    GraphicCalc.GetPointInDirection(ref _arrowTailPos, Center, Start, _arrowLength / 2);
+                }
+                else {
+                    GraphicCalc.GetPointInDirection(ref _arrowTailPos, Center, End, _arrowLength / 2);
+                }
+                return _arrowTailPos;
+            }
+        }
+
+        private Point _arrowHeadPos = new Point(0, 0);
+        private Point ArrowHeadPos {
+            get {
+                if (StartsFromStart) {
+                    GraphicCalc.GetPointInDirection(ref _arrowHeadPos, _arrowTailPos, End, _arrowLength);
+                }
+                else {
+                    GraphicCalc.GetPointInDirection(ref _arrowHeadPos, _arrowTailPos, Start, _arrowLength);
+                }
+                return _arrowHeadPos;
+            }
+        }
+
+        private Point _arrowTipOne = new Point(0, 0);
+        private Point ArrowTipOne {
+            get {
+                GraphicCalc.GetPointInDirection(ref _arrowTipOne, _arrowHeadPos, _arrowTailPos, _arrowTipsLength, _arrowTipsAngle);
+                return _arrowTipOne;
+            }
+        }
+        private Point _arrowTipTwo = new Point(0, 0);
+        private Point ArrowTipTwo {
+            get {
+                GraphicCalc.GetPointInDirection(ref _arrowTipTwo, _arrowHeadPos, _arrowTailPos, _arrowTipsLength, -_arrowTipsAngle);
+                return _arrowTipTwo;
+            }
+        }
+
         #endregion
 
         public StraightRailTrackItem(Point initPos) : base() {
@@ -177,8 +238,8 @@ namespace railway_monitor.Components.GraphicItems {
             dc.DrawEllipse(_railTrackBrush, _railTrackPen, Start, _circleRadius, _circleRadius);
 
             if (PlacementStatus != RailPlacementStatus.NOT_PLACED) {
-                if (Length >= _minDrawablePlatformLength) {
-                    // platform. NOTE: it's drawn before other parts to avoid boresome calculations of main line edge (it is replace with simple wide pen)
+                if (Length >= _minDrawableLength) {
+                    // platform. NOTE: it's drawn behind other parts to avoid boresome calculations of main line edge (it is replace with simple wide pen)
                     PathFigure platform = new PathFigure(PlatfromCornerOne, [
                         new LineSegment(PlatfromCornerTwo, true),
                         new LineSegment(PlatfromCornerThree, true),
@@ -203,6 +264,13 @@ namespace railway_monitor.Components.GraphicItems {
 
                 // main line
                 dc.DrawLine(_railTrackPen, Start, End);
+
+                if (Length >= _minDrawableLength) {
+                    // direction arrow 
+                    dc.DrawLine(_railArrowPen, ArrowTailPos, ArrowHeadPos);
+                    dc.DrawLine(_railArrowPen, _arrowHeadPos, ArrowTipOne);
+                    dc.DrawLine(_railArrowPen, _arrowHeadPos, ArrowTipTwo);
+                }
 
                 // second circle
                 dc.DrawEllipse(_railTrackBrush, _railTrackPen, End, _circleRadius, _circleRadius);
