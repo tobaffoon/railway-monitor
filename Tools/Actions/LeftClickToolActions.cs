@@ -49,6 +49,9 @@ namespace railway_monitor.Tools.Actions {
                 case StraightRailTrackItem.RailPlatformType.CARGO_HOVER:
                     srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.CARGO; 
                     break;
+                case StraightRailTrackItem.RailPlatformType.NONE_HOVER:
+                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.NONE_HOVER; 
+                    break;
             }
         }
         public static void PlaceSwitch(Tuple<RailwayCanvasViewModel, Point> args) {
