@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "railway-monitor", "railway-monitor.csproj", "{BA9ADE0E-F1F1-479A-9924-A3420B75ACA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "railway-monitor", "railway-monitor.csproj", "{BA9ADE0E-F1F1-479A-9924-A3420B75ACA8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolverLibrary", "..\train-manager\TrainManager\SolverLibrary\SolverLibrary.csproj", "{D31CD97F-3472-4B65-8822-71D29BED28B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{BA9ADE0E-F1F1-479A-9924-A3420B75ACA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA9ADE0E-F1F1-479A-9924-A3420B75ACA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA9ADE0E-F1F1-479A-9924-A3420B75ACA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D31CD97F-3472-4B65-8822-71D29BED28B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D31CD97F-3472-4B65-8822-71D29BED28B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D31CD97F-3472-4B65-8822-71D29BED28B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D31CD97F-3472-4B65-8822-71D29BED28B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
