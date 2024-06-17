@@ -5,11 +5,11 @@ namespace railway_monitor.Bases {
     public class Port {
         public event EventHandler<Port>? OnPortMerged;
 
-        public HashSet<GraphicItem> GraphicItems { get; }
+        public List<GraphicItem> GraphicItems { get; }
         public Point Pos;
 
         public Port(GraphicItem parentItem, Point startPos) {
-            GraphicItems = new HashSet<GraphicItem>();
+            GraphicItems = new List<GraphicItem>();
             AddItem(parentItem);
             Pos = startPos;
         }
