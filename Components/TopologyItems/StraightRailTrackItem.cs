@@ -1,9 +1,7 @@
 ﻿using railway_monitor.Bases;
 using railway_monitor.Utils;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
-using static railway_monitor.Components.GraphicItems.SwitchItem;
 
 namespace railway_monitor.Components.GraphicItems {
     public class StraightRailTrackItem : TopologyItem {
@@ -90,6 +88,26 @@ namespace railway_monitor.Components.GraphicItems {
                 PortEnd.Pos.X = value.X;
                 PortEnd.Pos.Y = value.Y;
                 Render();
+            }
+        }
+        public Point MovementStart {
+            get {
+                if (StartsFromStart) {
+                    return Start;
+                }
+                else {
+                    return End;
+                }
+            }
+        }
+        public Point MovementEnd {
+            get {
+                if (StartsFromStart) {
+                    return End;
+                }
+                else {
+                    return Start;
+                }
             }
         }
         public double Length {
