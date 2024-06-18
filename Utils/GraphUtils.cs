@@ -6,6 +6,8 @@ using SolverLibrary.Model.TrainInfo;
 
 namespace railway_monitor.Utils {
     public class GraphUtils {
+        private static int _defaultEdgeLength = 1;
+
         public static StationGraph CreateGraph(List<StraightRailTrackItem> rails) {
             Dictionary<Port, Vertex> vertexDict = new Dictionary<Port, Vertex>();
             Dictionary<StraightRailTrackItem, Edge> edgesDict = new Dictionary<StraightRailTrackItem, Edge>();
@@ -51,13 +53,14 @@ namespace railway_monitor.Utils {
                         break;
                 }
 
-                edgesDict[srt] = new Edge(edgeIdCounter, 1, vertexStart, vertexEnd, edgeType);
+                edgesDict[srt] = new Edge(edgeIdCounter, _defaultEdgeLength, vertexStart, vertexEnd, edgeType);
                 edgeIdCounter++;
             }
 
             // add edges links to each vertex
-            Edge curEdge;
+            StraightRailTrackItem[] portSrts;
             foreach (Port port in vertexDict.Keys) {
+                portSrts = port.GraphicItems.OfType<StraightRailTrackItem>().ToArray();
                 switch (vertexDict[port]) {
                     case InputVertex inputVertex:
                         inputVertex.SetEdge(edgesDict[port.GraphicItems.OfType<StraightRailTrackItem>().First()]);
@@ -66,11 +69,85 @@ namespace railway_monitor.Utils {
                         outputVertex.SetEdge(edgesDict[port.GraphicItems.OfType<StraightRailTrackItem>().First()]);
                         break;
                     case ConnectionVertex connectionVertex:
+                        #region Set edgeConnection considering srt direction
+                        if (portSrts[0].StartsFromStart) {
+                            if (portSrts[0].PortStart == port) {
+                                // the port is start to 0th edge. Thus this edge is outgoing
+                                connectionVertex.SetEdges(edgesDict[portSrts[1]], // incoming
+                                                          edgesDict[portSrts[0]]);// outgoing
+                            }
+                            else
+                            {
+                                connectionVertex.SetEdges(edgesDict[portSrts[0]], // incoming
+                                                          edgesDict[portSrts[1]]);// outgoing
+                            }
+                        }
+                        else {
+                            if (portSrts[0].PortStart == port) {
+                                // the port is end to 0th edge. Thus this edge is incoming
+                                connectionVertex.SetEdges(edgesDict[portSrts[0]], // incoming
+                                                          edgesDict[portSrts[1]]);// outgoing
+                            }
+                            else {
+                                connectionVertex.SetEdges(edgesDict[portSrts[1]], // incoming
+                                                          edgesDict[portSrts[0]]);// outgoing
+                            }
+                        }
+                        #endregion
+                        break;
+                    case DeadEndVertex deadEndVertex:
+                        deadEndVertex.SetEdge(edgesDict[port.GraphicItems.OfType<StraightRailTrackItem>().First()]);
+                        break;
+                    case TrafficLightVertex trafficLightVertex:
+                        #region Set edgeConnection considering srt direction
+                        if (portSrts[0].StartsFromStart) {
+                            if (portSrts[0].PortStart == port) {
+                                // the port is start to 0th edge. Thus this edge is outgoing
+                                trafficLightVertex.SetEdges(edgesDict[portSrts[1]], // incoming
+                                                          edgesDict[portSrts[0]]);// outgoing
+                            }
+                            else {
+                                trafficLightVertex.SetEdges(edgesDict[portSrts[0]], // incoming
+                                                          edgesDict[portSrts[1]]);// outgoing
+                            }
+                        }
+                        else {
+                            if (portSrts[0].PortStart == port) {
+                                // the port is end to 0th edge. Thus this edge is incoming
+                                trafficLightVertex.SetEdges(edgesDict[portSrts[0]], // incoming
+                                                          edgesDict[portSrts[1]]);// outgoing
+                            }
+                            else {
+                                trafficLightVertex.SetEdges(edgesDict[portSrts[1]], // incoming
+                                                            edgesDict[portSrts[0]]);// outgoing
+                            }
+                        }
+                        #endregion
+                        break;
+                    case SwitchVertex switchVertex:
+                        SwitchItem switchItem = port.GraphicItems.OfType<SwitchItem>().First();
+                        StraightRailTrackItem? sourceRail = portSrts.Where(srt => srt.PortStart == switchItem.PortSrc || srt.PortEnd == switchItem.PortSrc).FirstOrDefault();
+                        StraightRailTrackItem? dstOneRail = portSrts.Where(srt => srt.PortStart == switchItem.PortDstOne || srt.PortEnd == switchItem.PortDstOne).FirstOrDefault();
+                        StraightRailTrackItem? dstTwoRail = portSrts.Where(srt => srt.PortStart == switchItem.PortDstTwo || srt.PortEnd == switchItem.PortDstTwo).FirstOrDefault();
+                        if (sourceRail == null || dstOneRail == null || dstTwoRail == null) {
+                            throw new ArgumentException("Error retrieving srts connected to a switch");
+                        }
+
+                        switchVertex.SetEdges(edgesDict[sourceRail], edgesDict[dstOneRail], edgesDict[dstTwoRail]);
                         break;
                 }
             }
+
+            StationGraph graph = new StationGraph();
+            foreach (Vertex v in vertexDict.Values) {
+                graph.TryAddVerticeWithEdges(v);
+            }
+            return graph;
         }
         #region Port types
+        private static void SetEdgesOfConnection(Vertex vertex, Port port, Dictionary<StraightRailTrackItem, Edge> edgesDict) {
+
+        }
         private static bool IsPortInput(Port port) {
             return port.GraphicItems.OfType<ExternalTrackItem>().Where(externalItem  => externalItem.Type == ExternalTrackItem.ExternalTrackType.IN).Any();
         }
