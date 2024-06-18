@@ -35,7 +35,7 @@ namespace railway_monitor.Components.GraphicItems {
         private Point _arrowTailPos = new Point(0, 0);
         private Point ArrowTailPos {
             get {
-                GraphicCalc.GetPointInDirection(ref _arrowTailPos, Pos, _portSrc.Pos, _arrowDistance);
+                GraphicCalc.GetPointInDirection(ref _arrowTailPos, Pos, PortSrc.Pos, _arrowDistance);
                 return _arrowTailPos;
             }
         }
@@ -79,27 +79,27 @@ namespace railway_monitor.Components.GraphicItems {
         }
         #endregion
 
-        private Port _portSrc { get; set; }
+        public Port PortSrc { get; private set; }
         public Point SrcPos {
             get {
-                return _portSrc.Pos;
+                return PortSrc.Pos;
             }
             set {
-                _portSrc.Pos.X = value.X;
-                _portSrc.Pos.Y = value.Y;
+                PortSrc.Pos.X = value.X;
+                PortSrc.Pos.Y = value.Y;
                 Render();
             }
         }
 
-        private Port _portDstOne { get; set; }
-        private Port _portDstTwo { get; set; }
+        public Port PortDstOne { get; private set; }
+        public Port PortDstTwo { get; private set; }
         public Point DstPos {
             get {
                 if (SwitchedToOne) {
-                    return _portDstOne.Pos;
+                    return PortDstOne.Pos;
                 }
                 else {
-                    return _portDstTwo.Pos;
+                    return PortDstTwo.Pos;
                 }
             }
         }
@@ -132,9 +132,9 @@ namespace railway_monitor.Components.GraphicItems {
         public SwitchItem(Point initPos) : base() {
             Port = new Port(this, initPos);
 
-            _portSrc = new Port(this, new Point(0, 0));
-            _portDstOne = new Port(this, new Point(0, 0));
-            _portDstTwo = new Port(this, new Point(0, 0));
+            PortSrc = new Port(this, new Point(0, 0));
+            PortDstOne = new Port(this, new Point(0, 0));
+            PortDstTwo = new Port(this, new Point(0, 0));
         }
 
         public void Place(Port mainPort) {
@@ -175,15 +175,15 @@ namespace railway_monitor.Components.GraphicItems {
             connectedRails = connectedRails.Except([srcRail]);
 
             // set Source Port
-            _portSrc = source;
+            PortSrc = source;
 
             // set first Destination Port
             StraightRailTrackItem dstOne = connectedRails.ElementAt(0);
-            _portDstOne = dstOne.GetOtherPort(Port);
+            PortDstOne = dstOne.GetOtherPort(Port);
 
             // set second Destination Port
             StraightRailTrackItem dstTwo = connectedRails.ElementAt(1);
-            _portDstTwo = dstTwo.GetOtherPort(Port);
+            PortDstTwo = dstTwo.GetOtherPort(Port);
 
             SwitchedToOne = true;
 
