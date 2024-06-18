@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Media;
 
 namespace railway_monitor.Components.GraphicItems {
-    public class SignalItem : GraphicItem {
+    public class SignalItem : TopologyItem {
         public enum SignalPlacementStatus {
             ERROR,
             NOT_PLACED,

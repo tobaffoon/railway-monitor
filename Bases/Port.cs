@@ -5,21 +5,21 @@ namespace railway_monitor.Bases {
     public class Port {
         public event EventHandler<Port>? OnPortMerged;
 
-        public HashSet<GraphicItem> GraphicItems { get; }
+        public HashSet<TopologyItem> TopologyItems { get; }
         public Point Pos;
 
-        public Port(GraphicItem parentItem, Point startPos) {
-            GraphicItems = new HashSet<GraphicItem>();
+        public Port(TopologyItem parentItem, Point startPos) {
+            TopologyItems = new HashSet<TopologyItem>();
             AddItem(parentItem);
             Pos = startPos;
         }
 
-        public void AddItem(GraphicItem item) {
-            GraphicItems.Add(item);
+        public void AddItem(TopologyItem item) {
+            TopologyItems.Add(item);
             OnPortMerged += item.Reassign_OnPortMerged;
         }
-        public void RemoveItem(GraphicItem item) {
-            GraphicItems.Remove(item);
+        public void RemoveItem(TopologyItem item) {
+            TopologyItems.Remove(item);
             OnPortMerged -= item.Reassign_OnPortMerged;
         }
 
@@ -27,24 +27,24 @@ namespace railway_monitor.Bases {
             // reassign port link
             other.OnPortMerged?.Invoke(this, other);
             // move items to new port's list
-            foreach (GraphicItem item in other.GraphicItems) {
+            foreach (TopologyItem item in other.TopologyItems) {
                 this.AddItem(item);
             }
             // move items from old port's list
-            foreach (GraphicItem item in this.GraphicItems) {
+            foreach (TopologyItem item in this.TopologyItems) {
                 other.RemoveItem(item);
             }
 
         }
 
-        private void RenderGraphicItemsFlat() {
-            foreach (GraphicItem item in GraphicItems) {
+        private void RenderTopologyItemsFlat() {
+            foreach (TopologyItem item in TopologyItems) {
                 item.Render();
             }
         }
-        public void RenderGraphicItems() {
+        public void RenderTopologyGraphicItems() {
             List<Port> neighbourPorts = new List<Port>();
-            foreach (GraphicItem item in GraphicItems) {
+            foreach (TopologyItem item in TopologyItems) {
                 item.Render();
                 if (item is StraightRailTrackItem srt) {
                     // and neighbours to update them (for switches especially)
@@ -53,7 +53,7 @@ namespace railway_monitor.Bases {
             }
 
             foreach (Port neighbourPort in neighbourPorts) {
-                neighbourPort.RenderGraphicItemsFlat();
+                neighbourPort.RenderTopologyItemsFlat();
             }
         }
 

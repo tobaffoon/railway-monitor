@@ -9,14 +9,14 @@ namespace railway_monitor.Tools.Actions {
             Key pressedKey = args.Item2;
             switch (pressedKey) {
                 case Key.Escape:
-                    canvas.DeleteLatestGraphicItem();
+                    canvas.DeleteLatestTopologyItem();
                     break;
             }
         }
         public static void RotateExternalTrack(Tuple<RailwayCanvasViewModel, Key> args) {
             RailwayCanvasViewModel canvas = args.Item1;
             Key pressedKey = args.Item2;
-            ExternalTrackItem? externalTrackItem = canvas.LatestGraphicItem as ExternalTrackItem;
+            ExternalTrackItem? externalTrackItem = canvas.LatestTopologyItem as ExternalTrackItem;
             if (externalTrackItem == null) {
                 return;
             }
@@ -39,7 +39,7 @@ namespace railway_monitor.Tools.Actions {
         public static void RotateDeadend(Tuple<RailwayCanvasViewModel, Key> args) {
             RailwayCanvasViewModel canvas = args.Item1;
             Key pressedKey = args.Item2;
-            DeadendItem? deadendItem = canvas.LatestGraphicItem as DeadendItem;
+            DeadendItem? deadendItem = canvas.LatestTopologyItem as DeadendItem;
             if (deadendItem == null) {
                 return;
             }

@@ -18,7 +18,5 @@ namespace railway_monitor.Bases {
             Render(drawingContext);
             drawingContext.Close();
         }
-
-        public abstract void Reassign_OnPortMerged(object? sender, Port oldPort);
     }
 }
