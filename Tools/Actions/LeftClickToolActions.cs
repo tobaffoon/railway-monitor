@@ -1,7 +1,9 @@
 ﻿using railway_monitor.Bases;
+using railway_monitor.Components;
 using railway_monitor.Components.GraphicItems;
 using railway_monitor.Components.RailwayCanvas;
 using railway_monitor.Utils;
+using SolverLibrary.Model.TrainInfo;
 using System.Windows;
 
 namespace railway_monitor.Tools.Actions {
@@ -154,6 +156,8 @@ namespace railway_monitor.Tools.Actions {
             if (connectionPort == null) return;
 
             canvas.DraggedPort = connectionPort;
+        }
+        public static void TestActions(Tuple<RailwayCanvasViewModel, Point> args) {
         }
     }
 }

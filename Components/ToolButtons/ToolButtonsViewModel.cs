@@ -130,6 +130,18 @@ namespace railway_monitor.Components.ToolButtons
                 UtilToolActions.NoWheelAction,
                 UtilToolActions.NoKeyboardAction);
 
+            RadioButton testButton = new RadioButton {
+                GroupName = ToolsGroupName,
+                Content = "Test",
+            };
+            testButton.Checked += (object sender, RoutedEventArgs e) => SetCommands(
+                LeftClickToolActions.TestActions, 
+                UtilToolActions.NoMouseAction, 
+                UtilToolActions.NoCanvasAction,
+                UtilToolActions.NoCanvasAction,
+                UtilToolActions.NoWheelAction,
+                UtilToolActions.NoKeyboardAction);
+
             ToolButtonsList.AddRange([
                 srtButton,
                 platformButton,
@@ -137,7 +149,8 @@ namespace railway_monitor.Components.ToolButtons
                 signalButton,
                 deadEndButton,
                 externalTrackButton,
-                dragButton
+                dragButton,
+                testButton
                 ]);
 
             srtButton.IsChecked = true;
