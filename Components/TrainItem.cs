@@ -20,52 +20,75 @@ namespace railway_monitor.Components {
 
         #region Drawing params
         private static readonly double _triangleSide = 6;
-        private static readonly double _triangleAngle = 0.542;  // radians = 60 deg
+        private static readonly double _triangleAngle = 0.542;  // radians = 30 deg
         #endregion
 
         #region Drawing Points
         private Point _triangleBase = new Point(0, 0);
         private Point TriangleBase {
             get {
-                GraphicCalc.GetPointInDirection(ref _triangleBase, CurrentTrack.MovementStart, CurrentTrack.MovementEnd, CurrentTrack.Length * TrackProgress);
+                GraphicCalc.GetPointInDirection(ref _triangleBase, FlowCurrentTrack.MovementStart, FlowCurrentTrack.MovementEnd, FlowCurrentTrack.Length * FlowTrackProgress);
                 return _triangleBase; 
             } 
         }
         private Point _triangleSideOne = new Point(0, 0);
         private Point TriangleSideOne {
             get {
-                GraphicCalc.GetPointInDirection(ref _triangleSideOne, _triangleBase, CurrentTrack.MovementStart, _triangleSide, _triangleAngle);
+                GraphicCalc.GetPointInDirection(ref _triangleSideOne, _triangleBase, FlowCurrentTrack.MovementStart, _triangleSide, _triangleAngle);
                 return _triangleSideOne;
             }
         }
         private Point _triangleSideTwo = new Point(0, 0);
         private Point TriangleSideTwo {
             get {
-                GraphicCalc.GetPointInDirection(ref _triangleSideTwo, _triangleBase, CurrentTrack.MovementStart, _triangleSide, -_triangleAngle);
+                GraphicCalc.GetPointInDirection(ref _triangleSideTwo, _triangleBase, FlowCurrentTrack.MovementStart, _triangleSide, -_triangleAngle);
                 return _triangleSideTwo;
             }
         }
         #endregion
 
+        #region LastRealPos info
         private StraightRailTrackItem _currentTrack;
         public StraightRailTrackItem CurrentTrack {
-            get { 
-                return _currentTrack;
-            }
             set {
                 _currentTrack = value;
-                Render();
+                _flowCurrentTrack = value;
             }
         }
 
         private double _trackProgress;
         public double TrackProgress {
-            get {
-                return _trackProgress;
-            }
             set {
                 if (0.1 <= value && value <= 1) {
                     _trackProgress = value;
+                    _flowTrackProgress = value;
+                }
+                else {
+                    throw new InvalidDataException("Track progress of train " + Id + " attempted to be set outside of [0.1; 1]");
+                }
+            }
+        }
+        #endregion
+        #region FlowPos info
+        private StraightRailTrackItem _flowCurrentTrack;
+        public StraightRailTrackItem FlowCurrentTrack {
+            get {
+                return _flowCurrentTrack;
+            }
+            set {
+                _flowCurrentTrack = value;
+                Render();
+            }
+        }
+
+        private double _flowTrackProgress;
+        public double FlowTrackProgress {
+            get {
+                return _flowTrackProgress;
+            }
+            set {
+                if (0.1 <= value && value <= 1) {
+                    _flowTrackProgress = value;
                 }
                 else {
                     throw new InvalidDataException("Track progress of train " + Id + " attempted to be set outside of [0.1; 1]");
@@ -73,6 +96,7 @@ namespace railway_monitor.Components {
                 Render();
             }
         }
+        #endregion
 
         public int Id { get; }
 
