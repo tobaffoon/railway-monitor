@@ -20,8 +20,4 @@
     <ProjectReference Include="..\train-manager\TrainManager\SolverLibrary\SolverLibrary.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="MVVM\Models\UpdatePackages\" />
-  </ItemGroup>
-
 </Project>
