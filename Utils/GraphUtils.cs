@@ -16,7 +16,7 @@ namespace railway_monitor.Utils {
         /// Created StationGraph and dictionaries to map its vertices and edges to topology items.
         /// </returns>
         /// <exception cref="ArgumentException"></exception>
-        public static Tuple<StationGraph, Dictionary<Vertex, TopologyItem>, Dictionary<Edge, StraightRailTrackItem>> CreateGraph(List<StraightRailTrackItem> rails) {
+        public static Tuple<StationGraph, Dictionary<int, TopologyItem>, Dictionary<int, StraightRailTrackItem>> CreateGraph(List<StraightRailTrackItem> rails) {
             Dictionary<Port, Vertex> vertexDict = new Dictionary<Port, Vertex>();
             Dictionary<StraightRailTrackItem, Edge> edgesDict = new Dictionary<StraightRailTrackItem, Edge>();
             int vertexIdCounter = 0;
@@ -66,19 +66,19 @@ namespace railway_monitor.Utils {
             }
 
             // add edges links to each vertex
-            // also calculate vertex -> topology item dictionary
+            // also calculate vertex id -> topology item dictionary
             StraightRailTrackItem[] portSrts;
-            Dictionary<Vertex, TopologyItem> topologyDict = new Dictionary<Vertex, TopologyItem>(vertexIdCounter); // capacity is not bigger than number of vertices (connection vertices does not map to any item)
+            Dictionary<int, TopologyItem> topologyDict = new Dictionary<int, TopologyItem>(vertexIdCounter); // capacity is not bigger than number of vertices (connection vertices does not map to any item)
             foreach (Port port in vertexDict.Keys) {
                 portSrts = port.TopologyItems.OfType<StraightRailTrackItem>().ToArray();
                 switch (vertexDict[port]) {
                     case InputVertex inputVertex:
                         inputVertex.SetEdge(edgesDict[port.TopologyItems.OfType<StraightRailTrackItem>().First()]);
-                        topologyDict[inputVertex] = port.TopologyItems.OfType<ExternalTrackItem>().First();
+                        topologyDict[inputVertex.getId()] = port.TopologyItems.OfType<ExternalTrackItem>().First();
                         break;
                     case OutputVertex outputVertex:
                         outputVertex.SetEdge(edgesDict[port.TopologyItems.OfType<StraightRailTrackItem>().First()]);
-                        topologyDict[outputVertex] = port.TopologyItems.OfType<ExternalTrackItem>().First();
+                        topologyDict[outputVertex.getId()] = port.TopologyItems.OfType<ExternalTrackItem>().First();
                         break;
                     case ConnectionVertex connectionVertex:
                         #region Set edgeConnection considering srt direction
@@ -109,7 +109,7 @@ namespace railway_monitor.Utils {
                         break;
                     case DeadEndVertex deadEndVertex:
                         deadEndVertex.SetEdge(edgesDict[port.TopologyItems.OfType<StraightRailTrackItem>().First()]);
-                        topologyDict[deadEndVertex] = port.TopologyItems.OfType<DeadendItem>().First();
+                        topologyDict[deadEndVertex.getId()] = port.TopologyItems.OfType<DeadendItem>().First();
                         break;
                     case TrafficLightVertex trafficLightVertex:
                         #region Set edgeConnection considering srt direction
@@ -137,7 +137,7 @@ namespace railway_monitor.Utils {
                         }
                         #endregion
 
-                        topologyDict[trafficLightVertex] = port.TopologyItems.OfType<SignalItem>().First();
+                        topologyDict[trafficLightVertex.getId()] = port.TopologyItems.OfType<SignalItem>().First();
                         break;
                     case SwitchVertex switchVertex:
                         SwitchItem switchItem = port.TopologyItems.OfType<SwitchItem>().First();
@@ -149,7 +149,7 @@ namespace railway_monitor.Utils {
                         }
 
                         switchVertex.SetEdges(edgesDict[sourceRail], edgesDict[dstOneRail], edgesDict[dstTwoRail]);
-                        topologyDict[switchVertex] = port.TopologyItems.OfType<SwitchItem>().First();
+                        topologyDict[switchVertex.getId()] = port.TopologyItems.OfType<SwitchItem>().First();
                         break;
                 }
             }
@@ -158,7 +158,7 @@ namespace railway_monitor.Utils {
             foreach (Vertex v in vertexDict.Values) {
                 graph.TryAddVerticeWithEdges(v);
             }
-            return Tuple.Create(graph, topologyDict, edgesDict.ToDictionary(x => x.Value, x => x.Key)); // reverse edgesDict to map Edges to SRTs
+            return Tuple.Create(graph, topologyDict, edgesDict.ToDictionary(x => x.Value.getId(), x => x.Key)); // reverse edgesDict to map Edges to SRTs
         }
         #region Port types
         private static void SetEdgesOfConnection(Vertex vertex, Port port, Dictionary<StraightRailTrackItem, Edge> edgesDict) {

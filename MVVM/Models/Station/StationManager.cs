@@ -12,14 +12,14 @@ namespace railway_monitor.MVVM.Models.Station
     {
         private RailwayCanvasViewModel canvas;
         private StationGraph stationGraph;
-        private Dictionary<Vertex, TopologyItem> topologyVertexDict;
-        private Dictionary<Edge, StraightRailTrackItem> topologyEdgeDict;
+        private Dictionary<int, TopologyItem> topologyVertexDict;
+        private Dictionary<int, StraightRailTrackItem> topologyEdgeDict;
         private Dictionary<int, TrainItem> trains;
 
         public StationManager(RailwayCanvasViewModel canvas)
         {
             this.canvas = canvas;
-            Tuple<StationGraph, Dictionary<Vertex, TopologyItem>, Dictionary<Edge, StraightRailTrackItem>> graphInfo = GraphUtils.CreateGraph(canvas.Rails);
+            Tuple<StationGraph, Dictionary<int, TopologyItem>, Dictionary<int, StraightRailTrackItem>> graphInfo = GraphUtils.CreateGraph(canvas.Rails);
             stationGraph = graphInfo.Item1;
             topologyVertexDict = graphInfo.Item2;
             topologyEdgeDict = graphInfo.Item3;
