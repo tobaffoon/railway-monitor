@@ -13,6 +13,8 @@ namespace railway_monitor.Components {
             NONE
         }
 
+        private static double _minDrawableProgress = 1e-10;
+
         private static readonly Brush _trainBrush = new SolidColorBrush(Colors.Black);
         private static readonly Brush _trainBrokenBrush = new SolidColorBrush(Colors.DarkRed);
         private static readonly Brush _trainOutlinesBrush = new SolidColorBrush(Colors.LightGoldenrodYellow);
@@ -87,8 +89,13 @@ namespace railway_monitor.Components {
                 return _flowTrackProgress;
             }
             set {
-                if (0.1 <= value && value <= 1) {
-                    _flowTrackProgress = value;
+                if (0 <= value && value <= 1) {
+                    if(value <= _minDrawableProgress) {
+                        _flowTrackProgress = _minDrawableProgress;
+                    }
+                    else {
+                        _flowTrackProgress = value;
+                    }
                 }
                 else {
                     throw new InvalidDataException("Track progress of train " + Id + " attempted to be set outside of [0.1; 1]");
@@ -115,8 +122,8 @@ namespace railway_monitor.Components {
             Id = id;
             _currentTrack = startTrack;
             _flowCurrentTrack = startTrack;
-            _trackProgress = 0.1;
-            _flowTrackProgress = 0.1;
+            _trackProgress = _minDrawableProgress;
+            _flowTrackProgress = _minDrawableProgress;
         }
         protected override void Render(DrawingContext dc) {
             PathFigure triangle = new PathFigure(TriangleBase, [
