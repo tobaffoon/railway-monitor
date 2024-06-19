@@ -14,6 +14,7 @@ namespace railway_monitor.Components {
         }
 
         private static readonly Brush _trainBrush = new SolidColorBrush(Colors.Black);
+        private static readonly Brush _trainBrokenBrush = new SolidColorBrush(Colors.DarkRed);
         private static readonly Brush _trainOutlinesBrush = new SolidColorBrush(Colors.LightGoldenrodYellow);
         private static readonly Pen _trainPen = new Pen(_trainOutlinesBrush, 0.1);
 
@@ -75,6 +76,17 @@ namespace railway_monitor.Components {
 
         public int Id { get; }
 
+        private bool _isBroken = false;
+        public bool IsBroken { 
+            get {
+                return _isBroken;
+            }
+            set {
+                _isBroken = value;
+                Render();
+            }
+        } 
+
         public TrainItem(int id, StraightRailTrackItem startTrack) {
             Id = id;
             _currentTrack = startTrack;
@@ -86,7 +98,12 @@ namespace railway_monitor.Components {
                 new LineSegment(TriangleSideTwo, true),
                 ], true);
             PathGeometry triangleGeometry = new PathGeometry([triangle]);
-            dc.DrawGeometry(_trainBrush, _trainPen, triangleGeometry);
+            if(!IsBroken) {
+                dc.DrawGeometry(_trainBrush, _trainPen, triangleGeometry);
+            }
+            else {
+                dc.DrawGeometry(_trainBrokenBrush, _trainPen, triangleGeometry);
+            }
         }
     }
 }
