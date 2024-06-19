@@ -89,6 +89,26 @@ namespace railway_monitor.Components.GraphicItems {
                 Render();
             }
         }
+        public Port MovementPortStart {
+            get {
+                if (StartsFromStart) {
+                    return PortStart;
+                }
+                else {
+                    return PortEnd;
+                }
+            }
+        }
+        public Port MovementPortEnd {
+            get {
+                if (StartsFromStart) {
+                    return PortEnd;
+                }
+                else {
+                    return PortStart;
+                }
+            }
+        }
         public Point MovementStart {
             get {
                 if (StartsFromStart) {
