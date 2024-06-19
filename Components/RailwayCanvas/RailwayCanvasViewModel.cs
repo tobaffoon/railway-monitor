@@ -27,6 +27,11 @@ namespace railway_monitor.Components.RailwayCanvas {
 
         public ObservableCollection<GraphicItem> GraphicItems { get; }
         public TopologyItem? LatestTopologyItem { get; set; }
+        public List<StraightRailTrackItem> Rails {
+            get {
+                return GraphicItems.OfType<StraightRailTrackItem>().ToList();
+            }
+        }
 
         private TopologyItem[] permanentItems;
 
