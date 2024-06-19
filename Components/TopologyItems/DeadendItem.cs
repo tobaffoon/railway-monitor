@@ -37,6 +37,7 @@ namespace railway_monitor.Components.GraphicItems {
         private static readonly Pen _deadendPen = new Pen(_deadendBrush, _deadendWidth);
         private static readonly Brush _deadendPortBrush = new SolidColorBrush(Color.FromRgb(153, 255, 51));
         private static readonly Pen _deadendPortPen = new Pen(_deadendPortBrush, 0);
+        private static readonly Pen _deadendBrokenPen = new Pen(brokenBrush, _deadendWidth);
 
         #region Drawing points 
         private Point _cornerOne = new Point(0, 0);
@@ -102,6 +103,17 @@ namespace railway_monitor.Components.GraphicItems {
             }
         }
 
+        private bool _isBroken = false;
+        public bool IsBroken {
+            get {
+                return _isBroken;
+            }
+            set {
+                _isBroken = value;
+                Render();
+            }
+        }
+
         public DeadendItem(Point initPoint) : base() {
             Port = new Port(this, initPoint);
         }
@@ -122,7 +134,12 @@ namespace railway_monitor.Components.GraphicItems {
                 dc.DrawEllipse(_deadendPortBrush, _deadendPortPen, Pos, _portCircleRadius, _portCircleRadius);
             }
 
-            dc.DrawLine(_deadendPen, CornerOne, CornerTwo);
+            if (IsBroken) {
+                dc.DrawLine(_deadendBrokenPen, CornerOne, CornerTwo);
+            }
+            else {
+                dc.DrawLine(_deadendPen, CornerOne, CornerTwo);
+            }
         }
     }
 }
