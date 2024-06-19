@@ -14,7 +14,7 @@ namespace railway_monitor.Utils {
             return connectionPort.TopologyItems.OfType<StraightRailTrackItem>().Count() == 3 && connectionPort.TopologyItems.OfType<SwitchItem>().Count() == 0;
         }
         public static bool IsSignalConnectable(Port connectionPort) {
-            return connectionPort.TopologyItems.OfType<StraightRailTrackItem>().Count() >= 2 && connectionPort.TopologyItems.OfType<SignalItem>().Count() == 0;
+            return connectionPort.TopologyItems.OfType<StraightRailTrackItem>().Count() == 2 && connectionPort.TopologyItems.OfType<SignalItem>().Count() == 0;
         }
         public static bool IsExternalTrackConnectable(Port connectionPort) {
             return connectionPort.TopologyItems.OfType<ExternalTrackItem>().Count() == 0;
