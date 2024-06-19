@@ -31,21 +31,18 @@ namespace railway_monitor.Utils {
                 portEnd = srt.PortEnd;
 
                 // add starting port as vertex, if not present
-                if (vertexDict.ContainsKey(portStart)) {
-                    vertexStart = vertexDict[portStart];
-                }
-                else {
-                    vertexStart = CreateVertexFromPort(portStart, vertexIdCounter);
+                if (!vertexDict.ContainsKey(portStart)) {
+                    vertexDict[portStart] = CreateVertexFromPort(portStart, vertexIdCounter);
                     vertexIdCounter++;
                 }
+                vertexStart = vertexDict[portStart];
+
                 // add ending port as vertex, if not present
-                if (vertexDict.ContainsKey(portEnd)) {
-                    vertexEnd = vertexDict[portEnd];
-                }
-                else {
-                    vertexEnd = CreateVertexFromPort(portEnd, vertexIdCounter);
+                if (!vertexDict.ContainsKey(portEnd)) {
+                    vertexDict[portEnd] = CreateVertexFromPort(portEnd, vertexIdCounter);
                     vertexIdCounter++;
                 }
+                vertexEnd = vertexDict[portEnd];
 
                 // map type of platform
                 switch (srt.PlatformType) {
