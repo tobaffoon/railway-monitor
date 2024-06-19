@@ -11,6 +11,10 @@ namespace railway_monitor.Components.GraphicItems {
             SOURCE_SET
         }
 
+        public enum SwitchDirection {
+            FIRST,
+            SECOND
+        }
 
         private static readonly Brush _switchBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
         private static readonly Brush _switchArrowBrush = new SolidColorBrush(Colors.ForestGreen);
@@ -95,7 +99,7 @@ namespace railway_monitor.Components.GraphicItems {
         public Port PortDstTwo { get; private set; }
         public Point DstPos {
             get {
-                if (SwitchedToOne) {
+                if (Direction == SwitchDirection.FIRST) {
                     return PortDstOne.Pos;
                 }
                 else {
@@ -104,18 +108,18 @@ namespace railway_monitor.Components.GraphicItems {
             }
         }
 
-        private bool _switchedToTwo = true;
-        public bool SwitchedToOne {
+        public SwitchPlacementStatus PlacementStatus { get; private set; } = SwitchPlacementStatus.NOT_PLACED;
+
+        private SwitchDirection _direction = SwitchDirection.FIRST;
+        public SwitchDirection Direction {
             get {
-                return _switchedToTwo;
+                return _direction;
             }
             set {
-                _switchedToTwo = value;
+                _direction = value;
                 Render();
             }
         }
-
-        public SwitchPlacementStatus PlacementStatus { get; private set; } = SwitchPlacementStatus.NOT_PLACED;
 
         public Port Port { get; private set; }
         public Point Pos {
@@ -185,7 +189,7 @@ namespace railway_monitor.Components.GraphicItems {
             StraightRailTrackItem dstTwo = connectedRails.ElementAt(1);
             PortDstTwo = dstTwo.GetOtherPort(Port);
 
-            SwitchedToOne = true;
+            Direction = SwitchDirection.FIRST;
 
             PlacementStatus = SwitchPlacementStatus.SOURCE_SET;
             Render();
