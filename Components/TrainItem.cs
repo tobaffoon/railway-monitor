@@ -13,7 +13,7 @@ namespace railway_monitor.Components {
             NONE
         }
 
-        private static double _minDrawableProgress = 1e-10;
+        public static double minDrawableProgress = 1e-10;
 
         private static readonly Brush _trainBrush = new SolidColorBrush(Colors.Black);
         private static readonly Brush _trainBrokenBrush = new SolidColorBrush(Colors.DarkRed);
@@ -90,8 +90,8 @@ namespace railway_monitor.Components {
             }
             set {
                 if (0 <= value && value <= 1) {
-                    if(value <= _minDrawableProgress) {
-                        _flowTrackProgress = _minDrawableProgress;
+                    if(value <= minDrawableProgress) {
+                        _flowTrackProgress = minDrawableProgress;
                     }
                     else {
                         _flowTrackProgress = value;
@@ -122,8 +122,8 @@ namespace railway_monitor.Components {
             Id = id;
             _currentTrack = startTrack;
             _flowCurrentTrack = startTrack;
-            _trackProgress = _minDrawableProgress;
-            _flowTrackProgress = _minDrawableProgress;
+            _trackProgress = minDrawableProgress;
+            _flowTrackProgress = minDrawableProgress;
         }
         protected override void Render(DrawingContext dc) {
             PathFigure triangle = new PathFigure(TriangleBase, [
