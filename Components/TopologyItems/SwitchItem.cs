@@ -108,6 +108,10 @@ namespace railway_monitor.Components.GraphicItems {
             }
         }
 
+        public StraightRailTrackItem SrcTrack {  get; private set; }
+        public StraightRailTrackItem DstOneTrack {  get; private set; }
+        public StraightRailTrackItem DstTwoTrack {  get; private set; }
+
         public SwitchPlacementStatus PlacementStatus { get; private set; } = SwitchPlacementStatus.NOT_PLACED;
 
         private SwitchDirection _direction = SwitchDirection.FIRST;
@@ -171,7 +175,7 @@ namespace railway_monitor.Components.GraphicItems {
                 return;
             }
             var connectedRails = Port.TopologyItems.OfType<StraightRailTrackItem>();
-            var srcRail = connectedRails.Where((rail) => rail.PortStart == source || rail.PortEnd == source).FirstOrDefault();
+            StraightRailTrackItem? srcRail = connectedRails.Where((rail) => rail.PortStart == source || rail.PortEnd == source).FirstOrDefault();
             if (srcRail == null) {
                 // user has chosen port not out of three connected ports
                 return;
@@ -192,6 +196,10 @@ namespace railway_monitor.Components.GraphicItems {
             Direction = SwitchDirection.FIRST;
 
             PlacementStatus = SwitchPlacementStatus.SOURCE_SET;
+            SrcTrack = srcRail;
+            DstOneTrack = dstOne;
+            DstTwoTrack = dstTwo;
+
             Render();
         }
 

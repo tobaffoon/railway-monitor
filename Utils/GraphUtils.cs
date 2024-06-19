@@ -138,14 +138,8 @@ namespace railway_monitor.Utils {
                         break;
                     case SwitchVertex switchVertex:
                         SwitchItem switchItem = port.TopologyItems.OfType<SwitchItem>().First();
-                        StraightRailTrackItem? sourceRail = portSrts.Where(srt => srt.PortStart == switchItem.PortSrc || srt.PortEnd == switchItem.PortSrc).FirstOrDefault();
-                        StraightRailTrackItem? dstOneRail = portSrts.Where(srt => srt.PortStart == switchItem.PortDstOne || srt.PortEnd == switchItem.PortDstOne).FirstOrDefault();
-                        StraightRailTrackItem? dstTwoRail = portSrts.Where(srt => srt.PortStart == switchItem.PortDstTwo || srt.PortEnd == switchItem.PortDstTwo).FirstOrDefault();
-                        if (sourceRail == null || dstOneRail == null || dstTwoRail == null) {
-                            throw new ArgumentException("Error retrieving srts connected to a switch");
-                        }
 
-                        switchVertex.SetEdges(edgesDict[sourceRail], edgesDict[dstOneRail], edgesDict[dstTwoRail]);
+                        switchVertex.SetEdges(edgesDict[switchItem.SrcTrack], edgesDict[switchItem.DstOneTrack], edgesDict[switchItem.DstTwoTrack]);
                         topologyDict[switchVertex.getId()] = port.TopologyItems.OfType<SwitchItem>().First();
                         break;
                 }
