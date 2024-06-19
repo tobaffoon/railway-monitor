@@ -1,4 +1,6 @@
 ﻿using railway_monitor.Components.GraphicItems;
+using SolverLibrary.Model.Graph.VertexTypes;
+using SolverLibrary.Model.Graph;
 using System.Windows;
 
 namespace railway_monitor.Bases {
@@ -56,6 +58,27 @@ namespace railway_monitor.Bases {
                 neighbourPort.RenderTopologyItemsFlat();
             }
         }
+
+        #region Port types
+        public static bool IsPortInput(Port port) {
+            return port.TopologyItems.OfType<ExternalTrackItem>().Where(externalItem => externalItem.Type == ExternalTrackItem.ExternalTrackType.IN).Any();
+        }
+        public static bool IsPortOutput(Port port) {
+            return port.TopologyItems.OfType<ExternalTrackItem>().Where(externalItem => externalItem.Type == ExternalTrackItem.ExternalTrackType.OUT).Any();
+        }
+        public static bool IsPortConnection(Port port) {
+            return port.TopologyItems.OfType<StraightRailTrackItem>().Count() == port.TopologyItems.Count;
+        }
+        public static bool IsPortDeadend(Port port) {
+            return port.TopologyItems.OfType<DeadendItem>().Any();
+        }
+        public static bool IsPortSwitch(Port port) {
+            return port.TopologyItems.OfType<SwitchItem>().Any();
+        }
+        public static bool IsPortSignal(Port port) {
+            return port.TopologyItems.OfType<SignalItem>().Any();
+        }
+        #endregion
 
         public override string ToString() {
             return "<Port " + GetHashCode() + ">";

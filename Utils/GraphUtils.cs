@@ -157,47 +157,24 @@ namespace railway_monitor.Utils {
             }
             return Tuple.Create(graph, topologyDict, edgesDict.ToDictionary(x => x.Value.getId(), x => x.Key)); // reverse edgesDict to map Edges to SRTs
         }
-        #region Port types
-        private static void SetEdgesOfConnection(Vertex vertex, Port port, Dictionary<StraightRailTrackItem, Edge> edgesDict) {
-
-        }
-        private static bool IsPortInput(Port port) {
-            return port.TopologyItems.OfType<ExternalTrackItem>().Where(externalItem  => externalItem.Type == ExternalTrackItem.ExternalTrackType.IN).Any();
-        }
-        private static bool IsPortOutput(Port port) {
-            return port.TopologyItems.OfType<ExternalTrackItem>().Where(externalItem  => externalItem.Type == ExternalTrackItem.ExternalTrackType.OUT).Any();
-        }
-        private static bool IsPortConnection(Port port) {
-            return port.TopologyItems.OfType<StraightRailTrackItem>().Count() == port.TopologyItems.Count;
-        }
-        private static bool IsPortDeadend(Port port) {
-            return port.TopologyItems.OfType<DeadendItem>().Any();
-        }
-        private static bool IsPortSwitch(Port port) {
-            return port.TopologyItems.OfType<SwitchItem>().Any();
-        }
-        private static bool IsPortTrafficLight(Port port) {
-            return port.TopologyItems.OfType<SignalItem>().Any();
-        }
-        #endregion
-
+        
         private static Vertex CreateVertexFromPort(Port port, int vertexId) {
-            if (IsPortInput(port)) {
+            if (Port.IsPortInput(port)) {
                 return new InputVertex(vertexId);
             }
-            else if (IsPortOutput(port)) {
+            else if (Port.IsPortOutput(port)) {
                 return new OutputVertex(vertexId);
             }
-            else if (IsPortDeadend(port)) {
+            else if (Port.IsPortDeadend(port)) {
                 return new DeadEndVertex(vertexId);
             }
-            else if (IsPortTrafficLight(port)) {
+            else if (Port.IsPortSignal(port)) {
                 return new TrafficLightVertex(vertexId);
             }
-            else if (IsPortConnection(port)) {
+            else if (Port.IsPortConnection(port)) {
                 return new ConnectionVertex(vertexId);
             }
-            else if (IsPortSwitch(port)) {
+            else if (Port.IsPortSwitch(port)) {
                 return new SwitchVertex(vertexId);
             }
 
