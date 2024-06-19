@@ -19,8 +19,16 @@ namespace railway_monitor.Components.GraphicItems {
             NONE_HOVER
         }
 
+        #region Main line params
+        private static readonly double _railWidth = 6;
+        private static readonly double _circleRadius = 4.21;
+        private static readonly double _platformOffset = 10; // must be bigger than circle radius
+        private static readonly double _platformTiltAngle = 1.048;  // radians = 60 deg
+        private static readonly double _platformSideLength = 11;
+        #endregion
+
         private static readonly Brush _railTrackBrush = new SolidColorBrush(Color.FromRgb(153, 255, 51));
-        private static readonly Pen _railTrackPen = new Pen(_railTrackBrush, 6);
+        private static readonly Pen _railTrackPen = new Pen(_railTrackBrush, _railWidth);
         private static readonly Brush _railArrowBrush = new SolidColorBrush(Colors.Black);
         private static readonly Pen _railArrowPen = new Pen(_railArrowBrush, 1);
         private static readonly Brush _passengerTrackBrush = new SolidColorBrush(Color.FromRgb(185, 111, 92));
@@ -33,18 +41,12 @@ namespace railway_monitor.Components.GraphicItems {
         private static readonly Pen _cargoHoverPen = new Pen(_cargoHoverBrush, 0);
         private static readonly Brush _noneHoverBrush = new SolidColorBrush(Color.FromArgb(100, 235, 220, 185));
         private static readonly Pen _noneHoverPen = new Pen(_noneHoverBrush, 0);
+        private static readonly Pen _brokenRailTrackPen = new Pen(brokenBrush, _railWidth);
 
         static StraightRailTrackItem() {
             _railArrowPen.StartLineCap = PenLineCap.Round;
             _railArrowPen.EndLineCap = PenLineCap.Round;
         }
-
-        #region Main line params
-        private static readonly double _circleRadius = 4.21;
-        private static readonly double _platformOffset = 10; // must be bigger than circle radius
-        private static readonly double _platformTiltAngle = 1.048;  // radians = 60 deg
-        private static readonly double _platformSideLength = 11;
-        #endregion
 
         #region Arrow params
         private static readonly double _arrowLength = 10.0;
@@ -237,8 +239,18 @@ namespace railway_monitor.Components.GraphicItems {
                 return _arrowTipTwo;
             }
         }
-
         #endregion
+
+        private bool _isBroken = false;
+        public bool IsBroken {
+            get {
+                return _isBroken;
+            }
+            set {
+                _isBroken = value;
+                Render();
+            }
+        }
 
         public StraightRailTrackItem(Point initPos) : base() {
             PortStart = new Port(this, initPos);
@@ -285,7 +297,12 @@ namespace railway_monitor.Components.GraphicItems {
 
         protected override void Render(DrawingContext dc) {
             // first circle
-            dc.DrawEllipse(_railTrackBrush, _railTrackPen, Start, _circleRadius, _circleRadius);
+            if (IsBroken) {
+                dc.DrawEllipse(brokenBrush, brokenPen, Start, _circleRadius, _circleRadius);
+            }
+            else {
+                dc.DrawEllipse(_railTrackBrush, _railTrackPen, Start, _circleRadius, _circleRadius);
+            }
 
             if (PlacementStatus != RailPlacementStatus.NOT_PLACED) {
                 if (Length >= _minDrawableLength) {
@@ -296,27 +313,37 @@ namespace railway_monitor.Components.GraphicItems {
                         new LineSegment(PlatfromCornerFour, true),
                     ], true);
                     PathGeometry platformGeometry = new PathGeometry([platform]);
-                    switch (PlatformType) {
-                        case RailPlatformType.PASSENGER:
-                            dc.DrawGeometry(_passengerTrackBrush, _passengerTrackPen, platformGeometry);
-                            break;
-                        case RailPlatformType.PASSENGER_HOVER:
-                            dc.DrawGeometry(_passengerHoverBrush, _passengerHoverPen, platformGeometry);
-                            break;
-                        case RailPlatformType.CARGO:
-                            dc.DrawGeometry(_cargoTrackBrush, _cargoTrackPen, platformGeometry);
-                            break;
-                        case RailPlatformType.CARGO_HOVER:
-                            dc.DrawGeometry(_cargoHoverBrush, _cargoHoverPen, platformGeometry);
-                            break;
-                        case RailPlatformType.NONE_HOVER:
-                            dc.DrawGeometry(_noneHoverBrush, _noneHoverPen, platformGeometry);
-                            break;
+                    if (IsBroken && PlatformType != RailPlatformType.NONE) {
+                        dc.DrawGeometry(brokenBrush, brokenPen, platformGeometry);
+                    }
+                    else {
+                        switch (PlatformType) {
+                            case RailPlatformType.PASSENGER:
+                                dc.DrawGeometry(_passengerTrackBrush, _passengerTrackPen, platformGeometry);
+                                break;
+                            case RailPlatformType.PASSENGER_HOVER:
+                                dc.DrawGeometry(_passengerHoverBrush, _passengerHoverPen, platformGeometry);
+                                break;
+                            case RailPlatformType.CARGO:
+                                dc.DrawGeometry(_cargoTrackBrush, _cargoTrackPen, platformGeometry);
+                                break;
+                            case RailPlatformType.CARGO_HOVER:
+                                dc.DrawGeometry(_cargoHoverBrush, _cargoHoverPen, platformGeometry);
+                                break;
+                            case RailPlatformType.NONE_HOVER:
+                                dc.DrawGeometry(_noneHoverBrush, _noneHoverPen, platformGeometry);
+                                break;
+                        }
                     }
                 }
 
                 // main line
-                dc.DrawLine(_railTrackPen, Start, End);
+                if (IsBroken) {
+                    dc.DrawLine(_brokenRailTrackPen, Start, End);
+                }
+                else {
+                    dc.DrawLine(_railTrackPen, Start, End);
+                }
 
                 if (Length >= _minDrawableLength) {
                     // direction arrow 
@@ -326,7 +353,12 @@ namespace railway_monitor.Components.GraphicItems {
                 }
 
                 // second circle
-                dc.DrawEllipse(_railTrackBrush, _railTrackPen, End, _circleRadius, _circleRadius);
+                if (IsBroken) {
+                    dc.DrawEllipse(brokenBrush, brokenPen, End, _circleRadius, _circleRadius);
+                }
+                else {
+                    dc.DrawEllipse(_railTrackBrush, _railTrackPen, End, _circleRadius, _circleRadius);
+                }
             }
         }
     }

@@ -5,7 +5,8 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;
 
-namespace railway_monitor.Components.RailwayCanvas {
+namespace railway_monitor.Components.RailwayCanvas
+{
     public class RailwayCanvasViewModel : ViewModelBase {
         #region Highlight connection
         private StraightRailTrackItem? ConnectionPortTrack { get; set; }
@@ -38,7 +39,7 @@ namespace railway_monitor.Components.RailwayCanvas {
         private static readonly double _changeTrackThreshold = 0.9;
         #endregion
 
-        private TopologyItem[] permanentItems;
+        private GraphicItem[] permanentItems;
 
         public RailwayCanvasViewModel() {
             permanentItems = [HighlightPort];

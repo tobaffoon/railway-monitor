@@ -43,15 +43,15 @@ namespace railway_monitor.Components.GraphicItems {
             }
         }
 
-        private static readonly Brush _externalTrackBrush = new SolidColorBrush(Colors.Black);
-        private static readonly Pen _externalTrackPen = new Pen(_externalTrackBrush, 0);
-        private static readonly Brush _externalPortBrush = new SolidColorBrush(Color.FromRgb(153, 255, 51));
-        private static readonly Pen _externalPortPen = new Pen(_externalPortBrush, 0);
-
         #region Draw params
         private static readonly double _triangleSide = 30;
         private static readonly double _portCircleRadius = 6;
         #endregion
+
+        private static readonly Brush _externalTrackBrush = new SolidColorBrush(Colors.Black);
+        private static readonly Pen _externalTrackPen = new Pen(_externalTrackBrush, 0);
+        private static readonly Brush _externalPortBrush = new SolidColorBrush(Color.FromRgb(153, 255, 51));
+        private static readonly Pen _externalPortPen = new Pen(_externalPortBrush, 0);
         
         #region Drawing points 
         private Point _triangleBasePos = new Point(0, 0);
@@ -174,6 +174,17 @@ namespace railway_monitor.Components.GraphicItems {
             }
         }
 
+        private bool _isBroken = false;
+        public bool IsBroken {
+            get {
+                return _isBroken;
+            }
+            set {
+                _isBroken = value;
+                Render();
+            }
+        }
+
         public ExternalTrackItem(Point initPos) : base() {
             Port = new Port(this, initPos);
         }
@@ -200,7 +211,12 @@ namespace railway_monitor.Components.GraphicItems {
                 new LineSegment(SideVertexTwo, true),
                 ], true);
             PathGeometry triangleGeometry = new PathGeometry([triangle]);
-            dc.DrawGeometry(_externalTrackBrush, _externalTrackPen, triangleGeometry);
+            if (IsBroken) {
+                dc.DrawGeometry(brokenBrush, brokenPen, triangleGeometry);
+            }
+            else {
+                dc.DrawGeometry(_externalTrackBrush, _externalTrackPen, triangleGeometry);
+            }
         }
     }
 }

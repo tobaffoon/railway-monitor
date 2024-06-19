@@ -1,13 +1,15 @@
 ﻿using railway_monitor.Bases;
-using railway_monitor.Components.GraphicItems;
 using railway_monitor.Utils;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
 
-namespace railway_monitor.Components {
-    public class TrainItem : GraphicItem {
-        public enum TrainType {
+namespace railway_monitor.Components.GraphicItems
+{
+    public class TrainItem : GraphicItem
+    {
+        public enum TrainType
+        {
             PASSENGER,
             CARGO,
             NONE
@@ -27,22 +29,28 @@ namespace railway_monitor.Components {
 
         #region Drawing Points
         private Point _triangleBase = new Point(0, 0);
-        private Point TriangleBase {
-            get {
+        private Point TriangleBase
+        {
+            get
+            {
                 GraphicCalc.GetPointInDirection(ref _triangleBase, FlowCurrentTrack.MovementStart, FlowCurrentTrack.MovementEnd, FlowCurrentTrack.Length * FlowTrackProgress);
-                return _triangleBase; 
-            } 
+                return _triangleBase;
+            }
         }
         private Point _triangleSideOne = new Point(0, 0);
-        private Point TriangleSideOne {
-            get {
+        private Point TriangleSideOne
+        {
+            get
+            {
                 GraphicCalc.GetPointInDirection(ref _triangleSideOne, _triangleBase, FlowCurrentTrack.MovementStart, _triangleSide, _triangleAngle);
                 return _triangleSideOne;
             }
         }
         private Point _triangleSideTwo = new Point(0, 0);
-        private Point TriangleSideTwo {
-            get {
+        private Point TriangleSideTwo
+        {
+            get
+            {
                 GraphicCalc.GetPointInDirection(ref _triangleSideTwo, _triangleBase, FlowCurrentTrack.MovementStart, _triangleSide, -_triangleAngle);
                 return _triangleSideTwo;
             }
@@ -51,21 +59,27 @@ namespace railway_monitor.Components {
 
         #region LastRealPos info
         private StraightRailTrackItem _currentTrack;
-        public StraightRailTrackItem CurrentTrack {
-            set {
+        public StraightRailTrackItem CurrentTrack
+        {
+            set
+            {
                 _currentTrack = value;
                 FlowCurrentTrack = value;
             }
         }
 
         private double _trackProgress;
-        public double TrackProgress {
-            set {
-                if (0.1 <= value && value <= 1) {
+        public double TrackProgress
+        {
+            set
+            {
+                if (0.1 <= value && value <= 1)
+                {
                     _trackProgress = value;
                     FlowTrackProgress = value;
                 }
-                else {
+                else
+                {
                     throw new InvalidDataException("Track progress of train " + Id + " attempted to be set outside of [0.1; 1]");
                 }
             }
@@ -73,31 +87,41 @@ namespace railway_monitor.Components {
         #endregion
         #region FlowPos info
         private StraightRailTrackItem _flowCurrentTrack;
-        public StraightRailTrackItem FlowCurrentTrack {
-            get {
+        public StraightRailTrackItem FlowCurrentTrack
+        {
+            get
+            {
                 return _flowCurrentTrack;
             }
-            set {
+            set
+            {
                 _flowCurrentTrack = value;
                 Render();
             }
         }
 
         private double _flowTrackProgress;
-        public double FlowTrackProgress {
-            get {
+        public double FlowTrackProgress
+        {
+            get
+            {
                 return _flowTrackProgress;
             }
-            set {
-                if (0 <= value && value <= 1) {
-                    if(value <= minDrawableProgress) {
+            set
+            {
+                if (0 <= value && value <= 1)
+                {
+                    if (value <= minDrawableProgress)
+                    {
                         _flowTrackProgress = minDrawableProgress;
                     }
-                    else {
+                    else
+                    {
                         _flowTrackProgress = value;
                     }
                 }
-                else {
+                else
+                {
                     throw new InvalidDataException("Track progress of train " + Id + " attempted to be set outside of [0.1; 1]");
                 }
                 Render();
@@ -108,34 +132,39 @@ namespace railway_monitor.Components {
         public int Id { get; }
 
         private bool _isBroken = false;
-        public bool IsBroken { 
-            get {
+        public bool IsBroken
+        {
+            get
+            {
                 return _isBroken;
             }
-            set {
+            set
+            {
                 _isBroken = value;
                 Render();
             }
-        } 
+        }
 
-        public TrainItem(int id, StraightRailTrackItem startTrack) {
+        public TrainItem(int id, StraightRailTrackItem startTrack)
+        {
             Id = id;
             _currentTrack = startTrack;
             _flowCurrentTrack = startTrack;
             _trackProgress = minDrawableProgress;
             _flowTrackProgress = minDrawableProgress;
         }
-        protected override void Render(DrawingContext dc) {
+        protected override void Render(DrawingContext dc)
+        {
             PathFigure triangle = new PathFigure(TriangleBase, [
                 new LineSegment(TriangleSideOne, true),
                 new LineSegment(TriangleSideTwo, true),
                 ], true);
             PathGeometry triangleGeometry = new PathGeometry([triangle]);
-            if(!IsBroken) {
-                dc.DrawGeometry(_trainBrush, _trainPen, triangleGeometry);
+            if (IsBroken) {
+                dc.DrawGeometry(_trainBrokenBrush, _trainPen, triangleGeometry);
             }
             else {
-                dc.DrawGeometry(_trainBrokenBrush, _trainPen, triangleGeometry);
+                dc.DrawGeometry(_trainBrush, _trainPen, triangleGeometry);
             }
         }
     }

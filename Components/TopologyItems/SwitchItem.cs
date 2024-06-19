@@ -15,20 +15,24 @@ namespace railway_monitor.Components.GraphicItems {
             FIRST,
             SECOND
         }
-
-        private static readonly Brush _switchBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-        private static readonly Brush _switchArrowBrush = new SolidColorBrush(Colors.ForestGreen);
-        private static readonly Pen _switchPen = new Pen(_switchBrush, 3);
-        private static readonly Pen _switchArrowPen = new Pen(_switchArrowBrush, 1);
+        #region Line params
         private static readonly double _circleRadius = 3.0;
         private static readonly double _lineLength = 14.0;
-
+        private static readonly double _switchLineWidth = 3;
+#endregion
         #region Arrow params
         private static readonly double _arrowDistance = 15.0;
         private static readonly double _arrowLength = 10.0;
         private static readonly double _arrowTipsLength = 4.0;
         private static readonly double _arrowTipsAngle = 0.524;  // radians = 30 deg
+        private static readonly double _switchArrowWidth = 1;
         #endregion
+
+        private static readonly Brush _switchBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+        private static readonly Brush _switchArrowBrush = new SolidColorBrush(Colors.ForestGreen);
+        private static readonly Pen _switchPen = new Pen(_switchBrush, _switchLineWidth);
+        private static readonly Pen _switchArrowPen = new Pen(_switchArrowBrush, _switchArrowWidth);
+        private static readonly Pen _switchBrokenPen = new Pen(brokenBrush, _switchLineWidth);
 
         static SwitchItem() {
             _switchArrowPen.StartLineCap = PenLineCap.Round;
@@ -137,6 +141,17 @@ namespace railway_monitor.Components.GraphicItems {
             }
         }
 
+        private bool _isBroken = false;
+        public bool IsBroken {
+            get {
+                return _isBroken;
+            }
+            set {
+                _isBroken = value;
+                Render();
+            }
+        }
+
         public SwitchItem(Point initPos) : base() {
             Port = new Port(this, initPos);
 
@@ -210,10 +225,20 @@ namespace railway_monitor.Components.GraphicItems {
 
         protected override void Render(DrawingContext dc) {
             // body
-            dc.DrawEllipse(_switchBrush, _switchPen, Pos, _circleRadius, _circleRadius);
+            if (IsBroken) {
+                dc.DrawEllipse(brokenBrush, brokenPen, Pos, _circleRadius, _circleRadius);
+            }
+            else {
+                dc.DrawEllipse(_switchBrush, _switchPen, Pos, _circleRadius, _circleRadius);
+            }
 
             // main line
-            dc.DrawLine(_switchPen, Pos, LineHeadPos);
+            if (IsBroken) {
+                dc.DrawLine(_switchBrokenPen, Pos, LineHeadPos);
+            }
+            else {
+                dc.DrawLine(_switchPen, Pos, LineHeadPos);
+            }
 
             // source arrow
             if (PlacementStatus == SwitchPlacementStatus.PLACED) {
