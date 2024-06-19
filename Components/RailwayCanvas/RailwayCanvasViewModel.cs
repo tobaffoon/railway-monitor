@@ -33,6 +33,11 @@ namespace railway_monitor.Components.RailwayCanvas {
             }
         }
 
+        #region Train advancement params
+        private static readonly double _progressIncrement = 0.1;
+        private static readonly double _changeTrackThreshold = 0.9;
+        #endregion
+
         private TopologyItem[] permanentItems;
 
         public RailwayCanvasViewModel() {
@@ -179,6 +184,45 @@ namespace railway_monitor.Components.RailwayCanvas {
             if (DraggedPort == null) return;
             DraggedPort.RenderTopologyGraphicItems();
             HighlightPort.Pos = DraggedPort.Pos;
+        }
+
+        public Tuple<StraightRailTrackItem, double> GetAdvancedTrainPos(StraightRailTrackItem trainTrack, double trackProgress) {
+            // currently track progress is simply incrementing from 0 to 1 by 0.1 each time
+            // TODO: move this method to simulator
+            Port dstPort = trainTrack.MovementPortEnd;
+            if (Port.IsPortSignal(dstPort)) {
+                SignalItem signalItem = dstPort.TopologyItems.OfType<SignalItem>().First();
+                if (signalItem.LightStatus == SignalItem.SignalLightStatus.STOP) {
+                    return Tuple.Create(trainTrack, trackProgress);
+                }
+            }
+            if (trackProgress < _changeTrackThreshold) {
+                return Tuple.Create(trainTrack, trackProgress + 0.1);
+            }
+
+            // At this point we might want to change track
+            if (Port.IsPortSwitch(dstPort)) {
+                SwitchItem switchItem = dstPort.TopologyItems.OfType<SwitchItem>().First();
+                if(switchItem.Direction == SwitchItem.SwitchDirection.FIRST) {
+                    return Tuple.Create(switchItem.DstOneTrack, TrainItem.minDrawableProgress);
+                }
+                else {
+                    return Tuple.Create(switchItem.DstTwoTrack, TrainItem.minDrawableProgress);
+                }
+            }
+            if (Port.IsPortConnection(dstPort)) {
+                StraightRailTrackItem nextSrt = dstPort.TopologyItems.OfType<StraightRailTrackItem>().Where(srt => srt != trainTrack).First();
+                return Tuple.Create(nextSrt, TrainItem.minDrawableProgress);
+            }
+            if (Port.IsPortOutput(dstPort)) {
+                // TODO: send train departure package
+                return Tuple.Create(trainTrack, trackProgress);
+            }
+            if (Port.IsPortDeadend(dstPort)) {
+                return Tuple.Create(trainTrack, trackProgress);
+            }
+
+            throw new ArgumentException("Error while getting next position of a train that heads to " + dstPort);
         }
     }
 }
