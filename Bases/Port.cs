@@ -81,7 +81,26 @@ namespace railway_monitor.Bases {
         #endregion
 
         public override string ToString() {
-            return "<Port " + GetHashCode() + ">";
+            string typePrefix = "";
+            if (IsPortInput(this)) {
+                typePrefix = "Input ";
+            }
+            else if (IsPortOutput(this)) {
+                typePrefix = "Output ";
+            }
+            else if (IsPortConnection(this)) {
+                typePrefix = "Connection ";
+            }
+            else if (IsPortDeadend(this)) {
+                typePrefix = "Deadend ";
+            }
+            else if (IsPortSwitch(this)) {
+                typePrefix = "Switch ";
+            }
+            else if (IsPortSignal(this)) {
+                typePrefix = "Signal ";
+            }
+            return "<" + typePrefix + "Port " + GetHashCode() + ">";
         }
     }
 }
