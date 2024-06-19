@@ -1,12 +1,10 @@
 ﻿using railway_monitor.Bases;
 using railway_monitor.Utils;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
-using static railway_monitor.Components.GraphicItems.SwitchItem;
 
 namespace railway_monitor.Components.GraphicItems {
-    public class StraightRailTrackItem : GraphicItem {
+    public class StraightRailTrackItem : TopologyItem {
         public enum RailPlacementStatus {
             NOT_PLACED,
             PLACEMENT_STARTED,
@@ -90,6 +88,26 @@ namespace railway_monitor.Components.GraphicItems {
                 PortEnd.Pos.X = value.X;
                 PortEnd.Pos.Y = value.Y;
                 Render();
+            }
+        }
+        public Point MovementStart {
+            get {
+                if (StartsFromStart) {
+                    return Start;
+                }
+                else {
+                    return End;
+                }
+            }
+        }
+        public Point MovementEnd {
+            get {
+                if (StartsFromStart) {
+                    return End;
+                }
+                else {
+                    return Start;
+                }
             }
         }
         public double Length {
@@ -217,7 +235,7 @@ namespace railway_monitor.Components.GraphicItems {
         }
 
         public override void Reassign_OnPortMerged(object? sender, Port oldPort) {
-            if (sender == null || sender is not Port port || port.GraphicItems.Contains(this)) return;
+            if (sender == null || sender is not Port port || port.TopologyItems.Contains(this)) return;
 
             if (oldPort == PortStart) {
                 PortStart = (Port)sender;

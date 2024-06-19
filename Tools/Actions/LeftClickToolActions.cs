@@ -9,10 +9,10 @@ namespace railway_monitor.Tools.Actions {
         public static void PlaceStraightRailTrack(Tuple<RailwayCanvasViewModel, Point> args) {
             RailwayCanvasViewModel canvas = args.Item1;
             Point mousePos = args.Item2;
-            StraightRailTrackItem? srtItem = canvas.LatestGraphicItem as StraightRailTrackItem;
+            StraightRailTrackItem? srtItem = canvas.LatestTopologyItem as StraightRailTrackItem;
             if (srtItem == null) {
                 srtItem = new StraightRailTrackItem(mousePos);
-                canvas.AddGraphicItemBehind(srtItem);
+                canvas.AddTopologyItemBehind(srtItem);
             }
 
             Port? connectionPort = canvas.TryFindUnderlyingPort(mousePos);
@@ -23,7 +23,7 @@ namespace railway_monitor.Tools.Actions {
                 }
                 else {
                     srtItem.PlaceEndPoint(connectionPort);
-                    canvas.ResetLatestGraphicItem();
+                    canvas.ResetLatestTopologyItem();
                 }
             }
             else {
@@ -33,7 +33,7 @@ namespace railway_monitor.Tools.Actions {
                 }
                 else {
                     srtItem.PlaceEndPoint(mousePos);
-                    canvas.ResetLatestGraphicItem();
+                    canvas.ResetLatestTopologyItem();
                 }
             }
         }
@@ -57,10 +57,10 @@ namespace railway_monitor.Tools.Actions {
         public static void PlaceSwitch(Tuple<RailwayCanvasViewModel, Point> args) {
             RailwayCanvasViewModel canvas = args.Item1;
             Point mousePos = args.Item2;
-            SwitchItem? switchItem = canvas.LatestGraphicItem as SwitchItem;
+            SwitchItem? switchItem = canvas.LatestTopologyItem as SwitchItem;
             if (switchItem == null) {
                 switchItem = new SwitchItem(mousePos);
-                canvas.AddGraphicItem(switchItem);
+                canvas.AddTopologyItem(switchItem);
             }
 
             switch (switchItem.PlacementStatus) {
@@ -79,7 +79,7 @@ namespace railway_monitor.Tools.Actions {
                         return;
                     }
                     switchItem.SetSource(connectionPort);
-                    canvas.ResetLatestGraphicItem();
+                    canvas.ResetLatestTopologyItem();
                     break;
 
             }
@@ -87,10 +87,10 @@ namespace railway_monitor.Tools.Actions {
         public static void PlaceSignal(Tuple<RailwayCanvasViewModel, Point> args) {
             RailwayCanvasViewModel canvas = args.Item1;
             Point mousePos = args.Item2;
-            SignalItem? signalItem = canvas.LatestGraphicItem as SignalItem;
+            SignalItem? signalItem = canvas.LatestTopologyItem as SignalItem;
             if (signalItem == null) {
                 signalItem = new SignalItem(mousePos);
-                canvas.AddGraphicItem(signalItem);
+                canvas.AddTopologyItem(signalItem);
             }
 
             switch (signalItem.PlacementStatus) {
@@ -101,17 +101,17 @@ namespace railway_monitor.Tools.Actions {
                         return;
                     }
                     signalItem.Place(connectionPort);
-                    canvas.ResetLatestGraphicItem();
+                    canvas.ResetLatestTopologyItem();
                     break;
             }
         }
         public static void PlaceDeadend(Tuple<RailwayCanvasViewModel, Point> args) {
             RailwayCanvasViewModel canvas = args.Item1;
             Point mousePos = args.Item2;
-            DeadendItem? deadendItem = canvas.LatestGraphicItem as DeadendItem;
+            DeadendItem? deadendItem = canvas.LatestTopologyItem as DeadendItem;
             if (deadendItem == null) {
                 deadendItem = new DeadendItem(mousePos);
-                canvas.AddGraphicItem(deadendItem);
+                canvas.AddTopologyItem(deadendItem);
             }
 
             switch (deadendItem.PlacementStatus) {
@@ -122,17 +122,17 @@ namespace railway_monitor.Tools.Actions {
                         return;
                     }
                     deadendItem.Place(connectionPort);
-                    canvas.ResetLatestGraphicItem();
+                    canvas.ResetLatestTopologyItem();
                     break;
             }
         }
         public static void PlaceExternalTrack(Tuple<RailwayCanvasViewModel, Point> args) {
             RailwayCanvasViewModel canvas = args.Item1;
             Point mousePos = args.Item2;
-            ExternalTrackItem? externalTrackItem = canvas.LatestGraphicItem as ExternalTrackItem;
+            ExternalTrackItem? externalTrackItem = canvas.LatestTopologyItem as ExternalTrackItem;
             if (externalTrackItem == null) {
                 externalTrackItem = new ExternalTrackItem(mousePos);
-                canvas.AddGraphicItem(externalTrackItem);
+                canvas.AddTopologyItem(externalTrackItem);
             }
 
             switch (externalTrackItem.PlacementStatus) {
@@ -143,7 +143,7 @@ namespace railway_monitor.Tools.Actions {
                         return;
                     }
                     externalTrackItem.Place(connectionPort);
-                    canvas.ResetLatestGraphicItem();
+                    canvas.ResetLatestTopologyItem();
                     break;
             }
         }

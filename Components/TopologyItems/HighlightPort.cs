@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Media;
 
 namespace railway_monitor.Components.GraphicItems {
-    public class HighlightPort : GraphicItem {
+    public class HighlightPort : TopologyItem {
         public static readonly double ConnectRadius = 15;
         private static readonly Brush _highlightNormalBrush = new SolidColorBrush(Color.FromArgb(100, 51, 153, 255));
         private static readonly Pen _highlightNormalPen = new Pen(_highlightNormalBrush, 0);

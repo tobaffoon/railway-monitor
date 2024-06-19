@@ -3,7 +3,7 @@ using railway_monitor.Utils;
 using System.Windows;
 using System.Windows.Media;
 namespace railway_monitor.Components.GraphicItems {
-    public class SwitchItem : GraphicItem {
+    public class SwitchItem : TopologyItem {
         public enum SwitchPlacementStatus {
             ERROR,
             NOT_PLACED,
@@ -148,7 +148,7 @@ namespace railway_monitor.Components.GraphicItems {
                 // user has chosen port where switch is placed
                 return false;
             }
-            var connectedRails = Port.GraphicItems.OfType<StraightRailTrackItem>();
+            var connectedRails = Port.TopologyItems.OfType<StraightRailTrackItem>();
             var srcRail = connectedRails.Where((rail) => rail.PortStart == source || rail.PortEnd == source).FirstOrDefault();
             if (srcRail == null) {
                 // user has chosen port not out of three connected ports
@@ -166,7 +166,7 @@ namespace railway_monitor.Components.GraphicItems {
                 // user has chosen port where switch is placed
                 return;
             }
-            var connectedRails = Port.GraphicItems.OfType<StraightRailTrackItem>();
+            var connectedRails = Port.TopologyItems.OfType<StraightRailTrackItem>();
             var srcRail = connectedRails.Where((rail) => rail.PortStart == source || rail.PortEnd == source).FirstOrDefault();
             if (srcRail == null) {
                 // user has chosen port not out of three connected ports

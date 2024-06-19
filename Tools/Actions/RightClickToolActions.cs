@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace railway_monitor.Tools.Actions {
     public static class RightClickToolActions {
         public static void ToggleExternalTrackType(RailwayCanvasViewModel canvas) {
-            ExternalTrackItem? externalTrackItem = canvas.LatestGraphicItem as ExternalTrackItem;
+            ExternalTrackItem? externalTrackItem = canvas.LatestTopologyItem as ExternalTrackItem;
             if (externalTrackItem == null) {
                 return;
             }
@@ -22,7 +22,7 @@ namespace railway_monitor.Tools.Actions {
             }
         }
         public static void ChangeRailDirection(RailwayCanvasViewModel canvas) {
-            StraightRailTrackItem? srtItem = canvas.LatestGraphicItem as StraightRailTrackItem;
+            StraightRailTrackItem? srtItem = canvas.LatestTopologyItem as StraightRailTrackItem;
             if (srtItem == null) {
                 return;
             }
@@ -31,7 +31,7 @@ namespace railway_monitor.Tools.Actions {
             else srtItem.StartsFromStart = true;
         }
         public static void ScrollPlatformType(RailwayCanvasViewModel canvas) {
-            StraightRailTrackItem? srtItem = canvas.LatestGraphicItem as StraightRailTrackItem;
+            StraightRailTrackItem? srtItem = canvas.LatestTopologyItem as StraightRailTrackItem;
             if (srtItem == null) {
                 return;
             }
@@ -50,7 +50,7 @@ namespace railway_monitor.Tools.Actions {
         }
         public static void ScrollMiniPlatformType(RailwayCanvasViewModel canvas) {
             StraightRailTrackItem? connectionSrt = canvas.ConnectionPlatformTrack;
-            PlatformItem? platformItem = canvas.LatestGraphicItem as PlatformItem;
+            PlatformItem? platformItem = canvas.LatestTopologyItem as PlatformItem;
             if (platformItem == null || connectionSrt != null && !platformItem.ConnectionErrorOccured) return;
 
             switch (platformItem.PlatformType) {

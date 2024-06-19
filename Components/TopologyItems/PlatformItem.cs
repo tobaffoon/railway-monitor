@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Media;
 
 namespace railway_monitor.Components.GraphicItems {
-    public class PlatformItem : GraphicItem {
+    public class PlatformItem : TopologyItem {
         public enum PlatformItemType {
             PASSENGER,
             CARGO,

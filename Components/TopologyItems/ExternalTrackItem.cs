@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Media;
 
 namespace railway_monitor.Components.GraphicItems {
-    public class ExternalTrackItem : GraphicItem {
+    public class ExternalTrackItem : TopologyItem {
         public enum ExternalTrackPlacementStatus {
             ERROR,
             NOT_PLACED,

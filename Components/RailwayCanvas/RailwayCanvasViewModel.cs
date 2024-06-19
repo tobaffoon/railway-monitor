@@ -26,10 +26,9 @@ namespace railway_monitor.Components.RailwayCanvas {
         public Port? DraggedPort;
 
         public ObservableCollection<GraphicItem> GraphicItems { get; }
-        public GraphicItem? LatestGraphicItem { get; set; }
-        public int Len { get { return GraphicItems.Count; } }
+        public TopologyItem? LatestTopologyItem { get; set; }
 
-        private GraphicItem[] permanentItems;
+        private TopologyItem[] permanentItems;
 
         public RailwayCanvasViewModel() {
             permanentItems = [HighlightPort];
@@ -39,34 +38,33 @@ namespace railway_monitor.Components.RailwayCanvas {
             }
         }
 
-        public void AddGraphicItem(GraphicItem item) {
+        public void AddTopologyItem(TopologyItem item) {
             GraphicItems.Add(item);
-            LatestGraphicItem = item;
+            LatestTopologyItem = item;
         }
-        public void AddGraphicItemBehind(GraphicItem item) {
+        public void AddTopologyItemBehind(TopologyItem item) {
             GraphicItems.Insert(permanentItems.Length, item);
-            LatestGraphicItem = item;
+            LatestTopologyItem = item;
         }
-
-        public void DeleteGraphicItem(GraphicItem item) {
+        public void DeleteTopologyItem(TopologyItem item) {
             GraphicItems.Remove(item);
-            if (item == LatestGraphicItem) {
-                LatestGraphicItem = null;
+            if (item == LatestTopologyItem) {
+                LatestTopologyItem = null;
             }
         }
         public void DeleteStraightRailTrack(StraightRailTrackItem srt) {
-            DeleteGraphicItem(srt);
+            DeleteTopologyItem(srt);
             srt.PortStart.RemoveItem(srt);
             srt.PortEnd.RemoveItem(srt);
         }
         public void DeleteSwitch(SwitchItem swtch) {
-            DeleteGraphicItem(swtch);
+            DeleteTopologyItem(swtch);
             swtch.Port.RemoveItem(swtch);
         }
 
-        public void DeleteLatestGraphicItem() {
-            if (LatestGraphicItem != null) {
-                switch (LatestGraphicItem) {
+        public void DeleteLatestTopologyItem() {
+            if (LatestTopologyItem != null) {
+                switch (LatestTopologyItem) {
                     case StraightRailTrackItem srt:
                         DeleteStraightRailTrack(srt);
                         break;
@@ -74,13 +72,13 @@ namespace railway_monitor.Components.RailwayCanvas {
                         DeleteSwitch(swtch);
                         break;
                 }
-                DeleteGraphicItem(LatestGraphicItem);
+                DeleteTopologyItem(LatestTopologyItem);
             }
         }
 
         private bool RailDuplicates(StraightRailTrackItem srt) {
             // search among all SRTs on the same starting port excluding newly added one
-            foreach (StraightRailTrackItem item in srt.PortStart.GraphicItems.OfType<StraightRailTrackItem>().Except<StraightRailTrackItem>([srt])) {
+            foreach (StraightRailTrackItem item in srt.PortStart.TopologyItems.OfType<StraightRailTrackItem>().Except<StraightRailTrackItem>([srt])) {
                 if (item.Start == srt.Start && item.End == srt.End || item.Start == srt.End && item.End == srt.Start) {
                     return true;
                 }
@@ -88,19 +86,19 @@ namespace railway_monitor.Components.RailwayCanvas {
             return false;
         }
 
-        public void ResetLatestGraphicItem() {
-            switch (LatestGraphicItem) {
+        public void ResetLatestTopologyItem() {
+            switch (LatestTopologyItem) {
                 case StraightRailTrackItem srt:
                     if (RailDuplicates(srt)) {
                         DeleteStraightRailTrack(srt);
                     }
                     break;
             }
-            LatestGraphicItem = null;
+            LatestTopologyItem = null;
         }
 
         private HitTestResultBehavior PortRailHitTestResult(HitTestResult result) {
-            if (result.VisualHit != LatestGraphicItem) {
+            if (result.VisualHit != LatestTopologyItem) {
                 ConnectionPortTrack = result.VisualHit as StraightRailTrackItem;
                 return HitTestResultBehavior.Stop;
             }
@@ -110,7 +108,7 @@ namespace railway_monitor.Components.RailwayCanvas {
         }
 
         private HitTestResultBehavior PlatformRailHitTestResult(HitTestResult result) {
-            if (result.VisualHit != LatestGraphicItem) {
+            if (result.VisualHit != LatestTopologyItem) {
                 ConnectionPlatformTrack = result.VisualHit as StraightRailTrackItem;
                 return HitTestResultBehavior.Stop;
             }
@@ -174,7 +172,7 @@ namespace railway_monitor.Components.RailwayCanvas {
 
         public void RenderDraggedPort() {
             if (DraggedPort == null) return;
-            DraggedPort.RenderGraphicItems();
+            DraggedPort.RenderTopologyGraphicItems();
             HighlightPort.Pos = DraggedPort.Pos;
         }
     }

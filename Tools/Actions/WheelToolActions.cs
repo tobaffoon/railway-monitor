@@ -6,7 +6,7 @@ namespace railway_monitor.Tools.Actions {
         public static void RotateExternalTrack(Tuple<RailwayCanvasViewModel, bool> args) {
             RailwayCanvasViewModel canvas = args.Item1;
             bool IsRotationClockwise = args.Item2;
-            ExternalTrackItem? externalTrackItem = canvas.LatestGraphicItem as ExternalTrackItem;
+            ExternalTrackItem? externalTrackItem = canvas.LatestTopologyItem as ExternalTrackItem;
             if (externalTrackItem == null) {
                 return;
             }
@@ -47,7 +47,7 @@ namespace railway_monitor.Tools.Actions {
         public static void RotateDeadend(Tuple<RailwayCanvasViewModel, bool> args) {
             RailwayCanvasViewModel canvas = args.Item1;
             bool IsRotationClockwise = args.Item2;
-            DeadendItem? deadendItem = canvas.LatestGraphicItem as DeadendItem;
+            DeadendItem? deadendItem = canvas.LatestTopologyItem as DeadendItem;
             if (deadendItem == null) {
                 return;
             }
