@@ -60,13 +60,13 @@ namespace railway_monitor.Utils {
             // add edges links to each vertex
             StraightRailTrackItem[] portSrts;
             foreach (Port port in vertexDict.Keys) {
-                portSrts = port.GraphicItems.OfType<StraightRailTrackItem>().ToArray();
+                portSrts = port.TopologyItems.OfType<StraightRailTrackItem>().ToArray();
                 switch (vertexDict[port]) {
                     case InputVertex inputVertex:
-                        inputVertex.SetEdge(edgesDict[port.GraphicItems.OfType<StraightRailTrackItem>().First()]);
+                        inputVertex.SetEdge(edgesDict[port.TopologyItems.OfType<StraightRailTrackItem>().First()]);
                         break;
                     case OutputVertex outputVertex:
-                        outputVertex.SetEdge(edgesDict[port.GraphicItems.OfType<StraightRailTrackItem>().First()]);
+                        outputVertex.SetEdge(edgesDict[port.TopologyItems.OfType<StraightRailTrackItem>().First()]);
                         break;
                     case ConnectionVertex connectionVertex:
                         #region Set edgeConnection considering srt direction
@@ -96,7 +96,7 @@ namespace railway_monitor.Utils {
                         #endregion
                         break;
                     case DeadEndVertex deadEndVertex:
-                        deadEndVertex.SetEdge(edgesDict[port.GraphicItems.OfType<StraightRailTrackItem>().First()]);
+                        deadEndVertex.SetEdge(edgesDict[port.TopologyItems.OfType<StraightRailTrackItem>().First()]);
                         break;
                     case TrafficLightVertex trafficLightVertex:
                         #region Set edgeConnection considering srt direction
@@ -125,7 +125,7 @@ namespace railway_monitor.Utils {
                         #endregion
                         break;
                     case SwitchVertex switchVertex:
-                        SwitchItem switchItem = port.GraphicItems.OfType<SwitchItem>().First();
+                        SwitchItem switchItem = port.TopologyItems.OfType<SwitchItem>().First();
                         StraightRailTrackItem? sourceRail = portSrts.Where(srt => srt.PortStart == switchItem.PortSrc || srt.PortEnd == switchItem.PortSrc).FirstOrDefault();
                         StraightRailTrackItem? dstOneRail = portSrts.Where(srt => srt.PortStart == switchItem.PortDstOne || srt.PortEnd == switchItem.PortDstOne).FirstOrDefault();
                         StraightRailTrackItem? dstTwoRail = portSrts.Where(srt => srt.PortStart == switchItem.PortDstTwo || srt.PortEnd == switchItem.PortDstTwo).FirstOrDefault();
@@ -149,22 +149,22 @@ namespace railway_monitor.Utils {
 
         }
         private static bool IsPortInput(Port port) {
-            return port.GraphicItems.OfType<ExternalTrackItem>().Where(externalItem  => externalItem.Type == ExternalTrackItem.ExternalTrackType.IN).Any();
+            return port.TopologyItems.OfType<ExternalTrackItem>().Where(externalItem  => externalItem.Type == ExternalTrackItem.ExternalTrackType.IN).Any();
         }
         private static bool IsPortOutput(Port port) {
-            return port.GraphicItems.OfType<ExternalTrackItem>().Where(externalItem  => externalItem.Type == ExternalTrackItem.ExternalTrackType.OUT).Any();
+            return port.TopologyItems.OfType<ExternalTrackItem>().Where(externalItem  => externalItem.Type == ExternalTrackItem.ExternalTrackType.OUT).Any();
         }
         private static bool IsPortConnection(Port port) {
-            return port.GraphicItems.OfType<StraightRailTrackItem>().Count() == port.GraphicItems.Count;
+            return port.TopologyItems.OfType<StraightRailTrackItem>().Count() == port.TopologyItems.Count;
         }
         private static bool IsPortDeadend(Port port) {
-            return port.GraphicItems.OfType<DeadendItem>().Any();
+            return port.TopologyItems.OfType<DeadendItem>().Any();
         }
         private static bool IsPortSwitch(Port port) {
-            return port.GraphicItems.OfType<SwitchItem>().Any();
+            return port.TopologyItems.OfType<SwitchItem>().Any();
         }
         private static bool IsPortTrafficLight(Port port) {
-            return port.GraphicItems.OfType<SignalItem>().Any();
+            return port.TopologyItems.OfType<SignalItem>().Any();
         }
         #endregion
 

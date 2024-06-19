@@ -52,7 +52,7 @@ namespace railway_monitor.Components {
         public StraightRailTrackItem CurrentTrack {
             set {
                 _currentTrack = value;
-                _flowCurrentTrack = value;
+                FlowCurrentTrack = value;
             }
         }
 
@@ -61,7 +61,7 @@ namespace railway_monitor.Components {
             set {
                 if (0.1 <= value && value <= 1) {
                     _trackProgress = value;
-                    _flowTrackProgress = value;
+                    FlowTrackProgress = value;
                 }
                 else {
                     throw new InvalidDataException("Track progress of train " + Id + " attempted to be set outside of [0.1; 1]");
@@ -114,7 +114,9 @@ namespace railway_monitor.Components {
         public TrainItem(int id, StraightRailTrackItem startTrack) {
             Id = id;
             _currentTrack = startTrack;
+            _flowCurrentTrack = startTrack;
             _trackProgress = 0.1;
+            _flowTrackProgress = 0.1;
         }
         protected override void Render(DrawingContext dc) {
             PathFigure triangle = new PathFigure(TriangleBase, [

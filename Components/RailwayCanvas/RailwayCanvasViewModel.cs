@@ -25,35 +25,6 @@ namespace railway_monitor.Components.RailwayCanvas {
 
         public Port? DraggedPort;
 
-        private HashSet<Port> _ports;
-        public List<Port> Ports { 
-            get {
-                _ports.Clear();
-
-                foreach (GraphicItem item in GraphicItems) {
-                    switch (item) {
-                        case StraightRailTrackItem srtItem:
-                            _ports.Add(srtItem.PortStart);
-                            _ports.Add(srtItem.PortEnd);
-                            break;
-                        case DeadendItem deadendItem:
-                            _ports.Add(deadendItem.Port);
-                            break;
-                        case ExternalTrackItem externalTrackItem:
-                            _ports.Add(externalTrackItem.Port);
-                            break;
-                        case SignalItem signalItem:
-                            _ports.Add(signalItem.Port);
-                            break;
-                        case SwitchItem switchItem:
-                            _ports.Add(switchItem.Port);
-                            break;
-                    }
-                }
-
-                return _ports.ToList();
-            }
-        }
         public ObservableCollection<GraphicItem> GraphicItems { get; }
         public TopologyItem? LatestTopologyItem { get; set; }
 

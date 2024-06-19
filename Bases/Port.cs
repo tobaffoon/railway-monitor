@@ -5,7 +5,7 @@ namespace railway_monitor.Bases {
     public class Port {
         public event EventHandler<Port>? OnPortMerged;
 
-        public List<GraphicItem> GraphicItems { get; }
+        public List<TopologyItem> TopologyItems { get; }
         public Point Pos;
 
         public Port(TopologyItem parentItem, Point startPos) {

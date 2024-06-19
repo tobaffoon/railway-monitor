@@ -47,7 +47,6 @@ namespace railway_monitor.Components.GraphicItems {
         #endregion
 
         #region Arrow params
-        private static readonly double _arrowDistance = 40.0;
         private static readonly double _arrowLength = 10.0;
         private static readonly double _arrowTipsLength = 4.0;
         private static readonly double _arrowTipsAngle = 0.524;  // radians = 30 deg
