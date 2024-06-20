@@ -166,7 +166,7 @@ namespace railway_monitor.Components.TopologyItems {
                     dc.DrawGeometry(_nonePlatformBrush, _nonePlatformPen, platformGeometry);
                     break;
             }
-            
+
             if (ConnectionErrorOccured) {
                 // cross
                 dc.DrawLine(_errorCrossPen, CrossHandOneStart, CrossHandOneEnd);

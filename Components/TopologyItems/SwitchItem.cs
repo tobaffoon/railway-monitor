@@ -19,7 +19,7 @@ namespace railway_monitor.Components.TopologyItems {
         private static readonly double _circleRadius = 3.0;
         private static readonly double _lineLength = 14.0;
         private static readonly double _switchLineWidth = 3;
-#endregion
+        #endregion
         #region Arrow params
         private static readonly double _arrowDistance = 15.0;
         private static readonly double _arrowLength = 10.0;
@@ -112,9 +112,9 @@ namespace railway_monitor.Components.TopologyItems {
             }
         }
 
-        public StraightRailTrackItem SrcTrack {  get; private set; }
-        public StraightRailTrackItem DstOneTrack {  get; private set; }
-        public StraightRailTrackItem DstTwoTrack {  get; private set; }
+        public StraightRailTrackItem SrcTrack { get; private set; }
+        public StraightRailTrackItem DstOneTrack { get; private set; }
+        public StraightRailTrackItem DstTwoTrack { get; private set; }
 
         public SwitchPlacementStatus PlacementStatus { get; private set; } = SwitchPlacementStatus.NOT_PLACED;
 

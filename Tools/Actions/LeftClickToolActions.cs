@@ -1,9 +1,7 @@
 ﻿using railway_monitor.Bases;
-using railway_monitor.Components;
-using railway_monitor.Components.TopologyItems;
 using railway_monitor.Components.RailwayCanvas;
+using railway_monitor.Components.TopologyItems;
 using railway_monitor.Utils;
-using SolverLibrary.Model.TrainInfo;
 using System.Windows;
 
 namespace railway_monitor.Tools.Actions {
@@ -46,13 +44,13 @@ namespace railway_monitor.Tools.Actions {
 
             switch (srtItem.PlatformType) {
                 case StraightRailTrackItem.RailPlatformType.PASSENGER_HOVER:
-                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.PASSENGER; 
+                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.PASSENGER;
                     break;
                 case StraightRailTrackItem.RailPlatformType.CARGO_HOVER:
-                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.CARGO; 
+                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.CARGO;
                     break;
                 case StraightRailTrackItem.RailPlatformType.NONE_HOVER:
-                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.NONE_HOVER; 
+                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.NONE_HOVER;
                     break;
             }
         }

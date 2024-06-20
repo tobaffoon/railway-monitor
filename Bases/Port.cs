@@ -1,6 +1,4 @@
 ﻿using railway_monitor.Components.TopologyItems;
-using SolverLibrary.Model.Graph.VertexTypes;
-using SolverLibrary.Model.Graph;
 using System.Windows;
 
 namespace railway_monitor.Bases {

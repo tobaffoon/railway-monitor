@@ -1,20 +1,18 @@
 ﻿using railway_monitor.Bases;
-using railway_monitor.Components.TopologyItems;
 using railway_monitor.Components.GraphicItems;
 using railway_monitor.Components.RailwayCanvas;
+using railway_monitor.Components.TopologyItems;
+using railway_monitor.MVVM.Models.Server;
 using railway_monitor.MVVM.Models.UpdatePackages;
 using railway_monitor.Utils;
-using SolverLibrary.Model.Graph;
-using SolverLibrary.Model;
-using SolverLibrary.Model.TrainInfo;
-using SolverLibrary.Model.Graph.VertexTypes;
 using SolverLibrary;
-using railway_monitor.MVVM.Models.Server;
+using SolverLibrary.Model;
+using SolverLibrary.Model.Graph;
+using SolverLibrary.Model.Graph.VertexTypes;
+using SolverLibrary.Model.TrainInfo;
 
-namespace railway_monitor.MVVM.Models.Station
-{
-    public class StationManager
-    {
+namespace railway_monitor.MVVM.Models.Station {
+    public class StationManager {
         #region Confidence and flow timers
         private static readonly int confidenceInterval = 30000;
         private static readonly int flowUpdatesPerSec = 24;
@@ -39,8 +37,7 @@ namespace railway_monitor.MVVM.Models.Station
 
         public int CurrentTime;
 
-        public StationManager(RailwayCanvasViewModel canvas, TrainSchedule schedule, int timeInaccuracy)
-        {
+        public StationManager(RailwayCanvasViewModel canvas, TrainSchedule schedule, int timeInaccuracy) {
             CurrentTime = 0;
 
             // TODO: smth-smth that takes schedule and remembers it
@@ -196,14 +193,14 @@ namespace railway_monitor.MVVM.Models.Station
         #endregion
         #region Emergency handlers
         private void HandleUnscheduledTrain(int trainId, int inputVertexId) {
-        
+
         }
         internal void AddUnscheduledTrainEntry(int trainId, int inputVertexId, int departureTime, ExternalTrackItem outputTrack) {
             int outputVertexId = topologyVertexDict.First(pair => pair.Value == outputTrack).Key;
-            if (graphVertexDict[inputVertexId] is not InputVertex inputVertex) { 
+            if (graphVertexDict[inputVertexId] is not InputVertex inputVertex) {
                 throw new ArgumentException("Attempted to add a train coming from vertex " + inputVertexId + " which is not input");
             }
-            if (graphVertexDict[outputVertexId] is not OutputVertex outputVertex) { 
+            if (graphVertexDict[outputVertexId] is not OutputVertex outputVertex) {
                 throw new ArgumentException("Attempted to add a train coming to vertex " + outputVertexId + " which is not output");
             }
 
@@ -214,7 +211,7 @@ namespace railway_monitor.MVVM.Models.Station
             planSender.SendPlan(solver.CalculateWorkPlan(schedule));
         }
         private void HandleBrokenTrain(TrainItem train) {
-        
+
         }
         private void HandleOffscheduledTrain(TrainItem train) {
             // remove respective entry in schedule

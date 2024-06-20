@@ -6,8 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace railway_monitor.MVVM.ViewModels
-{
+namespace railway_monitor.MVVM.ViewModels {
     public class RailwayMonitorViewModel : ViewModelBase {
         private void PreprocessButtonChecked() {
             RailwayCanvas.DeleteLatestTopologyItem();

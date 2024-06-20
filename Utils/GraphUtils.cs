@@ -88,8 +88,7 @@ namespace railway_monitor.Utils {
                                 connectionVertex.SetEdges(edgesDict[portSrts[1]], // incoming
                                                           edgesDict[portSrts[0]]);// outgoing
                             }
-                            else
-                            {
+                            else {
                                 connectionVertex.SetEdges(edgesDict[portSrts[0]], // incoming
                                                           edgesDict[portSrts[1]]);// outgoing
                             }
@@ -154,7 +153,7 @@ namespace railway_monitor.Utils {
             }
             return Tuple.Create(graph, topologyDict, edgesDict.ToDictionary(x => x.Value.getId(), x => x.Key), vertexDict.ToDictionary(x => x.Value.getId(), x => x.Value)); // reverse edgesDict to map Edges to SRTs
         }
-        
+
         private static Vertex CreateVertexFromPort(Port port, int vertexId) {
             if (Port.IsPortInput(port)) {
                 return new InputVertex(vertexId);

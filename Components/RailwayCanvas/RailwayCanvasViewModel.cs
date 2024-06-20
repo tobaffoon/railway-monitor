@@ -6,14 +6,13 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;
 
-namespace railway_monitor.Components.RailwayCanvas
-{
+namespace railway_monitor.Components.RailwayCanvas {
     public class RailwayCanvasViewModel : ViewModelBase {
         #region Highlight connection
         private StraightRailTrackItem? ConnectionPortTrack { get; set; }
         private HighlightPort HighlightPort = new HighlightPort();
         private double PortConnectionRadius = HighlightPort.ConnectRadius;
-        
+
         public bool ConnectionErrorOccured {
             get => HighlightPort.ConnectionErrorOccured;
             set => HighlightPort.ConnectionErrorOccured = value;

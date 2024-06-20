@@ -1,8 +1,5 @@
-﻿using railway_monitor.Bases;
+﻿using railway_monitor.Components.RailwayCanvas;
 using railway_monitor.Components.TopologyItems;
-using railway_monitor.Components.RailwayCanvas;
-using railway_monitor.Utils;
-using System.Diagnostics;
 
 namespace railway_monitor.Tools.Actions {
     public static class RightClickToolActions {

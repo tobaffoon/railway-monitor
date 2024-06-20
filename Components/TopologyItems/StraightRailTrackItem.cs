@@ -1,5 +1,4 @@
 ﻿using railway_monitor.Bases;
-using railway_monitor.Components.GraphicItems;
 using railway_monitor.Utils;
 using System.Windows;
 using System.Windows.Media;
@@ -63,13 +62,13 @@ namespace railway_monitor.Components.TopologyItems {
         private static Size circleSize = new Size(_circleRadius, _circleRadius);
 
         public RailPlacementStatus PlacementStatus { get; private set; }
-        
+
         private RailPlatformType _platformType;
         public RailPlatformType PlatformType {
             get {
                 return _platformType;
             }
-            set { 
+            set {
                 _platformType = value;
                 Render();
             }
@@ -173,7 +172,7 @@ namespace railway_monitor.Components.TopologyItems {
                 GraphicCalc.GetPointInDirection(ref _platfromCornerTwo, Start, End, _platformOffset);
                 return _platfromCornerTwo;
             }
-        } 
+        }
 
         private Point _platfromCornerThree = new Point(0, 0);
         private Point PlatfromCornerThree {
@@ -186,7 +185,7 @@ namespace railway_monitor.Components.TopologyItems {
                 }
                 return _platfromCornerThree;
             }
-        } 
+        }
 
         private Point _platfromCornerFour = new Point(0, 0);
         private Point PlatfromCornerFour {
