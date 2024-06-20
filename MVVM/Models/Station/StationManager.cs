@@ -4,8 +4,6 @@ using railway_monitor.Components.RailwayCanvas;
 using railway_monitor.MVVM.Models.UpdatePackages;
 using railway_monitor.Utils;
 using SolverLibrary.Model.Graph;
-using SolverLibrary.Model.Graph.VertexTypes;
-using System.Linq;
 
 namespace railway_monitor.MVVM.Models.Station
 {
@@ -36,6 +34,7 @@ namespace railway_monitor.MVVM.Models.Station
             StraightRailTrackItem srtItem = topologyEdgeDict[package.edgeId];
             train.CurrentTrack = srtItem;
             train.TrackProgress = package.trackProgress;
+            train.IsBroken = package.isBroken;
         }
         public void ArriveTrain(TrainArrivalPackage package) {
             if (!topologyVertexDict.ContainsKey(package.inputVertexId)) {
@@ -66,6 +65,7 @@ namespace railway_monitor.MVVM.Models.Station
             }
 
             switchItem.Direction = package.direction;
+            switchItem.IsBroken = package.isBroken;
         }
         public void UpdateSignal(SignalUpdatePackage package) {
             if (!topologyVertexDict.ContainsKey(package.vertexId)) {
@@ -77,11 +77,15 @@ namespace railway_monitor.MVVM.Models.Station
             }
 
             signalItem.LightStatus = package.lightStatus;
+            signalItem.IsBroken = package.isBroken;
         }
         public void UpdateRail(RailUpdatePackage package) {
-            if (!topologyVertexDict.ContainsKey(package.edgeId)) {
+            if (!topologyEdgeDict.ContainsKey(package.edgeId)) {
                 throw new ArgumentException("Tried updating nonexistent rail with id " + package.edgeId);
             }
+            StraightRailTrackItem srtItem = topologyEdgeDict[package.edgeId];
+
+            srtItem.IsBroken = package.isBroken;
         }
         public void UpdateExternalTrack(ExternalTrackUpdatePackage package) {
             if (!topologyVertexDict.ContainsKey(package.vertexId)) {
@@ -91,6 +95,8 @@ namespace railway_monitor.MVVM.Models.Station
             if (topologyVertexDict[package.vertexId] is not ExternalTrackItem externalTrackItem) {
                 throw new ArgumentException("Tried updating not external track item with id " + package.vertexId + " as external track");
             }
+
+            externalTrackItem.IsBroken = package.isBroken;
         }   
         public void UpdateDeadend(DeadendUpdatePackage package) {
             if (!topologyVertexDict.ContainsKey(package.vertexId)) {
@@ -100,6 +106,8 @@ namespace railway_monitor.MVVM.Models.Station
             if (topologyVertexDict[package.vertexId] is not DeadendItem deadendItem) {
                 throw new ArgumentException("Tried updating not deadend item with id " + package.vertexId + " as deadend");
             }
+
+            deadendItem.IsBroken = package.isBroken;
         }        
     }
 }
