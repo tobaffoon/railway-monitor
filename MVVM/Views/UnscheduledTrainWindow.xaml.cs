@@ -2,10 +2,10 @@
 
 namespace railway_monitor.MVVM.Views {
     /// <summary>
-    /// Interaction logic for UnscheduledTrainWindows.xaml
+    /// Interaction logic for UnscheduledTrainWindow.xaml
     /// </summary>
-    public partial class UnscheduledTrainWindows : Window {
-        public UnscheduledTrainWindows() {
+    public partial class UnscheduledTrainWindow : Window {
+        public UnscheduledTrainWindow() {
             InitializeComponent();
         }
 
