@@ -19,18 +19,18 @@ namespace railway_monitor.MVVM.Models.Station
         private static readonly int flowUpdateInterval = 1000 / flowUpdatesPerSec;
 
         // id -> confidence one-shot timer
-        private Dictionary<int, TrainTimer> confidenceTimers;
+        private readonly Dictionary<int, TrainTimer> confidenceTimers;
         // id -> flow periodic timer
-        private Dictionary<int, TrainTimer> flowTimers;
+        private readonly Dictionary<int, TrainTimer> flowTimers;
         #endregion
 
-        private RailwayCanvasViewModel canvas;
-        private StationGraph stationGraph;
-        private TrainSchedule schedule;
-        private int timeInaccuracy;
-        private Dictionary<int, TopologyItem> topologyVertexDict;
-        private Dictionary<int, StraightRailTrackItem> topologyEdgeDict;
-        private Dictionary<int, TrainItem> trains;
+        private readonly RailwayCanvasViewModel canvas;
+        private readonly StationGraph stationGraph;
+        private readonly TrainSchedule schedule;
+        private readonly int timeInaccuracy;
+        private readonly Dictionary<int, TopologyItem> topologyVertexDict;
+        private readonly Dictionary<int, StraightRailTrackItem> topologyEdgeDict;
+        private readonly Dictionary<int, TrainItem> trains;
 
         public StationManager(RailwayCanvasViewModel canvas, TrainSchedule schedule, int timeInaccuracy)
         {
