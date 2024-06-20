@@ -181,5 +181,17 @@ namespace railway_monitor.MVVM.Models.Station
             train.FlowTrackProgress = nextPos.Item2;
         }
         #endregion
+        #region Emergency handlers
+        private void HandleUnscheduledTrain(TrainItem train) {
+        
+        }
+        private void HandleBrokenTrain(TrainItem train) {
+        
+        }
+        private void HandleOffscheduledTrain(TrainItem train) {
+            // remove respective entry in schedule
+            // pop up a window where manager inputs departure time
+        }
+        #endregion
     }
 }
