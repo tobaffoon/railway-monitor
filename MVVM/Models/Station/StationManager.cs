@@ -8,14 +8,14 @@ using SolverLibrary.Model.Graph;
 using SolverLibrary.Model;
 using SolverLibrary.Model.TrainInfo;
 using SolverLibrary.Model.Graph.VertexTypes;
+using SolverLibrary;
+using railway_monitor.MVVM.Models.Server;
 
 namespace railway_monitor.MVVM.Models.Station
 {
     public class StationManager
     {
-        // the maximum number of trains that will be drawn with inbetween states (between train update packages)
         #region Confidence and flow timers
-        private static readonly int maxTrainFlowRenderNumber = 100;
         private static readonly int confidenceInterval = 30000;
         private static readonly int flowUpdatesPerSec = 24;
         private static readonly int flowUpdateInterval = 1000 / flowUpdatesPerSec;
@@ -34,9 +34,15 @@ namespace railway_monitor.MVVM.Models.Station
         private readonly Dictionary<int, StraightRailTrackItem> topologyEdgeDict;
         private readonly Dictionary<int, TrainItem> trains;
         private readonly Dictionary<int, Vertex> graphVertexDict;
+        private readonly Solver solver;
+        private readonly StationPlanSender planSender;
+
+        public int CurrentTime;
 
         public StationManager(RailwayCanvasViewModel canvas, TrainSchedule schedule, int timeInaccuracy)
         {
+            CurrentTime = 0;
+
             // TODO: smth-smth that takes schedule and remembers it
             int[] trainIds = { };
             // add timers for each train
@@ -66,6 +72,9 @@ namespace railway_monitor.MVVM.Models.Station
             this.timeInaccuracy = timeInaccuracy;
 
             trains = new Dictionary<int, TrainItem>();
+
+            solver = new Solver(stationGraph, timeInaccuracy);
+            planSender = new SimulatorPlanSender();
         }
 
         public void UpdateTrain(TrainUpdatePackage package) {
@@ -186,11 +195,23 @@ namespace railway_monitor.MVVM.Models.Station
         }
         #endregion
         #region Emergency handlers
-        private void HandleUnscheduledTrain(int trainId) {
+        private void HandleUnscheduledTrain(int trainId, int inputVertexId) {
         
         }
-        internal void AddUnscheduledTrainEntry(int trainId, int time, ExternalTrackItem outputTrack) {
-            
+        internal void AddUnscheduledTrainEntry(int trainId, int inputVertexId, int departureTime, ExternalTrackItem outputTrack) {
+            int outputVertexId = topologyVertexDict.First(pair => pair.Value == outputTrack).Key;
+            if (graphVertexDict[inputVertexId] is not InputVertex inputVertex) { 
+                throw new ArgumentException("Attempted to add a train coming from vertex " + inputVertexId + " which is not input");
+            }
+            if (graphVertexDict[outputVertexId] is not OutputVertex outputVertex) { 
+                throw new ArgumentException("Attempted to add a train coming to vertex " + outputVertexId + " which is not output");
+            }
+
+            schedule.TryAddTrainSchedule(
+                new Train(TrainItem.defaultLength, TrainItem.defaultSpeed, TrainType.NONE),
+                new SingleTrainSchedule(CurrentTime, departureTime, 0, inputVertex, outputVertex)
+                );
+            planSender.SendPlan(solver.CalculateWorkPlan(schedule));
         }
         private void HandleBrokenTrain(TrainItem train) {
         
