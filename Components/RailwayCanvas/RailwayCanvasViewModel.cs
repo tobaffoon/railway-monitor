@@ -35,11 +35,6 @@ namespace railway_monitor.Components.RailwayCanvas
             }
         }
 
-        #region Train advancement params
-        private static readonly double _progressIncrement = 0.1;
-        private static readonly double _changeTrackThreshold = 0.9;
-        #endregion
-
         private GraphicItem[] permanentItems;
 
         public RailwayCanvasViewModel() {
@@ -188,8 +183,7 @@ namespace railway_monitor.Components.RailwayCanvas
             HighlightPort.Pos = DraggedPort.Pos;
         }
 
-        public Tuple<StraightRailTrackItem, double> GetAdvancedTrainPos(StraightRailTrackItem trainTrack, double trackProgress) {
-            // currently track progress is simply incrementing from 0 to 1 by 0.1 each time
+        public Tuple<StraightRailTrackItem, double> GetAdvancedTrainPos(StraightRailTrackItem trainTrack, double trackProgress, double speed, double millis) {
             // TODO: move this method to simulator
             Port dstPort = trainTrack.MovementPortEnd;
             if (Port.IsPortSignal(dstPort)) {
@@ -198,8 +192,10 @@ namespace railway_monitor.Components.RailwayCanvas
                     return Tuple.Create(trainTrack, trackProgress);
                 }
             }
-            if (trackProgress < _changeTrackThreshold) {
-                return Tuple.Create(trainTrack, trackProgress + 0.1);
+
+            double advancedProgress = trackProgress + speed / trainTrack.Length * millis / 1000; 
+            if (advancedProgress < 1) {
+                return Tuple.Create(trainTrack, advancedProgress);
             }
 
             // At this point we might want to change track

@@ -14,13 +14,15 @@ namespace railway_monitor.Components.GraphicItems {
             CARGO,
             NONE
         }
-
         public static double minDrawableProgress = 1e-10;
+        public static double defaultSpeed = 1;
+
+        private static readonly double _trainBorderWidth = 0.1;
 
         private static readonly Brush _trainBrush = new SolidColorBrush(Colors.Black);
         private static readonly Brush _trainBrokenBrush = new SolidColorBrush(Colors.DarkRed);
         private static readonly Brush _trainOutlinesBrush = new SolidColorBrush(Colors.LightGoldenrodYellow);
-        private static readonly Pen _trainPen = new Pen(_trainOutlinesBrush, 0.1);
+        private static readonly Pen _trainPen = new Pen(_trainOutlinesBrush, _trainBorderWidth);
 
         #region Drawing params
         private static readonly double _triangleSide = 6;
@@ -33,7 +35,7 @@ namespace railway_monitor.Components.GraphicItems {
         {
             get
             {
-                GraphicCalc.GetPointInDirection(ref _triangleBase, FlowCurrentTrack.MovementStart, FlowCurrentTrack.MovementEnd, FlowCurrentTrack.Length * FlowTrackProgress);
+                GraphicCalc.GetPointInDirection(ref _triangleBase, FlowCurrentTrack.MovementStart, FlowCurrentTrack.MovementEnd, FlowCurrentTrack.GraphicLength * FlowTrackProgress);
                 return _triangleBase;
             }
         }
@@ -130,6 +132,7 @@ namespace railway_monitor.Components.GraphicItems {
         #endregion
 
         public int Id { get; }
+        public double Speed; // equals 1 when it passes SRT of Length = 1 in one sec
 
         private bool _isBroken = false;
         public bool IsBroken
@@ -145,14 +148,17 @@ namespace railway_monitor.Components.GraphicItems {
             }
         }
 
-        public TrainItem(int id, StraightRailTrackItem startTrack)
+        public TrainItem(int id, StraightRailTrackItem startTrack, double initSpeed)
         {
             Id = id;
             _currentTrack = startTrack;
             _flowCurrentTrack = startTrack;
             _trackProgress = minDrawableProgress;
             _flowTrackProgress = minDrawableProgress;
+            Speed = initSpeed;
         }
+        public TrainItem(int id, StraightRailTrackItem startTrack) : this(id, startTrack, defaultSpeed) {}
+
         protected override void Render(DrawingContext dc)
         {
             PathFigure triangle = new PathFigure(TriangleBase, [

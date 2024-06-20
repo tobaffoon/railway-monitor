@@ -1,4 +1,5 @@
 ﻿using railway_monitor.Bases;
+using railway_monitor.Components.GraphicItems;
 using railway_monitor.Utils;
 using System.Windows;
 using System.Windows.Media;
@@ -19,6 +20,7 @@ namespace railway_monitor.Components.TopologyItems {
             NONE_HOVER
         }
 
+        private static readonly double defaultLength = 1;
         #region Main line params
         private static readonly double _railWidth = 6;
         private static readonly double _circleRadius = 4.21;
@@ -131,7 +133,7 @@ namespace railway_monitor.Components.TopologyItems {
                 }
             }
         }
-        public double Length {
+        public double GraphicLength {
             get {
                 return GraphicCalc.GetDistance(Start, End);
             }
@@ -151,7 +153,7 @@ namespace railway_monitor.Components.TopologyItems {
         private Point _center = new Point(0, 0);
         public Point Center {
             get {
-                GraphicCalc.GetPointInDirection(ref _center, Start, End, Length / 2);
+                GraphicCalc.GetPointInDirection(ref _center, Start, End, GraphicLength / 2);
                 return _center;
             }
         }
@@ -252,12 +254,16 @@ namespace railway_monitor.Components.TopologyItems {
             }
         }
 
-        public StraightRailTrackItem(Point initPos) : base() {
+        public double Length;
+
+        public StraightRailTrackItem(Point initPos, double length) : base() {
             PortStart = new Port(this, initPos);
             PortEnd = new Port(this, initPos);
             PlacementStatus = RailPlacementStatus.NOT_PLACED;
             PlatformType = RailPlatformType.NONE;
+            Length = length;
         }
+        public StraightRailTrackItem(Point initPos) : this(initPos, defaultLength) { }
 
         public Port GetOtherPort(Port wrongPort) {
             if (wrongPort == PortStart) return PortEnd;
@@ -305,7 +311,7 @@ namespace railway_monitor.Components.TopologyItems {
             }
 
             if (PlacementStatus != RailPlacementStatus.NOT_PLACED) {
-                if (Length >= _minDrawableLength) {
+                if (GraphicLength >= _minDrawableLength) {
                     // platform. NOTE: it's drawn behind other parts to avoid boresome calculations of main line edge (it is replace with simple wide pen)
                     PathFigure platform = new PathFigure(PlatfromCornerOne, [
                         new LineSegment(PlatfromCornerTwo, true),
@@ -345,7 +351,7 @@ namespace railway_monitor.Components.TopologyItems {
                     dc.DrawLine(_railTrackPen, Start, End);
                 }
 
-                if (Length >= _minDrawableLength) {
+                if (GraphicLength >= _minDrawableLength) {
                     // direction arrow 
                     dc.DrawLine(_railArrowPen, ArrowTailPos, ArrowHeadPos);
                     dc.DrawLine(_railArrowPen, _arrowHeadPos, ArrowTipOne);

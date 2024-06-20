@@ -12,6 +12,8 @@ namespace railway_monitor.MVVM.Models.Station
     {
         // the maximum number of trains that will be drawn with inbetween states (between train update packages)
         private static readonly int maxTrainFlowRenderNumber = 100;
+        private static readonly int confidenceTimeSec = 30;
+        private static readonly int confidenceUpdatesPerSec = 24;
 
         private RailwayCanvasViewModel canvas;
         private StationGraph stationGraph;
