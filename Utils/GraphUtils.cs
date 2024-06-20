@@ -13,7 +13,7 @@ namespace railway_monitor.Utils {
         /// </summary>
         /// <param name="rails"></param>
         /// <returns>
-        /// Created StationGraph and dictionaries to map its vertices and edges to topology items.
+        /// Created StationGraph and dictionaries to map ids of its vertices and edges to topology items.
         /// </returns>
         /// <exception cref="ArgumentException"></exception>
         public static Tuple<StationGraph, Dictionary<int, TopologyItem>, Dictionary<int, StraightRailTrackItem>> CreateGraph(List<StraightRailTrackItem> rails) {
