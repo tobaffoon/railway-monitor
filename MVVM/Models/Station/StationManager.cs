@@ -5,6 +5,7 @@ using railway_monitor.Components.RailwayCanvas;
 using railway_monitor.MVVM.Models.UpdatePackages;
 using railway_monitor.Utils;
 using SolverLibrary.Model.Graph;
+using SolverLibrary.Model;
 
 namespace railway_monitor.MVVM.Models.Station
 {
@@ -25,11 +26,13 @@ namespace railway_monitor.MVVM.Models.Station
 
         private RailwayCanvasViewModel canvas;
         private StationGraph stationGraph;
+        private TrainSchedule schedule;
+        private int timeInaccuracy;
         private Dictionary<int, TopologyItem> topologyVertexDict;
         private Dictionary<int, StraightRailTrackItem> topologyEdgeDict;
         private Dictionary<int, TrainItem> trains;
 
-        public StationManager(RailwayCanvasViewModel canvas)
+        public StationManager(RailwayCanvasViewModel canvas, TrainSchedule schedule, int timeInaccuracy)
         {
             // TODO: smth-smth that takes schedule and remembers it
             int[] trainIds = { };
@@ -53,6 +56,11 @@ namespace railway_monitor.MVVM.Models.Station
             stationGraph = graphInfo.Item1;
             topologyVertexDict = graphInfo.Item2;
             topologyEdgeDict = graphInfo.Item3;
+
+            this.schedule = schedule;
+            this.schedule.SetStationGraph(stationGraph);
+            this.timeInaccuracy = timeInaccuracy;
+
             trains = new Dictionary<int, TrainItem>();
         }
 
