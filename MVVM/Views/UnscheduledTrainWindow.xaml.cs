@@ -10,7 +10,7 @@ namespace railway_monitor.MVVM.Views {
         }
 
         private void ChooseUnscheduledTrack(object sender, RoutedEventArgs e) {
-
+            // take canvas from dataContext
         }
 
         private void ScheduleNewTrain(object sender, RoutedEventArgs e) {
