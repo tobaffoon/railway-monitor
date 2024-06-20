@@ -19,6 +19,9 @@
     <Compile Update="MVVM\Views\RailwayMonitorView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Utils\TrainTimer.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Components\RailwayCanvas\RailwayCanvas.xaml">

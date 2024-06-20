@@ -11,9 +11,17 @@ namespace railway_monitor.MVVM.Models.Station
     public class StationManager
     {
         // the maximum number of trains that will be drawn with inbetween states (between train update packages)
+        #region Confidence and flow timers
         private static readonly int maxTrainFlowRenderNumber = 100;
-        private static readonly int confidenceTimeSec = 30;
-        private static readonly int confidenceUpdatesPerSec = 24;
+        private static readonly int confidenceInterval = 30000;
+        private static readonly int flowUpdatesPerSec = 24;
+        private static readonly int flowUpdateInterval = 1000 / flowUpdatesPerSec;
+
+        // id -> confidence one-shot timer
+        private Dictionary<int, TrainTimer> confidenceTimers;
+        // id -> flow periodic timer
+        private Dictionary<int, TrainTimer> flowTimers;
+        #endregion
 
         private RailwayCanvasViewModel canvas;
         private StationGraph stationGraph;
@@ -24,6 +32,22 @@ namespace railway_monitor.MVVM.Models.Station
         public StationManager(RailwayCanvasViewModel canvas)
         {
             // TODO: smth-smth that takes schedule and remembers it
+            int[] trainIds = { };
+            // add timers for each train
+            confidenceTimers = new Dictionary<int, TrainTimer>();
+            flowTimers = new Dictionary<int, TrainTimer>();
+            TrainTimer confidenceTimer, flowTimer;
+            foreach (int id in trainIds) {
+                confidenceTimer = new TrainTimer(id, confidenceInterval);
+                confidenceTimer.Elapsed += OnConfidenceTimerElapsed;
+                flowTimer = new TrainTimer(id, flowUpdateInterval);
+                flowTimer.AutoReset = true;
+                flowTimer.Elapsed += OnFlowTimerElapsed;
+
+                confidenceTimers[id] = confidenceTimer;
+                flowTimers[id] = flowTimer;
+            }
+
             this.canvas = canvas;
             Tuple<StationGraph, Dictionary<int, TopologyItem>, Dictionary<int, StraightRailTrackItem>> graphInfo = GraphUtils.CreateGraph(canvas.Rails);
             stationGraph = graphInfo.Item1;
@@ -42,6 +66,8 @@ namespace railway_monitor.MVVM.Models.Station
             train.CurrentTrack = srtItem;
             train.TrackProgress = package.trackProgress;
             train.IsBroken = package.isBroken;
+            confidenceTimers[package.trainId].Stop();
+            confidenceTimers[package.trainId].Start();
         }
         public void ArriveTrain(TrainArrivalPackage package) {
             if (!topologyVertexDict.ContainsKey(package.inputVertexId)) {
@@ -54,6 +80,10 @@ namespace railway_monitor.MVVM.Models.Station
 
             StraightRailTrackItem srtItem = inputTrackItem.Port.TopologyItems.OfType<StraightRailTrackItem>().First();
             trains[package.trainId] = new TrainItem(package.trainId, srtItem);
+
+            // start confidence and flow timers
+            confidenceTimers[package.trainId].Start();
+            flowTimers[package.trainId].Start();
         }
         public void DepartTrain(TrainDeparturePackage package) {
             if (!trains.ContainsKey(package.trainId)) {
@@ -61,6 +91,12 @@ namespace railway_monitor.MVVM.Models.Station
             }
 
             trains.Remove(package.trainId);
+
+            // stop confidence and flow timers
+            TrainTimer confidenceTimer = confidenceTimers[package.trainId];
+            TrainTimer flowTimer = flowTimers[package.trainId];
+            confidenceTimer.Stop();
+            flowTimer.Stop();
         }
         public void UpdateSwitch(SwitchUpdatePackage package) {
             if (!topologyVertexDict.ContainsKey(package.vertexId)) {
@@ -104,7 +140,7 @@ namespace railway_monitor.MVVM.Models.Station
             }
 
             externalTrackItem.IsBroken = package.isBroken;
-        }   
+        }
         public void UpdateDeadend(DeadendUpdatePackage package) {
             if (!topologyVertexDict.ContainsKey(package.vertexId)) {
                 throw new ArgumentException("Tried updating nonexistent deadend with id " + package.vertexId);
@@ -115,6 +151,27 @@ namespace railway_monitor.MVVM.Models.Station
             }
 
             deadendItem.IsBroken = package.isBroken;
-        }        
+        }
+        #region Timer Elapsed Handlers
+        private void OnConfidenceTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e) {
+            if (sender is not TrainTimer timer) {
+                throw new ArgumentException(nameof(OnConfidenceTimerElapsed) + " sent by " + sender + ". However it can be used only for " + nameof(TrainTimer));
+            }
+
+            // if confidence timer is not reset by trainUpdatePackage, respective train is considered broken
+            trains[timer.TrainId].IsBroken = true;
+            flowTimers[timer.TrainId].Stop();
+        }
+        private void OnFlowTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e) {
+            if (sender is not TrainTimer timer) {
+                throw new ArgumentException(nameof(OnFlowTimerElapsed) + " sent by " + sender + ". However it can be used only for " + nameof(TrainTimer));
+            }
+
+            TrainItem train = trains[timer.TrainId];
+            Tuple<StraightRailTrackItem, double> nextPos = canvas.GetAdvancedTrainPos(train.FlowCurrentTrack, train.FlowTrackProgress, train.Speed, flowUpdateInterval);
+            train.FlowCurrentTrack = nextPos.Item1;
+            train.FlowTrackProgress = nextPos.Item2;
+        }
+        #endregion
     }
 }
