@@ -3,7 +3,7 @@ using railway_monitor.Utils;
 using System.Windows;
 using System.Windows.Media;
 
-namespace railway_monitor.Components.GraphicItems {
+namespace railway_monitor.Components.TopologyItems {
     public class StraightRailTrackItem : TopologyItem {
         public enum RailPlacementStatus {
             NOT_PLACED,

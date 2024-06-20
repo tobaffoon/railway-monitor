@@ -1,5 +1,5 @@
 ﻿using railway_monitor.Bases;
-using railway_monitor.Components.GraphicItems;
+using railway_monitor.Components.TopologyItems;
 using SolverLibrary.Model.Graph;
 using SolverLibrary.Model.Graph.VertexTypes;
 using SolverLibrary.Model.TrainInfo;

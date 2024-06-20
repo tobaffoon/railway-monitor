@@ -1,11 +1,11 @@
 ﻿using railway_monitor.Bases;
+using railway_monitor.Components.TopologyItems;
 using railway_monitor.Utils;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
 
-namespace railway_monitor.Components.GraphicItems
-{
+namespace railway_monitor.Components.GraphicItems {
     public class TrainItem : GraphicItem
     {
         public enum TrainType

@@ -1,4 +1,5 @@
 ﻿using railway_monitor.Bases;
+using railway_monitor.Components.TopologyItems;
 using railway_monitor.Components.GraphicItems;
 using railway_monitor.Components.RailwayCanvas;
 using railway_monitor.MVVM.Models.UpdatePackages;
@@ -9,6 +10,9 @@ namespace railway_monitor.MVVM.Models.Station
 {
     public class StationManager
     {
+        // the maximum number of trains that will be drawn with inbetween states (between train update packages)
+        private static readonly int maxTrainFlowRenderNumber = 100;
+
         private RailwayCanvasViewModel canvas;
         private StationGraph stationGraph;
         private Dictionary<int, TopologyItem> topologyVertexDict;
@@ -17,6 +21,7 @@ namespace railway_monitor.MVVM.Models.Station
 
         public StationManager(RailwayCanvasViewModel canvas)
         {
+            // TODO: smth-smth that takes schedule and remembers it
             this.canvas = canvas;
             Tuple<StationGraph, Dictionary<int, TopologyItem>, Dictionary<int, StraightRailTrackItem>> graphInfo = GraphUtils.CreateGraph(canvas.Rails);
             stationGraph = graphInfo.Item1;

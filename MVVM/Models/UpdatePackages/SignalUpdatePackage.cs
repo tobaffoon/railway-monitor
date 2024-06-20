@@ -1,4 +1,4 @@
-﻿using railway_monitor.Components.GraphicItems;
+﻿using railway_monitor.Components.TopologyItems;
 
 namespace railway_monitor.MVVM.Models.UpdatePackages {
     public readonly struct SignalUpdatePackage {

@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Media;
 
-namespace railway_monitor.Components.GraphicItems {
+namespace railway_monitor.Components.TopologyItems {
     public class ExternalTrackItem : TopologyItem {
         public enum ExternalTrackPlacementStatus {
             ERROR,

@@ -2,7 +2,7 @@
 using railway_monitor.Utils;
 using System.Windows;
 using System.Windows.Media;
-namespace railway_monitor.Components.GraphicItems {
+namespace railway_monitor.Components.TopologyItems {
     public class SwitchItem : TopologyItem {
         public enum SwitchPlacementStatus {
             ERROR,

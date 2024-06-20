@@ -1,5 +1,5 @@
 ﻿using railway_monitor.Bases;
-using railway_monitor.Components.GraphicItems;
+using railway_monitor.Components.TopologyItems;
 
 namespace railway_monitor.Utils {
     public static class ConnectConditions {
