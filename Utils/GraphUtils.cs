@@ -13,10 +13,13 @@ namespace railway_monitor.Utils {
         /// </summary>
         /// <param name="rails"></param>
         /// <returns>
-        /// Created StationGraph and dictionaries to map ids of its vertices and edges to topology items.
+        /// Created StationGraph and dictionaries 
+        /// 1. ids of its vertices -> topology items
+        /// 2. ids of its edges -> StraightRailTrack
+        /// 3. ids of its vertices -> Vertex objects in graph
         /// </returns>
         /// <exception cref="ArgumentException"></exception>
-        public static Tuple<StationGraph, Dictionary<int, TopologyItem>, Dictionary<int, StraightRailTrackItem>> CreateGraph(List<StraightRailTrackItem> rails) {
+        public static Tuple<StationGraph, Dictionary<int, TopologyItem>, Dictionary<int, StraightRailTrackItem>, Dictionary<int, Vertex>> CreateGraph(List<StraightRailTrackItem> rails) {
             Dictionary<Port, Vertex> vertexDict = new Dictionary<Port, Vertex>();
             Dictionary<StraightRailTrackItem, Edge> edgesDict = new Dictionary<StraightRailTrackItem, Edge>();
             int vertexIdCounter = 0;
@@ -149,7 +152,7 @@ namespace railway_monitor.Utils {
             foreach (Vertex v in vertexDict.Values) {
                 graph.TryAddVerticeWithEdges(v);
             }
-            return Tuple.Create(graph, topologyDict, edgesDict.ToDictionary(x => x.Value.getId(), x => x.Key)); // reverse edgesDict to map Edges to SRTs
+            return Tuple.Create(graph, topologyDict, edgesDict.ToDictionary(x => x.Value.getId(), x => x.Key), vertexDict.ToDictionary(x => x.Value.getId(), x => x.Value)); // reverse edgesDict to map Edges to SRTs
         }
         
         private static Vertex CreateVertexFromPort(Port port, int vertexId) {

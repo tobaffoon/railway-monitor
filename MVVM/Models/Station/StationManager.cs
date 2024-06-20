@@ -6,6 +6,8 @@ using railway_monitor.MVVM.Models.UpdatePackages;
 using railway_monitor.Utils;
 using SolverLibrary.Model.Graph;
 using SolverLibrary.Model;
+using SolverLibrary.Model.TrainInfo;
+using SolverLibrary.Model.Graph.VertexTypes;
 
 namespace railway_monitor.MVVM.Models.Station
 {
@@ -31,6 +33,7 @@ namespace railway_monitor.MVVM.Models.Station
         private readonly Dictionary<int, TopologyItem> topologyVertexDict;
         private readonly Dictionary<int, StraightRailTrackItem> topologyEdgeDict;
         private readonly Dictionary<int, TrainItem> trains;
+        private readonly Dictionary<int, Vertex> graphVertexDict;
 
         public StationManager(RailwayCanvasViewModel canvas, TrainSchedule schedule, int timeInaccuracy)
         {
@@ -52,10 +55,11 @@ namespace railway_monitor.MVVM.Models.Station
             }
 
             this.canvas = canvas;
-            Tuple<StationGraph, Dictionary<int, TopologyItem>, Dictionary<int, StraightRailTrackItem>> graphInfo = GraphUtils.CreateGraph(canvas.Rails);
+            Tuple<StationGraph, Dictionary<int, TopologyItem>, Dictionary<int, StraightRailTrackItem>, Dictionary<int, Vertex>> graphInfo = GraphUtils.CreateGraph(canvas.Rails);
             stationGraph = graphInfo.Item1;
             topologyVertexDict = graphInfo.Item2;
             topologyEdgeDict = graphInfo.Item3;
+            graphVertexDict = graphInfo.Item4;
 
             this.schedule = schedule;
             this.schedule.SetStationGraph(stationGraph);
@@ -182,8 +186,11 @@ namespace railway_monitor.MVVM.Models.Station
         }
         #endregion
         #region Emergency handlers
-        private void HandleUnscheduledTrain(TrainItem train) {
+        private void HandleUnscheduledTrain(int trainId) {
         
+        }
+        internal void AddUnscheduledTrainEntry(int trainId, int time, ExternalTrackItem outputTrack) {
+            
         }
         private void HandleBrokenTrain(TrainItem train) {
         
