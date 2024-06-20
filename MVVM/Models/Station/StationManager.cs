@@ -168,7 +168,7 @@ namespace railway_monitor.MVVM.Models.Station
             }
 
             TrainItem train = trains[timer.TrainId];
-            Tuple<StraightRailTrackItem, double> nextPos = canvas.GetAdvancedTrainPos(train.FlowCurrentTrack, train.FlowTrackProgress, train.Speed, flowUpdateInterval);
+            Tuple<StraightRailTrackItem, double> nextPos = canvas.GetAdvancedTrainPos(train.FlowCurrentTrack, train.FlowTrackProgress, train.Speed, flowUpdateInterval, false);
             train.FlowCurrentTrack = nextPos.Item1;
             train.FlowTrackProgress = nextPos.Item2;
         }

@@ -183,25 +183,31 @@ namespace railway_monitor.Components.RailwayCanvas
             HighlightPort.Pos = DraggedPort.Pos;
         }
 
-        public Tuple<StraightRailTrackItem, double> GetAdvancedTrainPos(StraightRailTrackItem trainTrack, double trackProgress, double speed, double millis) {
+        public Tuple<StraightRailTrackItem, double> GetAdvancedTrainPos(StraightRailTrackItem trainTrack, double trackProgress, double speed, double millis, bool reactsToState = true) {
             // TODO: move this method to simulator
             Port dstPort = trainTrack.MovementPortEnd;
-            if (Port.IsPortSignal(dstPort)) {
-                SignalItem signalItem = dstPort.TopologyItems.OfType<SignalItem>().First();
-                if (signalItem.LightStatus == SignalItem.SignalLightStatus.STOP) {
-                    return Tuple.Create(trainTrack, trackProgress);
-                }
-            }
-
-            double advancedProgress = trackProgress + speed / trainTrack.Length * millis / 1000; 
+            double advancedProgress = trackProgress + speed / trainTrack.Length * millis / 1000;
             if (advancedProgress < 1) {
                 return Tuple.Create(trainTrack, advancedProgress);
             }
 
             // At this point we might want to change track
+            if (Port.IsPortSignal(dstPort)) {
+                SignalItem signalItem = dstPort.TopologyItems.OfType<SignalItem>().First();
+                if (signalItem.LightStatus == SignalItem.SignalLightStatus.STOP || !reactsToState) {
+                    // stop if signal status is STOP. Or if caller doesn't want to react to station's state
+                    return Tuple.Create(trainTrack, trackProgress);
+                }
+            }
+
             if (Port.IsPortSwitch(dstPort)) {
+                if (!reactsToState) {
+                    // stop if caller doesn't want to react to station's state
+                    return Tuple.Create(trainTrack, trackProgress);
+                }
+
                 SwitchItem switchItem = dstPort.TopologyItems.OfType<SwitchItem>().First();
-                if(switchItem.Direction == SwitchItem.SwitchDirection.FIRST) {
+                if (switchItem.Direction == SwitchItem.SwitchDirection.FIRST) {
                     return Tuple.Create(switchItem.DstOneTrack, TrainItem.minDrawableProgress);
                 }
                 else {
