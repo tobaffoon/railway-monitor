@@ -2,7 +2,7 @@
 using railway_monitor.MVVM.Models.UpdatePackages;
 
 namespace railway_monitor.MVVM.Models.Server {
-    public class SimulatorListener : TrainStationListener {
+    public class SimulatorListener : StationUpdateListener {
         private bool _listensToSimulator = false;
         private StationManager _manager;
 
