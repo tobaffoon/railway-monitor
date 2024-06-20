@@ -215,7 +215,7 @@ namespace railway_monitor.Components.RailwayCanvas
                 }
             }
             if (Port.IsPortConnection(dstPort)) {
-                StraightRailTrackItem nextSrt = dstPort.TopologyItems.OfType<StraightRailTrackItem>().Where(srt => srt != trainTrack).First();
+                StraightRailTrackItem nextSrt = dstPort.TopologyItems.OfType<StraightRailTrackItem>().First(srt => srt != trainTrack);
                 return Tuple.Create(nextSrt, TrainItem.minDrawableProgress);
             }
             if (Port.IsPortOutput(dstPort)) {

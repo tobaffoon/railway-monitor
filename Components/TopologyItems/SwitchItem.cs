@@ -172,7 +172,7 @@ namespace railway_monitor.Components.TopologyItems {
                 return false;
             }
             var connectedRails = Port.TopologyItems.OfType<StraightRailTrackItem>();
-            var srcRail = connectedRails.Where((rail) => rail.PortStart == source || rail.PortEnd == source).FirstOrDefault();
+            var srcRail = connectedRails.FirstOrDefault((rail) => rail.PortStart == source || rail.PortEnd == source);
             if (srcRail == null) {
                 // user has chosen port not out of three connected ports
                 return false;
@@ -190,7 +190,7 @@ namespace railway_monitor.Components.TopologyItems {
                 return;
             }
             var connectedRails = Port.TopologyItems.OfType<StraightRailTrackItem>();
-            StraightRailTrackItem? srcRail = connectedRails.Where((rail) => rail.PortStart == source || rail.PortEnd == source).FirstOrDefault();
+            StraightRailTrackItem? srcRail = connectedRails.FirstOrDefault((rail) => rail.PortStart == source || rail.PortEnd == source);
             if (srcRail == null) {
                 // user has chosen port not out of three connected ports
                 return;

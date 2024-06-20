@@ -14,8 +14,9 @@ namespace railway_monitor.Components.GraphicItems {
             CARGO,
             NONE
         }
-        public static double minDrawableProgress = 1e-10;
-        public static double defaultSpeed = 1;
+        public static readonly double minDrawableProgress = 1e-10;
+        public static readonly int defaultSpeed = 1;
+        public static readonly int defaultLength = 400;
 
         private static readonly double _trainBorderWidth = 0.1;
 

@@ -61,10 +61,10 @@ namespace railway_monitor.Bases {
 
         #region Port types
         public static bool IsPortInput(Port port) {
-            return port.TopologyItems.OfType<ExternalTrackItem>().Where(externalItem => externalItem.Type == ExternalTrackItem.ExternalTrackType.IN).Any();
+            return port.TopologyItems.OfType<ExternalTrackItem>().Any(externalItem => externalItem.Type == ExternalTrackItem.ExternalTrackType.IN);
         }
         public static bool IsPortOutput(Port port) {
-            return port.TopologyItems.OfType<ExternalTrackItem>().Where(externalItem => externalItem.Type == ExternalTrackItem.ExternalTrackType.OUT).Any();
+            return port.TopologyItems.OfType<ExternalTrackItem>().Any(externalItem => externalItem.Type == ExternalTrackItem.ExternalTrackType.OUT);
         }
         public static bool IsPortConnection(Port port) {
             return port.TopologyItems.OfType<StraightRailTrackItem>().Count() == port.TopologyItems.Count;
