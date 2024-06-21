@@ -236,7 +236,27 @@ namespace railway_monitor.MVVM.Models.Station {
         }
         #endregion
         #region Emergency handlers
-        internal void AddUnscheduledTrainEntry(int trainId, int inputVertexId, int departureTime, ExternalTrackItem outputTrack) {
+        internal void HandleUnscheduledTrain(int trainId, int inputVertexId, int departureTime, ExternalTrackItem outputTrack) {
+            AddUnscheduledTrainEntry(trainId, inputVertexId, departureTime, outputTrack);
+        }
+        internal void HandleBrokenTrain(int trainId) {
+
+        }
+        internal void HandleOffscheduledTrain(int trainId, int departureTime) {
+            // remove respective entry from schedule
+            schedule.RemoveTrainSchedule(trains[trainId]);
+
+            // get data for new entry
+            int inputTrackId = GetScheduleById(trainId).GetVertexIn().getId();
+            int outputTrackId = GetScheduleById(trainId).GetVertexOut().getId();
+            ExternalTrackItem outputTrack = (ExternalTrackItem)topologyVertexDict[outputTrackId];
+
+            // add new entry as if the train was unscheduled
+            AddUnscheduledTrainEntry(trainId, inputTrackId, departureTime, outputTrack);
+        }
+        #endregion
+
+        private void AddUnscheduledTrainEntry(int trainId, int inputVertexId, int departureTime, ExternalTrackItem outputTrack) {
             int outputVertexId = topologyVertexDict.First(pair => pair.Value == outputTrack).Key;
             if (graphVertexDict[inputVertexId] is not InputVertex inputVertex) {
                 throw new ArgumentException("Attempted to add a train coming from vertex " + inputVertexId + " which is not input");
@@ -261,22 +281,6 @@ namespace railway_monitor.MVVM.Models.Station {
 
             ArriveTrain(new TrainArrivalPackage(trainId, inputVertexId));
         }
-        internal void HandleBrokenTrain(int trainId) {
-
-        }
-        internal void HandleOffscheduledTrain(int trainId, int departureTime) {
-            // remove respective entry from schedule
-            schedule.RemoveTrainSchedule(trains[trainId]);
-
-            // get data for new entry
-            int inputTrackId = GetScheduleById(trainId).GetVertexIn().getId();
-            int outputTrackId = GetScheduleById(trainId).GetVertexOut().getId();
-            ExternalTrackItem outputTrack = (ExternalTrackItem)topologyVertexDict[outputTrackId];
-
-            // add new entry as if the train was unscheduled
-            AddUnscheduledTrainEntry(trainId, inputTrackId, departureTime, outputTrack);
-        }
-        #endregion
         private SingleTrainSchedule GetScheduleById(int trainId) {
             return schedule.GetSchedule()[trains[trainId]];
         }
