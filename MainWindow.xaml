@@ -18,6 +18,9 @@
         <DataTemplate DataType="{x:Type viewmodels:RailwayMonitorViewModel}">
             <views:RailwayMonitorView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:StartViewModel}">
+            <views:StartView/>
+        </DataTemplate>
     </Window.Resources>
     
     <ContentControl Content="{Binding SelectedViewModel}" />

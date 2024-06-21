@@ -4,7 +4,7 @@ using System.Windows.Input;
 namespace railway_monitor.MVVM.ViewModels {
     public class MainViewModel : ViewModelBase {
         public enum ViewModelName {
-            Undefined = 0, RailwayMonitor
+            Undefined = 0, Start, RailwayMonitor
         }
 
         public ICommand SelectViewCommand => new CommandBase<ViewModelName>(SelectView);
@@ -16,10 +16,11 @@ namespace railway_monitor.MVVM.ViewModels {
         public MainViewModel() {
             ViewModels = new Dictionary<ViewModelName, ViewModelBase>
             {
-                { ViewModelName.RailwayMonitor, new RailwayMonitorViewModel() }
+                { ViewModelName.RailwayMonitor, new RailwayMonitorViewModel() },
+                { ViewModelName.Start, new StartViewModel() }
             };
 
-            SelectedViewModel = ViewModels.First().Value;
+            SelectedViewModel = ViewModels[ViewModelName.Start];
         }
 
         public void SelectView(ViewModelName viewModelName) {
