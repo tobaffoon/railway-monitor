@@ -65,6 +65,8 @@ namespace railway_monitor.Components.TopologyItems {
                 Render();
             }
         }
+        public StraightRailTrackItem ConnectedRailIn;
+        public StraightRailTrackItem ConnectedRailOut;
 
         private bool _isBroken = false;
         public bool IsBroken {
@@ -83,6 +85,8 @@ namespace railway_monitor.Components.TopologyItems {
 
         public void Place(Port mainPort) {
             mainPort.Merge(Port);
+            ConnectedRailIn = Port.TopologyItems.OfType<StraightRailTrackItem>().First(srt => srt.MovementPortEnd == Port);
+            ConnectedRailOut = Port.TopologyItems.OfType<StraightRailTrackItem>().First(srt => srt.MovementPortStart == Port);
             PlacementStatus = SignalPlacementStatus.PLACED;
             Render();
         }

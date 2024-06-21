@@ -174,6 +174,8 @@ namespace railway_monitor.Components.TopologyItems {
             }
         }
 
+        public StraightRailTrackItem ConnectedRail { get; private set; }
+
         private bool _isBroken = false;
         public bool IsBroken {
             get {
@@ -191,6 +193,7 @@ namespace railway_monitor.Components.TopologyItems {
 
         public void Place(Port mainPort) {
             mainPort.Merge(Port);
+            ConnectedRail = Port.TopologyItems.OfType<StraightRailTrackItem>().First();
             PlacementStatus = ExternalTrackPlacementStatus.PLACED;
             Render();
         }
