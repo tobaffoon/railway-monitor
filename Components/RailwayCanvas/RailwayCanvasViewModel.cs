@@ -61,6 +61,9 @@ namespace railway_monitor.Components.RailwayCanvas {
                 LatestTopologyItem = null;
             }
         }
+        public void DeleteTrainItem(TrainItem item) {
+            GraphicItems.Remove(item);
+        }
         public void DeleteStraightRailTrack(StraightRailTrackItem srt) {
             DeleteTopologyItem(srt);
             srt.PortStart.RemoveItem(srt);

@@ -18,6 +18,14 @@ namespace railway_monitor.MVVM.Models.Station {
         /// Arguments are: trainId, inputVertexId
         /// </summary>
         public event Action<int, int> OnUnscheduledTrainArrive;
+        /// <summary>
+        /// Arguments are: trainId
+        /// </summary>
+        public event Action<int> OnOffscheduledTrainArrive;
+        /// <summary>
+        /// Arguments are: trainId
+        /// </summary>
+        public event Action<int> OnBrokenTrain;
         #endregion
         #region Confidence and flow timers
         private static readonly int confidenceInterval = 30000;
@@ -30,37 +38,57 @@ namespace railway_monitor.MVVM.Models.Station {
         private readonly Dictionary<int, TrainTimer> flowTimers;
         #endregion
 
+        private int trainIdCounter;
+
         private readonly RailwayCanvasViewModel canvas;
         private readonly StationGraph stationGraph;
         private readonly TrainSchedule schedule;
         private readonly int timeInaccuracy;
         private readonly Dictionary<int, TopologyItem> topologyVertexDict;
         private readonly Dictionary<int, StraightRailTrackItem> topologyEdgeDict;
-        private readonly Dictionary<int, TrainItem> trains;
+        private readonly Dictionary<int, TrainItem> trainItems;
+        private readonly Dictionary<int, Train> trains;
         private readonly Dictionary<int, Vertex> graphVertexDict;
         private readonly Solver solver;
         private readonly StationPlanSender planSender;
 
-        public int CurrentTime;
+        private int _currentTime;
+        private readonly object _currentTimeLock = new object();
+        public int CurrentTime {
+            get {
+                 return _currentTime;
+            }
+            private set {
+                lock (_currentTimeLock) {
+                    _currentTime = value;
+                }
+            }
+        }
 
         public StationManager(RailwayCanvasViewModel canvas, TrainSchedule schedule, int timeInaccuracy) {
             CurrentTime = 0;
 
             // TODO: smth-smth that takes schedule and remembers it
-            int[] trainIds = { };
-            // add timers for each train
+            trainIdCounter = 0;
+            trains = new Dictionary<int, Train>();
+            // Process scheduule
             confidenceTimers = new Dictionary<int, TrainTimer>();
             flowTimers = new Dictionary<int, TrainTimer>();
             TrainTimer confidenceTimer, flowTimer;
-            foreach (int id in trainIds) {
-                confidenceTimer = new TrainTimer(id, confidenceInterval);
+            foreach (Train train in schedule.GetSchedule().Keys) {
+                // add timers for each train
+                confidenceTimer = new TrainTimer(trainIdCounter, confidenceInterval);
                 confidenceTimer.Elapsed += OnConfidenceTimerElapsed;
-                flowTimer = new TrainTimer(id, flowUpdateInterval);
+                flowTimer = new TrainTimer(trainIdCounter, flowUpdateInterval);
                 flowTimer.AutoReset = true;
                 flowTimer.Elapsed += OnFlowTimerElapsed;
+                confidenceTimers[trainIdCounter] = confidenceTimer;
+                flowTimers[trainIdCounter] = flowTimer;
 
-                confidenceTimers[id] = confidenceTimer;
-                flowTimers[id] = flowTimer;
+                // register train
+                trains[trainIdCounter] = train;
+
+                trainIdCounter++;
             }
 
             this.canvas = canvas;
@@ -74,18 +102,18 @@ namespace railway_monitor.MVVM.Models.Station {
             this.schedule.SetStationGraph(stationGraph);
             this.timeInaccuracy = timeInaccuracy;
 
-            trains = new Dictionary<int, TrainItem>();
+            trainItems = new Dictionary<int, TrainItem>();
 
             solver = new Solver(stationGraph, timeInaccuracy);
             planSender = new SimulatorPlanSender();
         }
 
         public void UpdateTrain(TrainUpdatePackage package) {
-            if (!trains.ContainsKey(package.trainId)) {
+            if (!trainItems.ContainsKey(package.trainId)) {
                 throw new ArgumentException("Tried updating not existing train with id " + package.trainId);
             }
 
-            TrainItem train = trains[package.trainId];
+            TrainItem train = trainItems[package.trainId];
             StraightRailTrackItem srtItem = topologyEdgeDict[package.edgeId];
             train.CurrentTrack = srtItem;
             train.TrackProgress = package.trackProgress;
@@ -102,19 +130,29 @@ namespace railway_monitor.MVVM.Models.Station {
                 throw new ArgumentException("Tried adding train from non-input vertex with id " + package.inputVertexId);
             }
 
+            if (!trains.ContainsKey(package.trainId)) {
+                OnUnscheduledTrainArrive?.Invoke(package.trainId, package.inputVertexId);
+                return;
+            }
+            if (IsTrainOffscheduled(package.trainId)) {
+                OnOffscheduledTrainArrive?.Invoke(package.trainId);
+            }
             StraightRailTrackItem srtItem = inputTrackItem.Port.TopologyItems.OfType<StraightRailTrackItem>().First();
-            trains[package.trainId] = new TrainItem(package.trainId, srtItem);
+            TrainItem trainItem = new TrainItem(package.trainId, srtItem);
+            trainItems[package.trainId] = trainItem;
+            canvas.AddTrainItem(trainItem);
 
             // start confidence and flow timers
             confidenceTimers[package.trainId].Start();
             flowTimers[package.trainId].Start();
         }
         public void DepartTrain(TrainDeparturePackage package) {
-            if (!trains.ContainsKey(package.trainId)) {
+            if (!trainItems.ContainsKey(package.trainId)) {
                 throw new ArgumentException("Tried updating not existing train with id " + package.trainId);
             }
 
-            trains.Remove(package.trainId);
+            canvas.DeleteTrainItem(trainItems[package.trainId]);
+            trainItems.Remove(package.trainId);
 
             // stop confidence and flow timers
             TrainTimer confidenceTimer = confidenceTimers[package.trainId];
@@ -183,7 +221,7 @@ namespace railway_monitor.MVVM.Models.Station {
             }
 
             // if confidence timer is not reset by trainUpdatePackage, respective train is considered broken
-            trains[timer.TrainId].IsBroken = true;
+            trainItems[timer.TrainId].IsBroken = true;
             flowTimers[timer.TrainId].Stop();
         }
         private void OnFlowTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e) {
@@ -191,16 +229,13 @@ namespace railway_monitor.MVVM.Models.Station {
                 throw new ArgumentException(nameof(OnFlowTimerElapsed) + " sent by " + sender + ". However it can be used only for " + nameof(TrainTimer));
             }
 
-            TrainItem train = trains[timer.TrainId];
+            TrainItem train = trainItems[timer.TrainId];
             Tuple<StraightRailTrackItem, double> nextPos = canvas.GetAdvancedTrainPos(train.FlowCurrentTrack, train.FlowTrackProgress, train.Speed, flowUpdateInterval, false);
             train.FlowCurrentTrack = nextPos.Item1;
             train.FlowTrackProgress = nextPos.Item2;
         }
         #endregion
         #region Emergency handlers
-        private void HandleUnscheduledTrain(int trainId, int inputVertexId) {
-            
-        }
         internal void AddUnscheduledTrainEntry(int trainId, int inputVertexId, int departureTime, ExternalTrackItem outputTrack) {
             int outputVertexId = topologyVertexDict.First(pair => pair.Value == outputTrack).Key;
             if (graphVertexDict[inputVertexId] is not InputVertex inputVertex) {
@@ -210,24 +245,47 @@ namespace railway_monitor.MVVM.Models.Station {
                 throw new ArgumentException("Attempted to add a train coming to vertex " + outputVertexId + " which is not output");
             }
 
+            StraightRailTrackItem inputTrack = ((ExternalTrackItem)topologyVertexDict[inputVertexId]).ConnectedRail;
+
+            // register new train
+            trains[trainId] = new Train(TrainItem.defaultLength, TrainItem.defaultSpeed, TrainType.NONE);
+            TrainItem trainItem = new TrainItem(trainId, inputTrack);
+            trainItems[trainId] = trainItem;
+            canvas.AddTrainItem(trainItem);
+
             schedule.TryAddTrainSchedule(
-                new Train(TrainItem.defaultLength, TrainItem.defaultSpeed, TrainType.NONE),
+                trains[trainId],
                 new SingleTrainSchedule(CurrentTime, departureTime, 0, inputVertex, outputVertex)
                 );
             planSender.SendPlan(solver.CalculateWorkPlan(schedule));
 
-            // register new train
-            TrainItem trainItem = new TrainItem(trainId, outputTrack);
-            trains[trainId] = trainItem;
-            canvas.AddTrainItem(trainItem);
+            ArriveTrain(new TrainArrivalPackage(trainId, inputVertexId));
         }
-        private void HandleBrokenTrain(TrainItem train) {
+        internal void HandleBrokenTrain(int trainId) {
 
         }
-        private void HandleOffscheduledTrain(TrainItem train) {
-            // remove respective entry in schedule
-            // pop up a window where manager inputs departure time
+        internal void HandleOffscheduledTrain(int trainId, int departureTime) {
+            // remove respective entry from schedule
+            schedule.RemoveTrainSchedule(trains[trainId]);
+
+            // get data for new entry
+            int inputTrackId = GetScheduleById(trainId).GetVertexIn().getId();
+            int outputTrackId = GetScheduleById(trainId).GetVertexOut().getId();
+            ExternalTrackItem outputTrack = (ExternalTrackItem)topologyVertexDict[outputTrackId];
+
+            // add new entry as if the train was unscheduled
+            AddUnscheduledTrainEntry(trainId, inputTrackId, departureTime, outputTrack);
         }
         #endregion
+        private SingleTrainSchedule GetScheduleById(int trainId) {
+            return schedule.GetSchedule()[trains[trainId]];
+        }
+        private bool IsTrainOffscheduled(int trainId) {
+            lock (_currentTimeLock) {
+                int expectedArrival = GetScheduleById(trainId).GetTimeArrival() - timeInaccuracy;
+                int expectedDeparture = GetScheduleById(trainId).GetTimeDeparture() + timeInaccuracy;
+                return expectedArrival < CurrentTime && CurrentTime < expectedDeparture;
+            }
+        }
     }
 }
