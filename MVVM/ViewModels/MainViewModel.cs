@@ -1,17 +1,16 @@
-﻿using railway_monitor.Bases;
-using System.Windows.Input;
-
-namespace railway_monitor.MVVM.ViewModels {
+﻿namespace railway_monitor.MVVM.ViewModels {
     public class MainViewModel : ViewModelBase {
         public enum ViewModelName {
             Undefined = 0, Start, RailwayMonitor
         }
 
-        public ICommand SelectViewCommand => new CommandBase<ViewModelName>(SelectView);
-
         private Dictionary<ViewModelName, ViewModelBase> ViewModels { get; }
 
-        public ViewModelBase SelectedViewModel { get; set; }
+        private ViewModelBase _selectedViewModel;
+        public ViewModelBase SelectedViewModel { 
+            get => _selectedViewModel;
+            set => SetField(ref _selectedViewModel, value);
+        }
 
         public MainViewModel() {
             ViewModels = new Dictionary<ViewModelName, ViewModelBase>
@@ -23,9 +22,10 @@ namespace railway_monitor.MVVM.ViewModels {
             SelectedViewModel = ViewModels[ViewModelName.Start];
         }
 
-        public void SelectView(ViewModelName viewModelName) {
-            if (ViewModels.TryGetValue(viewModelName, out ViewModelBase? selectedViewModel)) {
-                this.SelectedViewModel = selectedViewModel;
+        public void SelectView(object param) {
+            if (param is ViewModelName viewModelName &&
+                    ViewModels.TryGetValue(viewModelName, out ViewModelBase? selectedViewModel)) {
+                SelectedViewModel = selectedViewModel;
             }
         }
     }
