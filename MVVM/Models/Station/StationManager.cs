@@ -15,6 +15,12 @@ using System.Windows;
 
 namespace railway_monitor.MVVM.Models.Station {
     public class StationManager {
+        #region Emergency events
+        /// <summary>
+        /// Arguments are: trainId, inputVertexId
+        /// </summary>
+        public event Action<int, int> OnUnscheduledTrainArrive;
+        #endregion
         #region Confidence and flow timers
         private static readonly int confidenceInterval = 30000;
         private static readonly int flowUpdatesPerSec = 24;
