@@ -131,6 +131,10 @@ namespace railway_monitor.Components.GraphicItems {
             Speed = initSpeed;
         }
         public TrainItem(int id, StraightRailTrackItem startTrack) : this(id, startTrack, defaultSpeed) { }
+        public TrainItem(int id, ExternalTrackItem externalTrack) : this(
+            id,
+            externalTrack.Port.TopologyItems.OfType<StraightRailTrackItem>().First()
+            ) { }
 
         protected override void Render(DrawingContext dc) {
             PathFigure triangle = new PathFigure(TriangleBase, [
