@@ -1,3 +1,4 @@
+using railway_monitor.Bases;
 using railway_monitor.Components.RailwayCanvas;
 using railway_monitor.Components.ToolButtons;
 using railway_monitor.MVVM.Models.Station;
@@ -6,9 +7,12 @@ using railway_monitor.Tools.Actions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace railway_monitor.MVVM.ViewModels {
     public class RailwayMonitorViewModel : ViewModelBase {
+        public ICommand SaveCommand => new RelayCommand(FinishDesigning);
+
         private static readonly int _defaultTimeInaccuracy = 5;
         private void PreprocessButtonChecked() {
             RailwayCanvas.DeleteLatestTopologyItem();
@@ -88,13 +92,16 @@ namespace railway_monitor.MVVM.ViewModels {
         public RailwayCanvasViewModel RailwayCanvas { get; private set; }
         public StationManager StationManager { get; private set; }
 
-        public RailwayMonitorViewModel() {
+        private MainViewModel _mainViewModel;
+
+        public RailwayMonitorViewModel(MainViewModel mainViewModel) {
             #region Initialize ViewModels
+            _mainViewModel = mainViewModel;
             ToolButtons = new ToolButtonsViewModel();
             RailwayCanvas = new RailwayCanvasViewModel();
             AddPreprocessButtonChecked(ToolButtons.ToolButtonsList);
             #endregion
-
+            
             //StationManager = new StationManager(RailwayCanvas, null, _defaultTimeInaccuracy);
             #region Bind commands
             CanvasKeyboardCommand = new KeyboardCommand(KeyboardActions.CanvasKeyDown);
@@ -124,6 +131,10 @@ namespace railway_monitor.MVVM.ViewModels {
             };
             BindingOperations.SetBinding(this, ArrowsCommandProperty, arrowsBinding);
             #endregion
+        }
+
+        private void FinishDesigning() {
+            _mainViewModel.SelectView(MainViewModel.ViewModelName.Start);
         }
     }
 }

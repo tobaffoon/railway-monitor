@@ -35,7 +35,7 @@
                 <TextBlock Grid.Row="0" FontSize="50" FontWeight="ExtraBold" HorizontalAlignment="Center">Railway Monitor</TextBlock>
             </Border>
             <Border Grid.Row="1">
-                <Button>Design station</Button>
+                <Button Command="{Binding DesignCommand}">Design station</Button>
             </Border>
             <Border Grid.Row="2">
                 <Button>Start monitoring</Button>

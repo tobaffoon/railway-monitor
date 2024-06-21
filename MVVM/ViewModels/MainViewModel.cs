@@ -16,8 +16,8 @@ namespace railway_monitor.MVVM.ViewModels {
         public MainViewModel() {
             ViewModels = new Dictionary<ViewModelName, ViewModelBase>
             {
-                { ViewModelName.RailwayMonitor, new RailwayMonitorViewModel() },
-                { ViewModelName.Start, new StartViewModel() }
+                { ViewModelName.RailwayMonitor, new RailwayMonitorViewModel(this) },
+                { ViewModelName.Start, new StartViewModel(this) }
             };
 
             SelectedViewModel = ViewModels[ViewModelName.Start];

@@ -20,16 +20,16 @@ namespace railway_monitor.MVVM.Views {
         }
 
         private void OnCanvasKeyDown(object sender, KeyEventArgs e) {
-            RailwayMonitorViewModel contex = (RailwayMonitorViewModel)DataContext;
+            RailwayMonitorViewModel context = (RailwayMonitorViewModel)DataContext;
             switch (e.Key) {
                 case Key.Left:
                 case Key.Right:
                 case Key.Up:
                 case Key.Down:
-                    contex.ArrowsCommand.Execute(Tuple.Create(contex.RailwayCanvas, e.Key));
+                    context.ArrowsCommand.Execute(Tuple.Create(context.RailwayCanvas, e.Key));
                     break;
                 default:
-                    contex.CanvasKeyboardCommand.Execute(Tuple.Create(contex.RailwayCanvas, e.Key));
+                    context.CanvasKeyboardCommand.Execute(Tuple.Create(context.RailwayCanvas, e.Key));
                     break;
             }
         }
