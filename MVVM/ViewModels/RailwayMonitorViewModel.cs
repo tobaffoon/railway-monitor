@@ -1,5 +1,6 @@
 using railway_monitor.Components.RailwayCanvas;
 using railway_monitor.Components.ToolButtons;
+using railway_monitor.MVVM.Models.Station;
 using railway_monitor.Tools;
 using railway_monitor.Tools.Actions;
 using System.Windows;
@@ -8,6 +9,7 @@ using System.Windows.Data;
 
 namespace railway_monitor.MVVM.ViewModels {
     public class RailwayMonitorViewModel : ViewModelBase {
+        private static readonly int _defaultTimeInaccuracy = 5;
         private void PreprocessButtonChecked() {
             RailwayCanvas.DeleteLatestTopologyItem();
         }
@@ -16,12 +18,6 @@ namespace railway_monitor.MVVM.ViewModels {
             foreach (RadioButton button in buttons) {
                 button.Checked += (object sender, RoutedEventArgs e) => PreprocessButtonChecked();
             }
-        }
-
-        private void InitializeViewModels() {
-            ToolButtons = new ToolButtonsViewModel();
-            RailwayCanvas = new RailwayCanvasViewModel();
-            AddPreprocessButtonChecked(ToolButtons.ToolButtonsList);
         }
 
         public static readonly DependencyProperty MoveCommandProperty =
@@ -90,9 +86,17 @@ namespace railway_monitor.MVVM.ViewModels {
 
         public ToolButtonsViewModel ToolButtons { get; private set; }
         public RailwayCanvasViewModel RailwayCanvas { get; private set; }
+        public StationManager StationManager { get; private set; }
 
         public RailwayMonitorViewModel() {
-            InitializeViewModels();
+            #region Initialize ViewModels
+            ToolButtons = new ToolButtonsViewModel();
+            RailwayCanvas = new RailwayCanvasViewModel();
+            AddPreprocessButtonChecked(ToolButtons.ToolButtonsList);
+            #endregion
+
+            //StationManager = new StationManager(RailwayCanvas, null, _defaultTimeInaccuracy);
+            #region Bind commands
             CanvasKeyboardCommand = new KeyboardCommand(KeyboardActions.CanvasKeyDown);
 
             var leftClickBinding = new Binding("LeftClickCommand") {
@@ -119,6 +123,7 @@ namespace railway_monitor.MVVM.ViewModels {
                 Source = ToolButtons
             };
             BindingOperations.SetBinding(this, ArrowsCommandProperty, arrowsBinding);
+            #endregion
         }
     }
 }
