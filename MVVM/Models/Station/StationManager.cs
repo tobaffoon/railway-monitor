@@ -4,14 +4,12 @@ using railway_monitor.Components.RailwayCanvas;
 using railway_monitor.Components.TopologyItems;
 using railway_monitor.MVVM.Models.Server;
 using railway_monitor.MVVM.Models.UpdatePackages;
-using railway_monitor.MVVM.Views;
 using railway_monitor.Utils;
 using SolverLibrary;
 using SolverLibrary.Model;
 using SolverLibrary.Model.Graph;
 using SolverLibrary.Model.Graph.VertexTypes;
 using SolverLibrary.Model.TrainInfo;
-using System.Windows;
 
 namespace railway_monitor.MVVM.Models.Station {
     public class StationManager {
@@ -201,8 +199,7 @@ namespace railway_monitor.MVVM.Models.Station {
         #endregion
         #region Emergency handlers
         private void HandleUnscheduledTrain(int trainId, int inputVertexId) {
-            UnscheduledTrainWindow unscheduledTrainWindows = new UnscheduledTrainWindow();
-            unscheduledTrainWindows.Show();
+            
         }
         internal void AddUnscheduledTrainEntry(int trainId, int inputVertexId, int departureTime, ExternalTrackItem outputTrack) {
             int outputVertexId = topologyVertexDict.First(pair => pair.Value == outputTrack).Key;
@@ -218,6 +215,11 @@ namespace railway_monitor.MVVM.Models.Station {
                 new SingleTrainSchedule(CurrentTime, departureTime, 0, inputVertex, outputVertex)
                 );
             planSender.SendPlan(solver.CalculateWorkPlan(schedule));
+
+            // register new train
+            TrainItem trainItem = new TrainItem(trainId, outputTrack);
+            trains[trainId] = trainItem;
+            canvas.AddTrainItem(trainItem);
         }
         private void HandleBrokenTrain(TrainItem train) {
 

@@ -44,6 +44,9 @@ namespace railway_monitor.Components.RailwayCanvas {
             }
         }
 
+        public void AddTrainItem(TrainItem item) {
+            GraphicItems.Add(item);
+        }
         public void AddTopologyItem(TopologyItem item) {
             GraphicItems.Add(item);
             LatestTopologyItem = item;
