@@ -4,8 +4,6 @@
              xmlns:local="clr-namespace:railway_monitor"
              xmlns:toolbuttons="clr-namespace:railway_monitor.Components.ToolButtons">
     <Application.Resources>
-        <toolbuttons:ToolButtonsViewModel x:Key="SharedToolButtonsViewModel"/>
-
         <Style TargetType="Window">
             <Setter Property="FontSize" Value="18" />
         </Style>
