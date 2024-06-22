@@ -26,7 +26,7 @@ namespace railway_monitor.Tools.Actions {
                     canvas.ResetLatestTopologyItem();
                 }
             }
-            else {
+            else if (connectionPort == null) {
                 // connection port is not found or latest srt cannot be connected to it
                 if (srtItem.PlacementStatus == StraightRailTrackItem.RailPlacementStatus.NOT_PLACED) {
                     srtItem.PlaceStartPoint(mousePos);

@@ -4,10 +4,9 @@ using railway_monitor.Components.TopologyItems;
 namespace railway_monitor.Utils {
     public static class ConnectConditions {
         public static bool IsRailConnectable(Port connectionPort) {
-            int switches = connectionPort.TopologyItems.OfType<SwitchItem>().Count();
             int srts = connectionPort.TopologyItems.OfType<StraightRailTrackItem>().Count();
 
-            if (switches != 0 && srts >= 3) return false;
+            if (srts >= 3) return false;
             return true;
         }
         public static bool IsSwitchConnectable(Port connectionPort) {
