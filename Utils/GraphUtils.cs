@@ -5,11 +5,10 @@ using SolverLibrary.Model.Graph;
 using SolverLibrary.Model.Graph.VertexTypes;
 using SolverLibrary.Model.TrainInfo;
 using System.Windows;
-using System.Windows.Media;
 
 namespace railway_monitor.Utils {
     public class GraphUtils {
-        private static int _defaultEdgeLength = 1;
+        private static readonly int _defaultEdgeLength = 100;
 
         /// <summary>
         /// Calculates stationGraph from topology Items.
@@ -121,7 +120,7 @@ namespace railway_monitor.Utils {
                         break;
                     case DeadEndVertex deadEndVertex:
                         deadEndVertex.SetEdge(edgesDict[port.TopologyItems.OfType<StraightRailTrackItem>().First()]);
-                        relatedItem = port.TopologyItems.OfType<ExternalTrackItem>().First();
+                        relatedItem = port.TopologyItems.OfType<DeadendItem>().First();
                         topologyDict[deadEndVertex.getId()] = relatedItem;
                         if (relatedItem.IsBroken) deadEndVertex.Block();
                         break;
@@ -151,7 +150,7 @@ namespace railway_monitor.Utils {
                         }
                         #endregion
 
-                        relatedItem = port.TopologyItems.OfType<ExternalTrackItem>().First();
+                        relatedItem = port.TopologyItems.OfType<SignalItem>().First();
                         topologyDict[trafficLightVertex.getId()] = relatedItem;
                         if (relatedItem.IsBroken) trafficLightVertex.Block();
                         break;
@@ -159,7 +158,7 @@ namespace railway_monitor.Utils {
                         SwitchItem switchItem = port.TopologyItems.OfType<SwitchItem>().First();
 
                         switchVertex.SetEdges(edgesDict[switchItem.SrcTrack], edgesDict[switchItem.DstOneTrack], edgesDict[switchItem.DstTwoTrack]);
-                        relatedItem = port.TopologyItems.OfType<ExternalTrackItem>().First();
+                        relatedItem = port.TopologyItems.OfType<SwitchItem>().First();
                         topologyDict[switchVertex.getId()] = relatedItem;
                         if (relatedItem.IsBroken && switchVertex.GetWorkCondition() == SwitchWorkCondition.WORKING) switchVertex.ChangeWorkCondition();
                         break;
