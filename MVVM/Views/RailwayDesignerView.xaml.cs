@@ -7,12 +7,12 @@ using System.Windows.Input;
 
 namespace railway_monitor.MVVM.Views {
     /// <summary>
-    /// Interaction logic for RailwayMonitorView.xaml
+    /// Interaction logic for RailwayDesignerView.xaml
     /// </summary>
-    public partial class RailwayMonitorView : UserControl {
+    public partial class RailwayDesignerView : UserControl {
         private RailwayDesignerViewModel Context => (RailwayDesignerViewModel) DataContext;
 
-        public RailwayMonitorView() {
+        public RailwayDesignerView() {
             InitializeComponent();
 
             Loaded += (x, y) => Keyboard.Focus(railwayCanvas);

@@ -1,7 +1,10 @@
 ﻿namespace railway_monitor.MVVM.ViewModels {
     public class MainViewModel : ViewModelBase {
         public enum ViewModelName {
-            Undefined = 0, Start, RailwayMonitor
+            Undefined = 0, 
+            Start, 
+            RailwayDesigner, 
+            RailwayMonitor
         }
 
         private Dictionary<ViewModelName, ViewModelBase> ViewModels { get; }
@@ -15,8 +18,9 @@
         public MainViewModel() {
             ViewModels = new Dictionary<ViewModelName, ViewModelBase>
             {
-                { ViewModelName.RailwayMonitor, new RailwayDesignerViewModel(this) },
-                { ViewModelName.Start, new StartViewModel(this) }
+                { ViewModelName.RailwayDesigner, new RailwayDesignerViewModel(this) },
+                { ViewModelName.Start, new StartViewModel(this) },
+                { ViewModelName.RailwayMonitor, new RailwayMonitorViewModel(this) }
             };
 
             SelectedViewModel = ViewModels[ViewModelName.Start];

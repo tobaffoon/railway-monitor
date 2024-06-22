@@ -13,12 +13,12 @@ namespace railway_monitor.MVVM.ViewModels {
         }
 
         private void StartDesigning() {
-            _mainViewModel.SelectView(MainViewModel.ViewModelName.RailwayMonitor);
+            _mainViewModel.SelectView(MainViewModel.ViewModelName.RailwayDesigner);
         }
 
         internal void StartMonitoring(StationGraph graph) {
             _mainViewModel.SelectView(MainViewModel.ViewModelName.RailwayMonitor);
-            if (_mainViewModel.SelectedViewModel is not RailwayDesignerViewModel monitor) {
+            if (_mainViewModel.SelectedViewModel is not RailwayMonitorViewModel monitor) {
                 _mainViewModel.SelectView(MainViewModel.ViewModelName.Start);
                 return;
             }
