@@ -71,17 +71,8 @@ namespace railway_monitor.Tools.Actions {
                         return;
                     }
                     switchItem.Place(connectionPort);
-                    break;
-                case SwitchItem.SwitchPlacementStatus.PLACED:
-                    connectionPort = canvas.TryFindUnderlyingPort(mousePos);
-                    if (connectionPort == null || !switchItem.IsSourceValid(connectionPort)) {
-                        // no valid source port found
-                        return;
-                    }
-                    switchItem.SetSource(connectionPort);
                     canvas.ResetLatestTopologyItem();
                     break;
-
             }
         }
         public static void PlaceSignal(Tuple<RailwayCanvasViewModel, Point> args) {

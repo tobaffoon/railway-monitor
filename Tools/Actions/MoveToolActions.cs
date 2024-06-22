@@ -117,21 +117,6 @@ namespace railway_monitor.Tools.Actions {
 
                     switchItem.Pos = connectionPos;
                     break;
-                case SwitchItem.SwitchPlacementStatus.PLACED:
-                    if (connectionPort == null) {
-                        connectionPos = mousePos;
-                    }
-                    else {
-                        if (!switchItem.IsSourceValid(connectionPort)) {
-                            connectionPos = mousePos;
-                            canvas.ConnectionErrorOccured = true;
-                        }
-                        else {
-                            connectionPos = connectionPort.Pos;
-                        }
-                    }
-                    switchItem.SrcPos = connectionPos;
-                    break;
             }
         }
         public static void MoveSignal(Tuple<RailwayCanvasViewModel, Point> args) {
