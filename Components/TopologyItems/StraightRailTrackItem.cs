@@ -242,17 +242,6 @@ namespace railway_monitor.Components.TopologyItems {
         }
         #endregion
 
-        private bool _isBroken = false;
-        public bool IsBroken {
-            get {
-                return _isBroken;
-            }
-            set {
-                _isBroken = value;
-                Render();
-            }
-        }
-
         public double Length;
 
         public StraightRailTrackItem(Point initPos, double length) : base() {

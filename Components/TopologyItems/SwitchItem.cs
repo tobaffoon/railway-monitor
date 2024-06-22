@@ -123,17 +123,6 @@ namespace railway_monitor.Components.TopologyItems {
             }
         }
 
-        private bool _isBroken = false;
-        public bool IsBroken {
-            get {
-                return _isBroken;
-            }
-            set {
-                _isBroken = value;
-                Render();
-            }
-        }
-
         public SwitchItem(Point initPos) : base() {
             Port = new Port(this, initPos);
 

@@ -105,17 +105,6 @@ namespace railway_monitor.Components.TopologyItems {
 
         public StraightRailTrackItem ConnectedRail { get; private set; }
 
-        private bool _isBroken = false;
-        public bool IsBroken {
-            get {
-                return _isBroken;
-            }
-            set {
-                _isBroken = value;
-                Render();
-            }
-        }
-
         public DeadendItem(Point initPoint) : base() {
             Port = new Port(this, initPoint);
         }

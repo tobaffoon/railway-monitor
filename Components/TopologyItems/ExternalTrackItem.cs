@@ -176,17 +176,6 @@ namespace railway_monitor.Components.TopologyItems {
 
         public StraightRailTrackItem ConnectedRail { get; private set; }
 
-        private bool _isBroken = false;
-        public bool IsBroken {
-            get {
-                return _isBroken;
-            }
-            set {
-                _isBroken = value;
-                Render();
-            }
-        }
-
         public ExternalTrackItem(Point initPos) : base() {
             Port = new Port(this, initPos);
         }

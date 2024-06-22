@@ -4,6 +4,8 @@ using railway_monitor.Components.TopologyItems;
 using SolverLibrary.Model.Graph;
 using SolverLibrary.Model.Graph.VertexTypes;
 using SolverLibrary.Model.TrainInfo;
+using System.Drawing;
+using System.Windows.Media;
 
 namespace railway_monitor.Utils {
     public class GraphUtils {
@@ -63,23 +65,29 @@ namespace railway_monitor.Utils {
                 }
 
                 edgesDict[srt] = new Edge(edgeIdCounter, _defaultEdgeLength, vertexStart, vertexEnd, edgeType);
+                if (srt.IsBroken) edgesDict[srt].Block();
                 edgeIdCounter++;
             }
 
             // add edges links to each vertex
             // also calculate vertex id -> topology item dictionary
             StraightRailTrackItem[] portSrts;
+            TopologyItem relatedItem;
             Dictionary<int, TopologyItem> topologyDict = new Dictionary<int, TopologyItem>(vertexIdCounter); // capacity is not bigger than number of vertices (connection vertices does not map to any item)
             foreach (Port port in vertexDict.Keys) {
                 portSrts = port.TopologyItems.OfType<StraightRailTrackItem>().ToArray();
                 switch (vertexDict[port]) {
                     case InputVertex inputVertex:
                         inputVertex.SetEdge(edgesDict[port.TopologyItems.OfType<StraightRailTrackItem>().First()]);
-                        topologyDict[inputVertex.getId()] = port.TopologyItems.OfType<ExternalTrackItem>().First();
+                        relatedItem = port.TopologyItems.OfType<ExternalTrackItem>().First();
+                        topologyDict[inputVertex.getId()] = relatedItem;
+                        if (relatedItem.IsBroken) inputVertex.Block();
                         break;
                     case OutputVertex outputVertex:
                         outputVertex.SetEdge(edgesDict[port.TopologyItems.OfType<StraightRailTrackItem>().First()]);
-                        topologyDict[outputVertex.getId()] = port.TopologyItems.OfType<ExternalTrackItem>().First();
+                        relatedItem = port.TopologyItems.OfType<ExternalTrackItem>().First();
+                        topologyDict[outputVertex.getId()] = relatedItem;
+                        if (relatedItem.IsBroken) outputVertex.Block();
                         break;
                     case ConnectionVertex connectionVertex:
                         if(portSrts.Length != 2) {
@@ -109,10 +117,13 @@ namespace railway_monitor.Utils {
                             }
                         }
                         #endregion
+                        if (portSrts[0].IsBroken || portSrts[1].IsBroken) connectionVertex.Block();
                         break;
                     case DeadEndVertex deadEndVertex:
                         deadEndVertex.SetEdge(edgesDict[port.TopologyItems.OfType<StraightRailTrackItem>().First()]);
-                        topologyDict[deadEndVertex.getId()] = port.TopologyItems.OfType<DeadendItem>().First();
+                        relatedItem = port.TopologyItems.OfType<ExternalTrackItem>().First();
+                        topologyDict[deadEndVertex.getId()] = relatedItem;
+                        if (relatedItem.IsBroken) deadEndVertex.Block();
                         break;
                     case TrafficLightVertex trafficLightVertex:
                         #region Set edgeConnection considering srt direction
@@ -140,13 +151,17 @@ namespace railway_monitor.Utils {
                         }
                         #endregion
 
-                        topologyDict[trafficLightVertex.getId()] = port.TopologyItems.OfType<SignalItem>().First();
+                        relatedItem = port.TopologyItems.OfType<ExternalTrackItem>().First();
+                        topologyDict[trafficLightVertex.getId()] = relatedItem;
+                        if (relatedItem.IsBroken) trafficLightVertex.Block();
                         break;
                     case SwitchVertex switchVertex:
                         SwitchItem switchItem = port.TopologyItems.OfType<SwitchItem>().First();
 
                         switchVertex.SetEdges(edgesDict[switchItem.SrcTrack], edgesDict[switchItem.DstOneTrack], edgesDict[switchItem.DstTwoTrack]);
-                        topologyDict[switchVertex.getId()] = port.TopologyItems.OfType<SwitchItem>().First();
+                        relatedItem = port.TopologyItems.OfType<ExternalTrackItem>().First();
+                        topologyDict[switchVertex.getId()] = relatedItem;
+                        if (relatedItem.IsBroken && switchVertex.GetWorkCondition() == SwitchWorkCondition.WORKING) switchVertex.ChangeWorkCondition();
                         break;
                 }
             }
@@ -183,5 +198,8 @@ namespace railway_monitor.Utils {
         public static Tuple<StationGraph, Dictionary<int, TopologyItem>, Dictionary<int, StraightRailTrackItem>, Dictionary<int, Vertex>> CreateGraph(RailwayCanvasViewModel canvas) {
             return CreateGraph(canvas.Rails);
         }
+        //public void AddTopologyFromGraph(RailwayCanvasViewModel canvas, StationGraph graph) {
+        //    Point startPos = new Point(100, 100);
+        //}
     }
 }
