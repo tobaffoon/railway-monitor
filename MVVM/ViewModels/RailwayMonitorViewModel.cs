@@ -7,12 +7,9 @@ using railway_monitor.Tools.Actions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Input;
 
 namespace railway_monitor.MVVM.ViewModels {
     public class RailwayMonitorViewModel : ViewModelBase {
-        public ICommand SaveCommand => new RelayCommand(FinishDesigning);
-
         private static readonly int _defaultTimeInaccuracy = 5;
         private void PreprocessButtonChecked() {
             RailwayCanvas.DeleteLatestTopologyItem();
@@ -133,7 +130,7 @@ namespace railway_monitor.MVVM.ViewModels {
             #endregion
         }
 
-        private void FinishDesigning() {
+        internal void FinishDesigning() {
             _mainViewModel.SelectView(MainViewModel.ViewModelName.Start);
         }
     }

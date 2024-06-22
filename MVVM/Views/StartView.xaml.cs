@@ -1,5 +1,4 @@
-﻿using railway_monitor.MVVM.ViewModels;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace railway_monitor.MVVM.Views {
     /// <summary>

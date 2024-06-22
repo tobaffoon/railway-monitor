@@ -92,7 +92,7 @@ namespace railway_monitor.MVVM.Models.Station {
             }
 
             this.canvas = canvas;
-            Tuple<StationGraph, Dictionary<int, TopologyItem>, Dictionary<int, StraightRailTrackItem>, Dictionary<int, Vertex>> graphInfo = GraphUtils.CreateGraph(canvas.Rails);
+            Tuple<StationGraph, Dictionary<int, TopologyItem>, Dictionary<int, StraightRailTrackItem>, Dictionary<int, Vertex>> graphInfo = GraphUtils.CreateGraph(canvas);
             stationGraph = graphInfo.Item1;
             topologyVertexDict = graphInfo.Item2;
             topologyEdgeDict = graphInfo.Item3;

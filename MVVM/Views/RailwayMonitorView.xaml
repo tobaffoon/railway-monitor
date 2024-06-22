@@ -17,11 +17,12 @@
 
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <ItemsControl Grid.Row="0" x:Name="railwayCanvas" ItemsSource="{Binding RailwayCanvas.GraphicItems}" Focusable="True" KeyDown="OnCanvasKeyDown">
+            <ItemsControl Grid.Row="0" Grid.RowSpan="2" x:Name="railwayCanvas" ItemsSource="{Binding RailwayCanvas.GraphicItems}" Focusable="True" KeyDown="OnCanvasKeyDown">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <rw_canvas:RailwayCanvas x:Name="MainCanvas" Background="Azure"/>
@@ -29,7 +30,9 @@
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
 
-            <toolbuttons:ToolButtons Grid.Row="1" DataContext="{Binding ToolButtons}">
+            <Button Grid.Row="0" Padding="10,0" MaxWidth="100" HorizontalAlignment="Left" Click="FinishDesigning">Save</Button>
+
+            <toolbuttons:ToolButtons Grid.Row="2" DataContext="{Binding ToolButtons}">
                 <toolbuttons:ToolButtons.HorizontalAlignment>
                     Center
                 </toolbuttons:ToolButtons.HorizontalAlignment>

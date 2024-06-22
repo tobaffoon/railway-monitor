@@ -1,4 +1,7 @@
-﻿using railway_monitor.MVVM.ViewModels;
+﻿using railway_monitor.Bases;
+using railway_monitor.Components.RailwayCanvas;
+using railway_monitor.MVVM.ViewModels;
+using railway_monitor.Utils;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -7,6 +10,8 @@ namespace railway_monitor.MVVM.Views {
     /// Interaction logic for RailwayMonitorView.xaml
     /// </summary>
     public partial class RailwayMonitorView : UserControl {
+        private RailwayMonitorViewModel Context => (RailwayMonitorViewModel) DataContext;
+
         public RailwayMonitorView() {
             InitializeComponent();
 
@@ -20,18 +25,42 @@ namespace railway_monitor.MVVM.Views {
         }
 
         private void OnCanvasKeyDown(object sender, KeyEventArgs e) {
-            RailwayMonitorViewModel context = (RailwayMonitorViewModel)DataContext;
             switch (e.Key) {
                 case Key.Left:
                 case Key.Right:
                 case Key.Up:
                 case Key.Down:
-                    context.ArrowsCommand.Execute(Tuple.Create(context.RailwayCanvas, e.Key));
+                    Context.ArrowsCommand.Execute(Tuple.Create(Context.RailwayCanvas, e.Key));
                     break;
                 default:
-                    context.CanvasKeyboardCommand.Execute(Tuple.Create(context.RailwayCanvas, e.Key));
+                    Context.CanvasKeyboardCommand.Execute(Tuple.Create(Context.RailwayCanvas, e.Key));
                     break;
             }
+        }
+
+        private void FinishDesigning(object sender, System.Windows.RoutedEventArgs e) {
+            // Configure save file dialog box
+            var dialog = new Microsoft.Win32.SaveFileDialog();
+            dialog.FileName = DateTime.Today.ToString("MM-dd-yyyy") + "-station";
+            dialog.DefaultExt = ".json";
+            dialog.Filter = "JSON documents (.json)|*.json"; // Filter files by extension
+
+            // Show save file dialog box
+            bool? result = dialog.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == false) {
+                return;
+            }
+
+            // Save document
+            string filename = dialog.FileName;
+            SolverLibrary.JsonDoc.JsonParser.SaveJsonStationGraph(
+                filename,
+                GraphUtils.CreateGraph(Context.RailwayCanvas).Item1
+                );
+
+            Context.FinishDesigning();
         }
     }
 }
