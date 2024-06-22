@@ -9,6 +9,7 @@ using System.Windows;
 namespace railway_monitor.Utils {
     public class GraphUtils {
         private static readonly int _defaultEdgeLength = 100;
+        private static readonly Point _initGraphPos = new Point(100, 100);
 
         /// <summary>
         /// Calculates stationGraph from topology Items.
@@ -22,6 +23,10 @@ namespace railway_monitor.Utils {
         /// </returns>
         /// <exception cref="ArgumentException"></exception>
         public static Tuple<StationGraph, Dictionary<int, TopologyItem>, Dictionary<int, StraightRailTrackItem>, Dictionary<int, Vertex>> CreateGraph(List<StraightRailTrackItem> rails) {
+            if(rails.Count() == 0) {
+                throw new ArgumentException("No rails drawn");
+            }
+            
             Dictionary<Port, Vertex> vertexDict = new Dictionary<Port, Vertex>();
             Dictionary<StraightRailTrackItem, Edge> edgesDict = new Dictionary<StraightRailTrackItem, Edge>();
             int vertexIdCounter = 0;
@@ -198,22 +203,58 @@ namespace railway_monitor.Utils {
             return CreateGraph(canvas.Rails);
         }
         public static void AddTopologyFromGraph(RailwayCanvasViewModel canvas, StationGraph graph) {
-            Point currentPos = new Point(100, 100);
+            Point currentStart = new Point(0, 0) {
+                X = _initGraphPos.X,
+                Y = _initGraphPos.Y
+            };
+            Point currentEnd = new Point(0, 0) {
+                X = _initGraphPos.X + 100,
+                Y = _initGraphPos.Y
+            };
+
             Dictionary<Edge, StraightRailTrackItem> railDict = [];
+            Edge[] edges = [.. graph.GetEdges()];
 
             // add rails without connecting them yet
-            foreach (Edge edge in graph.GetEdges()) {
+            foreach (Edge edge in edges) {
                 int length = edge.GetLength();
-                StraightRailTrackItem srtItem = new StraightRailTrackItem(currentPos, length);
-                srtItem.PlaceStartPoint(currentPos);
-                currentPos.X += length;
-                srtItem.PlaceEndPoint(currentPos);
+                StraightRailTrackItem srtItem = new StraightRailTrackItem(_initGraphPos, length);
+                srtItem.PlaceStartPoint(currentStart);
+                srtItem.PlaceEndPoint(currentEnd);
+                currentStart.Y += 10;
+                currentEnd.Y += 10;
                 railDict[edge] = srtItem;
 
                 canvas.AddTopologyItemBehind(srtItem);
             }
 
-            // connect rails
+            // connect start of rails
+            // only non input vertices can have their starts moved
+            foreach (Edge edge in edges) {
+                if (edge.GetStart() is InputVertex) continue;
+                Edge incomingEdge = edges.First(x => x.GetEnd().getId() == edge.GetStart().getId());
+                Port newPort = railDict[incomingEdge].MovementPortEnd;
+                StraightRailTrackItem srtItem = railDict[edge];
+                
+                // connect starting points
+                srtItem.PlaceStartPoint(newPort);
+
+                // place end point
+                Point endPos = new Point(0, 0);
+                if (newPort.TopologyItems.OfType<StraightRailTrackItem>().Count() == 2) {
+                    // it's first outgoing track
+                    endPos.X = newPort.Pos.X + srtItem.Length;
+                    endPos.Y = newPort.Pos.Y;
+                }
+                else {
+                    // it's second outgoing track
+                    endPos.X = newPort.Pos.X + srtItem.Length;
+                    endPos.Y = newPort.Pos.Y + srtItem.Length;
+                }
+                srtItem.PlaceEndPoint(endPos);
+            }
+
+            canvas.ResetLatestTopologyItem();
         }
 
     }
