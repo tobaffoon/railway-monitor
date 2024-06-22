@@ -4,7 +4,7 @@ using railway_monitor.Components.TopologyItems;
 using SolverLibrary.Model.Graph;
 using SolverLibrary.Model.Graph.VertexTypes;
 using SolverLibrary.Model.TrainInfo;
-using System.Drawing;
+using System.Windows;
 using System.Windows.Media;
 
 namespace railway_monitor.Utils {
@@ -199,7 +199,23 @@ namespace railway_monitor.Utils {
             return CreateGraph(canvas.Rails);
         }
         public static void AddTopologyFromGraph(RailwayCanvasViewModel canvas, StationGraph graph) {
-            Point startPos = new Point(100, 100);
+            Point currentPos = new Point(100, 100);
+            Dictionary<Edge, StraightRailTrackItem> railDict = [];
+
+            // add rails without connecting them yet
+            foreach (Edge edge in graph.GetEdges()) {
+                int length = edge.GetLength();
+                StraightRailTrackItem srtItem = new StraightRailTrackItem(currentPos, length);
+                srtItem.PlaceStartPoint(currentPos);
+                currentPos.X += length;
+                srtItem.PlaceEndPoint(currentPos);
+                railDict[edge] = srtItem;
+
+                canvas.AddTopologyItemBehind(srtItem);
+            }
+
+            // connect rails
         }
+
     }
 }
