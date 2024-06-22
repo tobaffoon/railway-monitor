@@ -38,7 +38,7 @@
                 <Button Command="{Binding DesignCommand}">Design station</Button>
             </Border>
             <Border Grid.Row="2">
-                <Button>Start monitoring</Button>
+                <Button Click="StartMonitoring">Start monitoring</Button>
             </Border>
         </Grid>
     </Border>

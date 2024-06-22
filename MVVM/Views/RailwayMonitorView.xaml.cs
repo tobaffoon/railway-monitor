@@ -44,7 +44,7 @@ namespace railway_monitor.MVVM.Views {
             var dialog = new Microsoft.Win32.SaveFileDialog();
             dialog.FileName = DateTime.Today.ToString("MM-dd-yyyy") + "-station";
             dialog.DefaultExt = ".json";
-            dialog.Filter = "JSON documents (.json)|*.json"; // Filter files by extension
+            dialog.Filter = "JSON documents (.json)|*.json";
 
             // Show save file dialog box
             bool? result = dialog.ShowDialog();

@@ -198,8 +198,8 @@ namespace railway_monitor.Utils {
         public static Tuple<StationGraph, Dictionary<int, TopologyItem>, Dictionary<int, StraightRailTrackItem>, Dictionary<int, Vertex>> CreateGraph(RailwayCanvasViewModel canvas) {
             return CreateGraph(canvas.Rails);
         }
-        //public void AddTopologyFromGraph(RailwayCanvasViewModel canvas, StationGraph graph) {
-        //    Point startPos = new Point(100, 100);
-        //}
+        public static void AddTopologyFromGraph(RailwayCanvasViewModel canvas, StationGraph graph) {
+            Point startPos = new Point(100, 100);
+        }
     }
 }

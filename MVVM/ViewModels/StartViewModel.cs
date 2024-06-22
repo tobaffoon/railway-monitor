@@ -1,4 +1,6 @@
 ﻿using railway_monitor.Bases;
+using railway_monitor.Utils;
+using SolverLibrary.Model.Graph;
 using System.Windows.Input;
 
 namespace railway_monitor.MVVM.ViewModels {
@@ -12,6 +14,16 @@ namespace railway_monitor.MVVM.ViewModels {
 
         private void StartDesigning() {
             _mainViewModel.SelectView(MainViewModel.ViewModelName.RailwayMonitor);
+        }
+
+        internal void StartMonitoring(StationGraph graph) {
+            _mainViewModel.SelectView(MainViewModel.ViewModelName.RailwayMonitor);
+            if (_mainViewModel.SelectedViewModel is not RailwayMonitorViewModel monitor) {
+                _mainViewModel.SelectView(MainViewModel.ViewModelName.Start);
+                return;
+            }
+
+            GraphUtils.AddTopologyFromGraph(monitor.RailwayCanvas, graph);
         }
     }
 }

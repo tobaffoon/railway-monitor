@@ -98,8 +98,6 @@ namespace railway_monitor.MVVM.ViewModels {
             RailwayCanvas = new RailwayCanvasViewModel();
             AddPreprocessButtonChecked(ToolButtons.ToolButtonsList);
             #endregion
-            
-            //StationManager = new StationManager(RailwayCanvas, null, _defaultTimeInaccuracy);
             #region Bind commands
             CanvasKeyboardCommand = new KeyboardCommand(KeyboardActions.CanvasKeyDown);
 
