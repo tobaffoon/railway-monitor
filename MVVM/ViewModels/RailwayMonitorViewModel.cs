@@ -4,6 +4,7 @@ using railway_monitor.Components.ToolButtons;
 using railway_monitor.MVVM.Models.Station;
 using railway_monitor.Tools;
 using railway_monitor.Tools.Actions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -129,6 +130,13 @@ namespace railway_monitor.MVVM.ViewModels {
         }
 
         internal void FinishDesigning() {
+            _mainViewModel.SelectView(MainViewModel.ViewModelName.RailwayMonitor);
+            if (_mainViewModel.SelectedViewModel is not RailwayMonitorViewModel monitor) {
+                _mainViewModel.SelectView(MainViewModel.ViewModelName.Start);
+                return;
+            }
+            monitor.RailwayCanvas.Clear();
+
             _mainViewModel.SelectView(MainViewModel.ViewModelName.Start);
         }
     }

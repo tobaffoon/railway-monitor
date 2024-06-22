@@ -40,6 +40,10 @@ namespace railway_monitor.Components.RailwayCanvas {
         public RailwayCanvasViewModel() {
             permanentItems = [HighlightPort];
             GraphicItems = [];
+            AddPermanentItems();
+        }
+
+        private void AddPermanentItems() {
             foreach (var item in permanentItems) {
                 GraphicItems.Add(item);
             }
@@ -233,6 +237,14 @@ namespace railway_monitor.Components.RailwayCanvas {
             }
 
             throw new ArgumentException("Error while getting next position of a train that heads to " + dstPort);
+        }
+
+        public void Clear() {
+            GraphicItems.Clear();
+            AddPermanentItems();
+            ConnectionPlatformTrack = null;
+            DraggedPort = null;
+            LatestTopologyItem = null;
         }
     }
 }
