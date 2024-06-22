@@ -16,7 +16,7 @@
     <Compile Update="MVVM\Views\MainView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="MVVM\Views\RailwayMonitorView.xaml.cs">
+    <Compile Update="MVVM\Views\RailwayDesignerView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="MVVM\Views\StartView.xaml.cs">
@@ -42,7 +42,7 @@
     <Page Update="MVVM\Views\MainView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="MVVM\Views\RailwayMonitorView.xaml">
+    <Page Update="MVVM\Views\RailwayDesignerView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MVVM\Views\StartView.xaml">
