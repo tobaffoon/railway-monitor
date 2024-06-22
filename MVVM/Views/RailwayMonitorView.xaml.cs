@@ -68,5 +68,9 @@ namespace railway_monitor.MVVM.Views {
             SolverLibrary.JsonDoc.JsonParser.SaveJsonStationGraph(filename, graph);
             Context.FinishDesigning();
         }
+
+        private void CancelDesigning(object sender, RoutedEventArgs e) {
+            Context.FinishDesigning();
+        }
     }
 }

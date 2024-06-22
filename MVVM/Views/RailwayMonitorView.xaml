@@ -16,6 +16,13 @@
             PreviewKeyDown="FocusCanvas">
 
         <Grid>
+            <Grid.Resources>
+                <Style TargetType="Button" >
+                    <Setter Property="Padding" Value="10,0" />
+                    <Setter Property="Margin" Value="10,0" />
+                </Style>
+            </Grid.Resources>
+                
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
@@ -30,8 +37,11 @@
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
 
-            <Button Grid.Row="0" Padding="10,0" MaxWidth="100" HorizontalAlignment="Left" Click="FinishDesigning">Save</Button>
-
+            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                <Button MaxWidth="100" HorizontalAlignment="Left" Click="CancelDesigning">Cancel</Button>
+                <Button MaxWidth="100" HorizontalAlignment="Left" Click="FinishDesigning">Save</Button>
+            </StackPanel>
+            
             <toolbuttons:ToolButtons Grid.Row="2" DataContext="{Binding ToolButtons}">
                 <toolbuttons:ToolButtons.HorizontalAlignment>
                     Center
