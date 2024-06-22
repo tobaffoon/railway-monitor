@@ -18,7 +18,7 @@ namespace railway_monitor.MVVM.ViewModels {
 
         internal void StartMonitoring(StationGraph graph) {
             _mainViewModel.SelectView(MainViewModel.ViewModelName.RailwayMonitor);
-            if (_mainViewModel.SelectedViewModel is not RailwayMonitorViewModel monitor) {
+            if (_mainViewModel.SelectedViewModel is not RailwayDesignerViewModel monitor) {
                 _mainViewModel.SelectView(MainViewModel.ViewModelName.Start);
                 return;
             }

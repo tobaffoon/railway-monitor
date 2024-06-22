@@ -15,7 +15,7 @@
         public MainViewModel() {
             ViewModels = new Dictionary<ViewModelName, ViewModelBase>
             {
-                { ViewModelName.RailwayMonitor, new RailwayMonitorViewModel(this) },
+                { ViewModelName.RailwayMonitor, new RailwayDesignerViewModel(this) },
                 { ViewModelName.Start, new StartViewModel(this) }
             };
 

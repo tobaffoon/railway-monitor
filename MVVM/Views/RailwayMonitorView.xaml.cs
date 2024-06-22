@@ -10,7 +10,7 @@ namespace railway_monitor.MVVM.Views {
     /// Interaction logic for RailwayMonitorView.xaml
     /// </summary>
     public partial class RailwayMonitorView : UserControl {
-        private RailwayMonitorViewModel Context => (RailwayMonitorViewModel) DataContext;
+        private RailwayDesignerViewModel Context => (RailwayDesignerViewModel) DataContext;
 
         public RailwayMonitorView() {
             InitializeComponent();

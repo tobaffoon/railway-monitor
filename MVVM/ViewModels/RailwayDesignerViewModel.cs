@@ -10,7 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace railway_monitor.MVVM.ViewModels {
-    public class RailwayMonitorViewModel : ViewModelBase {
+    public class RailwayDesignerViewModel : ViewModelBase {
         private static readonly int _defaultTimeInaccuracy = 5;
         private void PreprocessButtonChecked() {
             RailwayCanvas.DeleteLatestTopologyItem();
@@ -25,7 +25,7 @@ namespace railway_monitor.MVVM.ViewModels {
         public static readonly DependencyProperty MoveCommandProperty =
             DependencyProperty.Register(
             "MoveCommand", typeof(UseToolCommand),
-            typeof(RailwayMonitorViewModel));
+            typeof(RailwayDesignerViewModel));
         public UseToolCommand MoveCommand {
             get { return (UseToolCommand)GetValue(MoveCommandProperty); }
             set { SetValue(MoveCommandProperty, value); }
@@ -34,7 +34,7 @@ namespace railway_monitor.MVVM.ViewModels {
         public static readonly DependencyProperty LeftClickCommandProperty =
             DependencyProperty.Register(
             "LeftClickCommand", typeof(UseToolCommand),
-            typeof(RailwayMonitorViewModel));
+            typeof(RailwayDesignerViewModel));
         public UseToolCommand LeftClickCommand {
             get { return (UseToolCommand)GetValue(LeftClickCommandProperty); }
             set { SetValue(LeftClickCommandProperty, value); }
@@ -43,7 +43,7 @@ namespace railway_monitor.MVVM.ViewModels {
         public static readonly DependencyProperty RightClickCommandProperty =
             DependencyProperty.Register(
             "RightClickCommand", typeof(CanvasCommand),
-            typeof(RailwayMonitorViewModel));
+            typeof(RailwayDesignerViewModel));
         public CanvasCommand RightClickCommand {
             get { return (CanvasCommand)GetValue(RightClickCommandProperty); }
             set { SetValue(RightClickCommandProperty, value); }
@@ -52,7 +52,7 @@ namespace railway_monitor.MVVM.ViewModels {
         public static readonly DependencyProperty LeftReleaseCommandProperty =
             DependencyProperty.Register(
             "LeftReleaseCommand", typeof(CanvasCommand),
-            typeof(RailwayMonitorViewModel));
+            typeof(RailwayDesignerViewModel));
         public CanvasCommand LeftReleaseCommand {
             get { return (CanvasCommand)GetValue(LeftReleaseCommandProperty); }
             set { SetValue(LeftReleaseCommandProperty, value); }
@@ -62,7 +62,7 @@ namespace railway_monitor.MVVM.ViewModels {
         public static readonly DependencyProperty WheelCommandProperty =
             DependencyProperty.Register(
             "WheelCommand", typeof(WheelCommand),
-            typeof(RailwayMonitorViewModel));
+            typeof(RailwayDesignerViewModel));
         public WheelCommand WheelCommand {
             get { return (WheelCommand)GetValue(WheelCommandProperty); }
             set { SetValue(WheelCommandProperty, value); }
@@ -71,7 +71,7 @@ namespace railway_monitor.MVVM.ViewModels {
         public static readonly DependencyProperty ArrowsCommandProperty =
             DependencyProperty.Register(
             "ArrowsCommand", typeof(KeyboardCommand),
-            typeof(RailwayMonitorViewModel));
+            typeof(RailwayDesignerViewModel));
         public KeyboardCommand ArrowsCommand {
             get { return (KeyboardCommand)GetValue(ArrowsCommandProperty); }
             set { SetValue(ArrowsCommandProperty, value); }
@@ -80,7 +80,7 @@ namespace railway_monitor.MVVM.ViewModels {
         public static readonly DependencyProperty CanvasKeyboardProperty =
             DependencyProperty.Register(
             "EscapeCommand", typeof(KeyboardCommand),
-            typeof(RailwayMonitorViewModel));
+            typeof(RailwayDesignerViewModel));
         public KeyboardCommand CanvasKeyboardCommand {
             get { return (KeyboardCommand)GetValue(CanvasKeyboardProperty); }
             set { SetValue(CanvasKeyboardProperty, value); }
@@ -92,7 +92,7 @@ namespace railway_monitor.MVVM.ViewModels {
 
         private MainViewModel _mainViewModel;
 
-        public RailwayMonitorViewModel(MainViewModel mainViewModel) {
+        public RailwayDesignerViewModel(MainViewModel mainViewModel) {
             #region Initialize ViewModels
             _mainViewModel = mainViewModel;
             ToolButtons = new ToolButtonsViewModel();
@@ -131,7 +131,7 @@ namespace railway_monitor.MVVM.ViewModels {
 
         internal void FinishDesigning() {
             _mainViewModel.SelectView(MainViewModel.ViewModelName.RailwayMonitor);
-            if (_mainViewModel.SelectedViewModel is not RailwayMonitorViewModel monitor) {
+            if (_mainViewModel.SelectedViewModel is not RailwayDesignerViewModel monitor) {
                 _mainViewModel.SelectView(MainViewModel.ViewModelName.Start);
                 return;
             }
