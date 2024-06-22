@@ -2,6 +2,7 @@
 using railway_monitor.Components.GraphicItems;
 using railway_monitor.Components.TopologyItems;
 using railway_monitor.MVVM.ViewModels;
+using SolverLibrary.Model.Graph;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;

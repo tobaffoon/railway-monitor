@@ -1,4 +1,5 @@
 ﻿using railway_monitor.Bases;
+using railway_monitor.Components.RailwayCanvas;
 using railway_monitor.Components.TopologyItems;
 using SolverLibrary.Model.Graph;
 using SolverLibrary.Model.Graph.VertexTypes;
@@ -175,6 +176,9 @@ namespace railway_monitor.Utils {
             }
 
             throw new ArgumentException("A port " + port.GetHashCode() + " could not be mapped to vertex, because it is not an Input, Output, Deadend, Traffic light, Connection or Switch port. Thus it cannote be included in station graph");
+        }
+        public static Tuple<StationGraph, Dictionary<int, TopologyItem>, Dictionary<int, StraightRailTrackItem>, Dictionary<int, Vertex>> CreateGraph(RailwayCanvasViewModel canvas) {
+            return CreateGraph(canvas.Rails);
         }
     }
 }
