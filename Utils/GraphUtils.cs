@@ -82,6 +82,9 @@ namespace railway_monitor.Utils {
                         topologyDict[outputVertex.getId()] = port.TopologyItems.OfType<ExternalTrackItem>().First();
                         break;
                     case ConnectionVertex connectionVertex:
+                        if(portSrts.Length != 2) {
+                            throw new ArgumentException("Drawn station contains disallowed hanging vertices");
+                        }
                         #region Set edgeConnection considering srt direction
                         if (portSrts[0].StartsFromStart) {
                             if (portSrts[0].PortStart == port) {

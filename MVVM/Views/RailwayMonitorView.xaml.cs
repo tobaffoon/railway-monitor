@@ -2,6 +2,7 @@
 using railway_monitor.Components.RailwayCanvas;
 using railway_monitor.MVVM.ViewModels;
 using railway_monitor.Utils;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -55,10 +56,16 @@ namespace railway_monitor.MVVM.Views {
 
             // Save document
             string filename = dialog.FileName;
-            SolverLibrary.JsonDoc.JsonParser.SaveJsonStationGraph(
-                filename,
-                GraphUtils.CreateGraph(Context.RailwayCanvas).Item1
-                );
+            try {
+                SolverLibrary.JsonDoc.JsonParser.SaveJsonStationGraph(
+                    filename,
+                    GraphUtils.CreateGraph(Context.RailwayCanvas).Item1
+                    );
+            }
+            catch (ArgumentException exc) {
+                MessageBox.Show(exc.Message);
+                return;
+            }
 
             Context.FinishDesigning();
         }
