@@ -219,6 +219,15 @@ namespace railway_monitor.Utils {
             foreach (Edge edge in edges) {
                 int length = edge.GetLength();
                 StraightRailTrackItem srtItem = new StraightRailTrackItem(_initGraphPos, length);
+                switch (edge.GetEdgeType()) {
+                    case TrainType.PASSENGER:
+                        srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.PASSENGER;
+                        break;
+                    case TrainType.CARGO:
+                        srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.CARGO;
+                        break;
+                }
+
                 srtItem.PlaceStartPoint(currentStart);
                 srtItem.PlaceEndPoint(currentEnd);
                 currentStart.Y += 10;
