@@ -1,7 +1,6 @@
-﻿using railway_monitor.Bases;
-using railway_monitor.Components.RailwayCanvas;
-using railway_monitor.MVVM.ViewModels;
+﻿using railway_monitor.MVVM.ViewModels;
 using railway_monitor.Utils;
+using SolverLibrary.Model.Graph;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -40,6 +39,16 @@ namespace railway_monitor.MVVM.Views {
         }
 
         private void FinishDesigning(object sender, System.Windows.RoutedEventArgs e) {
+            // create graph
+            StationGraph graph;
+            try {
+                graph = GraphUtils.CreateGraph(Context.RailwayCanvas).Item1;
+            }
+            catch (ArgumentException exc) {
+                MessageBox.Show(exc.Message);
+                return;
+            }
+
             // Configure save file dialog box
             var dialog = new Microsoft.Win32.SaveFileDialog();
             dialog.FileName = DateTime.Today.ToString("MM-dd-yyyy") + "-station";
@@ -56,17 +65,7 @@ namespace railway_monitor.MVVM.Views {
 
             // Save document
             string filename = dialog.FileName;
-            try {
-                SolverLibrary.JsonDoc.JsonParser.SaveJsonStationGraph(
-                    filename,
-                    GraphUtils.CreateGraph(Context.RailwayCanvas).Item1
-                    );
-            }
-            catch (ArgumentException exc) {
-                MessageBox.Show(exc.Message);
-                return;
-            }
-
+            SolverLibrary.JsonDoc.JsonParser.SaveJsonStationGraph(filename, graph);
             Context.FinishDesigning();
         }
     }
