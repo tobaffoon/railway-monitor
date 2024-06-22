@@ -254,8 +254,66 @@ namespace railway_monitor.Utils {
                 srtItem.PlaceEndPoint(endPos);
             }
 
+            // register and connect units
+            foreach (Edge edge in edges) {
+                StraightRailTrackItem srtItem = railDict[edge];
+                // Handle start vertex
+                Vertex? startVertex = edge.GetStart();
+                if (startVertex != null && startVertex is not ConnectionVertex && Port.IsPortConnection(srtItem.MovementPortStart)) {
+                    // model-wise vertex is not simple connection, but graphic-wise it still is
+                    AddTopologyItem(canvas, srtItem.MovementPortStart, startVertex);
+                }
+                // Handle end vertex
+                Vertex? endVertex = edge.GetEnd();
+                if (endVertex != null && endVertex is not ConnectionVertex && Port.IsPortConnection(srtItem.MovementPortEnd)) {
+                    // model-wise vertex is not simple connection, but graphic-wise it still is
+                    AddTopologyItem(canvas, srtItem.MovementPortEnd, endVertex);
+                }
+            }
+
             canvas.ResetLatestTopologyItem();
         }
 
+        private static void AddTopologyItem(RailwayCanvasViewModel canvas, Port port, Vertex vertex) {
+            switch (vertex) {
+                case InputVertex inputVertex:
+                    ExternalTrackItem externalTrackItem = new ExternalTrackItem(port.Pos) {
+                        IsBroken = inputVertex.IsBlocked(),
+                        Type = ExternalTrackItem.ExternalTrackType.IN
+                    };
+                    canvas.AddTopologyItem(externalTrackItem);
+                    externalTrackItem.Place(port);
+                    break;
+                case OutputVertex outputVertex:
+                    externalTrackItem = new ExternalTrackItem(port.Pos) {
+                        IsBroken = outputVertex.IsBlocked(),
+                        Type = ExternalTrackItem.ExternalTrackType.OUT
+                    };
+                    canvas.AddTopologyItem(externalTrackItem);
+                    externalTrackItem.Place(port);
+                    break;
+                case DeadEndVertex deadEndVertex:
+                    DeadendItem deadendItem = new DeadendItem(port.Pos) {
+                        IsBroken = deadEndVertex.IsBlocked(),
+                    };
+                    canvas.AddTopologyItem(deadendItem); 
+                    deadendItem.Place(port); 
+                    break;
+                case SwitchVertex switchVertex:
+                    SwitchItem switchItem = new SwitchItem(port.Pos) {
+                        IsBroken = switchVertex.IsBlocked(),
+                    };
+                    canvas.AddTopologyItem(switchItem);
+                    switchItem.Place(port);
+                    break;
+                case TrafficLightVertex trafficLightVertex:
+                    SignalItem signalItem = new SignalItem(port.Pos) {
+                        IsBroken = trafficLightVertex.IsBlocked()
+                    };
+                    canvas.AddTopologyItem(signalItem);
+                    signalItem.Place(port);
+                    break;
+            }
+        }
     }
 }
