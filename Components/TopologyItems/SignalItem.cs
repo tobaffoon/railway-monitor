@@ -65,8 +65,6 @@ namespace railway_monitor.Components.TopologyItems {
                 Render();
             }
         }
-        public StraightRailTrackItem ConnectedRailIn;
-        public StraightRailTrackItem ConnectedRailOut;
 
         public SignalItem(Point initPos) : base() {
             Port = new Port(this, initPos);
@@ -74,8 +72,6 @@ namespace railway_monitor.Components.TopologyItems {
 
         public void Place(Port mainPort) {
             mainPort.Merge(Port);
-            ConnectedRailIn = Port.TopologyItems.OfType<StraightRailTrackItem>().First(srt => srt.MovementPortEnd == Port);
-            ConnectedRailOut = Port.TopologyItems.OfType<StraightRailTrackItem>().First(srt => srt.MovementPortStart == Port);
             PlacementStatus = SignalPlacementStatus.PLACED;
             Render();
         }

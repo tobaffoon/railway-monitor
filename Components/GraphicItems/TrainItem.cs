@@ -32,21 +32,21 @@ namespace railway_monitor.Components.GraphicItems {
         private Point _triangleBase = new Point(0, 0);
         private Point TriangleBase {
             get {
-                GraphicCalc.GetPointInDirection(ref _triangleBase, FlowCurrentTrack.MovementStart, FlowCurrentTrack.MovementEnd, FlowCurrentTrack.GraphicLength * FlowTrackProgress);
+                GraphicCalc.GetPointInDirection(ref _triangleBase, FlowStartingPort.Pos, FlowEndingPort.Pos, FlowCurrentTrack.GraphicLength * FlowTrackProgress);
                 return _triangleBase;
             }
         }
         private Point _triangleSideOne = new Point(0, 0);
         private Point TriangleSideOne {
             get {
-                GraphicCalc.GetPointInDirection(ref _triangleSideOne, _triangleBase, FlowCurrentTrack.MovementStart, _triangleSide, _triangleAngle);
+                GraphicCalc.GetPointInDirection(ref _triangleSideOne, _triangleBase, FlowStartingPort.Pos, _triangleSide, _triangleAngle);
                 return _triangleSideOne;
             }
         }
         private Point _triangleSideTwo = new Point(0, 0);
         private Point TriangleSideTwo {
             get {
-                GraphicCalc.GetPointInDirection(ref _triangleSideTwo, _triangleBase, FlowCurrentTrack.MovementStart, _triangleSide, -_triangleAngle);
+                GraphicCalc.GetPointInDirection(ref _triangleSideTwo, _triangleBase, FlowStartingPort.Pos, _triangleSide, -_triangleAngle);
                 return _triangleSideTwo;
             }
         }
@@ -58,6 +58,13 @@ namespace railway_monitor.Components.GraphicItems {
             set {
                 _currentTrack = value;
                 FlowCurrentTrack = value;
+            }
+        }
+        private Port _startingPort;
+        public Port StartingPort {
+            set {
+                _startingPort = value;
+                FlowStartingPort = value;
             }
         }
 
@@ -83,6 +90,22 @@ namespace railway_monitor.Components.GraphicItems {
             set {
                 _flowCurrentTrack = value;
                 Render();
+            }
+        }
+        private Port _flowStartingPort;
+        public Port FlowStartingPort {
+            get {
+                return _flowStartingPort;
+            }
+            set {
+                _flowStartingPort = value;
+                Render();
+            }
+        }
+
+        public Port FlowEndingPort {
+            get {
+                return _flowCurrentTrack.GetOtherPort(FlowStartingPort);
             }
         }
 
@@ -122,7 +145,7 @@ namespace railway_monitor.Components.GraphicItems {
             }
         }
 
-        public TrainItem(int id, StraightRailTrackItem startTrack, double initSpeed) {
+        public TrainItem(int id, StraightRailTrackItem startTrack, Port startingPort, double initSpeed) {
             Id = id;
             _currentTrack = startTrack;
             _flowCurrentTrack = startTrack;
@@ -130,10 +153,11 @@ namespace railway_monitor.Components.GraphicItems {
             _flowTrackProgress = minDrawableProgress;
             Speed = initSpeed;
         }
-        public TrainItem(int id, StraightRailTrackItem startTrack) : this(id, startTrack, defaultSpeed) { }
-        public TrainItem(int id, ExternalTrackItem externalTrack) : this(
+        public TrainItem(int id, StraightRailTrackItem startTrack, Port startingPort) : this(id, startTrack, startingPort, defaultSpeed) { }
+        public TrainItem(int id, ExternalTrackItem externalTrack, Port startingPort) : this(
             id,
-            externalTrack.Port.TopologyItems.OfType<StraightRailTrackItem>().First()
+            externalTrack.Port.TopologyItems.OfType<StraightRailTrackItem>().First(),
+            externalTrack.Port
             ) { }
 
         protected override void Render(DrawingContext dc) {

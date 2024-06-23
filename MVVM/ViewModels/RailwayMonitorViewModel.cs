@@ -13,9 +13,9 @@ namespace railway_monitor.MVVM.ViewModels {
         public RailwayMonitorViewModel(MainViewModel mainViewModel) : base(mainViewModel) {
             CanvasKeyboardCommand = new KeyboardCommand(UtilToolActions.NoKeyboardAction);
             RightClickCommand = new CanvasCommand(UtilToolActions.NoCanvasAction); 
-            LeftClickCommand = new UseToolCommand(UtilToolActions.NoMouseAction);
-            MoveCommand = new UseToolCommand(UtilToolActions.NoMouseAction);
-            LeftReleaseCommand = new CanvasCommand(UtilToolActions.NoCanvasAction);
+            LeftClickCommand = new UseToolCommand(LeftClickToolActions.CaptureDrag);
+            MoveCommand = new UseToolCommand(MoveToolActions.MoveDrag);
+            LeftReleaseCommand = new CanvasCommand(LeftReleaseToolActions.ReleaseDrag);
             WheelCommand = new WheelCommand(UtilToolActions.NoWheelAction);
             ArrowsCommand = new KeyboardCommand(UtilToolActions.NoKeyboardAction);
         }

@@ -193,9 +193,11 @@ namespace railway_monitor.Components.RailwayCanvas {
             HighlightPort.Pos = DraggedPort.Pos;
         }
 
-        public Tuple<StraightRailTrackItem, double> GetAdvancedTrainPos(StraightRailTrackItem trainTrack, double trackProgress, double speed, double millis, bool reactsToState = true) {
+        public Tuple<StraightRailTrackItem, double> GetAdvancedTrainPos(TrainItem train, double speed, double millis, bool reactsToState = true) {
             // TODO: move this method to simulator
-            Port dstPort = trainTrack.MovementPortEnd;
+            StraightRailTrackItem trainTrack = train.FlowCurrentTrack;
+            Port dstPort = train.FlowEndingPort;
+            double trackProgress = train.FlowTrackProgress;
             double advancedProgress = trackProgress + speed / trainTrack.Length * millis / 1000;
             if (advancedProgress < 1) {
                 return Tuple.Create(trainTrack, advancedProgress);

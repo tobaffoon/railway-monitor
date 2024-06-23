@@ -138,7 +138,7 @@ namespace railway_monitor.MVVM.Models.Station {
                 OnOffscheduledTrainArrive?.Invoke(package.trainId);
             }
             StraightRailTrackItem srtItem = inputTrackItem.Port.TopologyItems.OfType<StraightRailTrackItem>().First();
-            TrainItem trainItem = new TrainItem(package.trainId, srtItem);
+            TrainItem trainItem = new TrainItem(package.trainId, srtItem, inputTrackItem.Port);
             trainItems[package.trainId] = trainItem;
             canvas.AddTrainItem(trainItem);
 
@@ -230,7 +230,7 @@ namespace railway_monitor.MVVM.Models.Station {
             }
 
             TrainItem train = trainItems[timer.TrainId];
-            Tuple<StraightRailTrackItem, double> nextPos = canvas.GetAdvancedTrainPos(train.FlowCurrentTrack, train.FlowTrackProgress, train.Speed, flowUpdateInterval, false);
+            Tuple<StraightRailTrackItem, double> nextPos = canvas.GetAdvancedTrainPos(train, train.Speed, flowUpdateInterval, false);
             train.FlowCurrentTrack = nextPos.Item1;
             train.FlowTrackProgress = nextPos.Item2;
         }
@@ -265,11 +265,12 @@ namespace railway_monitor.MVVM.Models.Station {
                 throw new ArgumentException("Attempted to add a train coming to vertex " + outputVertexId + " which is not output");
             }
 
-            StraightRailTrackItem inputTrack = ((ExternalTrackItem)topologyVertexDict[inputVertexId]).ConnectedRail;
+            ExternalTrackItem inputItem = topologyVertexDict[inputVertexId] as ExternalTrackItem;
+            StraightRailTrackItem inputTrack = inputItem.ConnectedRail;
 
             // register new train
             trains[trainId] = new Train(TrainItem.defaultLength, TrainItem.defaultSpeed, TrainType.NONE);
-            TrainItem trainItem = new TrainItem(trainId, inputTrack);
+            TrainItem trainItem = new TrainItem(trainId, inputTrack, inputItem.Port);
             trainItems[trainId] = trainItem;
             canvas.AddTrainItem(trainItem);
 

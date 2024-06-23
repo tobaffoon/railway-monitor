@@ -97,30 +97,7 @@ namespace railway_monitor.Utils {
                         if(portSrts.Length != 2) {
                             throw new ArgumentException("Drawn station contains disallowed hanging vertices");
                         }
-                        #region Set edgeConnection considering srt direction
-                        if (portSrts[0].StartsFromStart) {
-                            if (portSrts[0].PortStart == port) {
-                                // the port is start to 0th edge. Thus this edge is outgoing
-                                connectionVertex.SetEdges(edgesDict[portSrts[1]], // incoming
-                                                          edgesDict[portSrts[0]]);// outgoing
-                            }
-                            else {
-                                connectionVertex.SetEdges(edgesDict[portSrts[0]], // incoming
-                                                          edgesDict[portSrts[1]]);// outgoing
-                            }
-                        }
-                        else {
-                            if (portSrts[0].PortStart == port) {
-                                // the port is end to 0th edge. Thus this edge is incoming
-                                connectionVertex.SetEdges(edgesDict[portSrts[0]], // incoming
-                                                          edgesDict[portSrts[1]]);// outgoing
-                            }
-                            else {
-                                connectionVertex.SetEdges(edgesDict[portSrts[1]], // incoming
-                                                          edgesDict[portSrts[0]]);// outgoing
-                            }
-                        }
-                        #endregion
+                        connectionVertex.SetEdges(edgesDict[portSrts[0]], edgesDict[portSrts[1]]);
                         if (portSrts[0].IsBroken || portSrts[1].IsBroken) connectionVertex.Block();
                         break;
                     case DeadEndVertex deadEndVertex:
@@ -130,31 +107,7 @@ namespace railway_monitor.Utils {
                         if (relatedItem.IsBroken) deadEndVertex.Block();
                         break;
                     case TrafficLightVertex trafficLightVertex:
-                        #region Set edgeConnection considering srt direction
-                        if (portSrts[0].StartsFromStart) {
-                            if (portSrts[0].PortStart == port) {
-                                // the port is start to 0th edge. Thus this edge is outgoing
-                                trafficLightVertex.SetEdges(edgesDict[portSrts[1]], // incoming
-                                                          edgesDict[portSrts[0]]);// outgoing
-                            }
-                            else {
-                                trafficLightVertex.SetEdges(edgesDict[portSrts[0]], // incoming
-                                                          edgesDict[portSrts[1]]);// outgoing
-                            }
-                        }
-                        else {
-                            if (portSrts[0].PortStart == port) {
-                                // the port is end to 0th edge. Thus this edge is incoming
-                                trafficLightVertex.SetEdges(edgesDict[portSrts[0]], // incoming
-                                                          edgesDict[portSrts[1]]);// outgoing
-                            }
-                            else {
-                                trafficLightVertex.SetEdges(edgesDict[portSrts[1]], // incoming
-                                                            edgesDict[portSrts[0]]);// outgoing
-                            }
-                        }
-                        #endregion
-
+                        trafficLightVertex.SetEdges(edgesDict[portSrts[0]], edgesDict[portSrts[1]]);
                         relatedItem = port.TopologyItems.OfType<SignalItem>().First();
                         topologyDict[trafficLightVertex.getId()] = relatedItem;
                         if (relatedItem.IsBroken) trafficLightVertex.Block();
@@ -213,10 +166,11 @@ namespace railway_monitor.Utils {
             };
 
             Dictionary<Edge, StraightRailTrackItem> railDict = [];
-            Edge[] edges = [.. graph.GetEdges()];
+            Dictionary<int, Edge> edgesDict = graph.GetEdges().ToDictionary(x => x.getId(), x => x);
+            Dictionary<int, Vertex> vertices = graph.GetVertices().ToDictionary(x => x.getId(), x => x);
 
             // add rails without connecting them yet
-            foreach (Edge edge in edges) {
+            foreach (Edge edge in edgesDict.Values) {
                 int length = edge.GetLength();
                 StraightRailTrackItem srtItem = new StraightRailTrackItem(_initGraphPos, length);
                 switch (edge.GetEdgeType()) {
@@ -237,91 +191,144 @@ namespace railway_monitor.Utils {
                 canvas.AddTopologyItemBehind(srtItem);
             }
 
-            // connect start of rails
+            // connect rails using info from edgeConnections
             // only non input vertices can have their starts moved
-            foreach (Edge edge in edges) {
-                if (edge.GetStart() is InputVertex) continue;
-                Edge incomingEdge = edges.First(x => x.GetEnd().getId() == edge.GetStart().getId());
-                Port newPort = railDict[incomingEdge].MovementPortEnd;
-                StraightRailTrackItem srtItem = railDict[edge];
-                
-                // connect starting points
-                srtItem.PlaceStartPoint(newPort);
+            foreach (Vertex vertex in vertices.Values) {
+                switch (vertex.GetVertexType()) {
+                    case VertexType.INPUT:
+                        Edge inputEdge = vertex.GetEdgeConnections()[0].Item1 == null ? vertex.GetEdgeConnections()[0].Item2 : vertex.GetEdgeConnections()[0].Item1;
+                        StraightRailTrackItem srtItem = railDict[inputEdge];
 
-                // place end point
-                Point endPos = new Point(0, 0);
-                if (newPort.TopologyItems.OfType<StraightRailTrackItem>().Count() == 2) {
-                    // it's first outgoing track
-                    endPos.X = newPort.Pos.X + srtItem.Length;
-                    endPos.Y = newPort.Pos.Y;
-                }
-                else {
-                    // it's second outgoing track
-                    endPos.X = newPort.Pos.X + srtItem.Length;
-                    endPos.Y = newPort.Pos.Y + srtItem.Length;
-                }
-                srtItem.PlaceEndPoint(endPos);
-            }
+                        ExternalTrackItem externalTrackItem = new ExternalTrackItem(srtItem.Start) {
+                            IsBroken = vertex.IsBlocked(),
+                            Type = ExternalTrackItem.ExternalTrackType.IN
+                        };
+                        Port connectionPort = HasItems(srtItem.PortEnd) ? srtItem.PortStart : srtItem.PortEnd;
+                        canvas.AddTopologyItem(externalTrackItem);
+                        externalTrackItem.Place(connectionPort);
+                        break;
+                    case VertexType.OUTPUT:
+                        Edge outputEdge = vertex.GetEdgeConnections()[0].Item1 == null ? vertex.GetEdgeConnections()[0].Item2 : vertex.GetEdgeConnections()[0].Item1;
+                        srtItem = railDict[outputEdge];
 
-            // register and connect units
-            foreach (Edge edge in edges) {
-                StraightRailTrackItem srtItem = railDict[edge];
-                // Handle start vertex
-                Vertex? startVertex = edge.GetStart();
-                if (startVertex != null && startVertex is not ConnectionVertex && Port.IsPortConnection(srtItem.MovementPortStart)) {
-                    // model-wise vertex is not simple connection, but graphic-wise it still is
-                    AddTopologyItem(canvas, srtItem.MovementPortStart, startVertex);
-                }
-                // Handle end vertex
-                Vertex? endVertex = edge.GetEnd();
-                if (endVertex != null && endVertex is not ConnectionVertex && Port.IsPortConnection(srtItem.MovementPortEnd)) {
-                    // model-wise vertex is not simple connection, but graphic-wise it still is
-                    AddTopologyItem(canvas, srtItem.MovementPortEnd, endVertex);
+                        externalTrackItem = new ExternalTrackItem(srtItem.End) {
+                            IsBroken = vertex.IsBlocked(),
+                            Type = ExternalTrackItem.ExternalTrackType.OUT
+                        };
+                        connectionPort = HasItems(srtItem.PortEnd) ? srtItem.PortStart : srtItem.PortEnd;
+                        canvas.AddTopologyItem(externalTrackItem);
+                        externalTrackItem.Place(connectionPort);
+                        break;
+                    case VertexType.DEADEND:
+                        Edge deadendEdge = vertex.GetEdgeConnections()[0].Item1 == null ? vertex.GetEdgeConnections()[0].Item2 : vertex.GetEdgeConnections()[0].Item1;
+                        srtItem = railDict[deadendEdge];
+
+                        DeadendItem deadendItem = new DeadendItem(srtItem.End) {
+                            IsBroken = vertex.IsBlocked(),
+                        };
+                        connectionPort = HasItems(srtItem.PortEnd) ? srtItem.PortStart : srtItem.PortEnd;
+                        canvas.AddTopologyItem(deadendItem);
+                        deadendItem.Place(connectionPort);
+                        break;
+                    case VertexType.CONNECTION:
+                        Edge edgeOne = vertex.GetEdgeConnections()[0].Item1;
+                        Edge edgeTwo = vertex.GetEdgeConnections()[0].Item2;
+
+                        StraightRailTrackItem srtOne = railDict[edgeOne];
+                        StraightRailTrackItem srtTwo = railDict[edgeTwo];
+
+                        connectionPort = HasItems(srtOne.PortEnd) ? srtOne.PortStart : srtOne.PortEnd;
+                        Point endPos = new Point(
+                            connectionPort.Pos.X + srtTwo.Length,
+                            connectionPort.Pos.Y
+                            );
+                        ConnectRail(srtTwo, connectionPort, endPos);
+                        break;
+                    case VertexType.TRAFFIC:
+                        #region repeat
+                        edgeOne = vertex.GetEdgeConnections()[0].Item1;
+                        edgeTwo = vertex.GetEdgeConnections()[0].Item2;
+
+                        srtOne = railDict[edgeOne];
+                        srtTwo = railDict[edgeTwo];
+
+                        connectionPort = HasItems(srtOne.PortEnd) ? srtOne.PortStart : srtOne.PortEnd;
+                        endPos = new Point(
+                            connectionPort.Pos.X + srtTwo.Length,
+                            connectionPort.Pos.Y
+                            );
+                        ConnectRail(srtTwo, connectionPort, endPos);
+                        #endregion
+
+                        SignalItem signalItem = new SignalItem(srtOne.End) {
+                            IsBroken = vertex.IsBlocked()
+                        };
+                        canvas.AddTopologyItem(signalItem);
+                        signalItem.Place(connectionPort);
+                        break;
+                    case VertexType.SWITCH:
+                        edgeOne = vertex.GetEdgeConnections()[0].Item1;
+                        edgeTwo = vertex.GetEdgeConnections()[0].Item2;
+                        Edge edgeThree = vertex.GetEdgeConnections()[1].Item1;
+                        Edge edgeFour = vertex.GetEdgeConnections()[1].Item2;
+                        Edge edgeSrc, edgeDstOne, edgeDstTwo;
+                        if(edgeOne == edgeThree || edgeOne == edgeFour) {
+                            edgeSrc = edgeOne;
+                            edgeDstOne = edgeTwo;
+                            edgeDstTwo = edgeSrc == edgeThree ? edgeFour : edgeThree;
+                        }
+                        else {
+                            edgeSrc = edgeTwo;
+                            edgeDstOne = edgeOne;
+                            edgeDstTwo = edgeSrc == edgeThree ? edgeFour : edgeThree;
+                        }
+
+                        StraightRailTrackItem srtSrc = railDict[edgeSrc];
+                        srtOne = railDict[edgeDstOne];
+                        srtTwo = railDict[edgeDstTwo];
+
+                        connectionPort = HasItems(srtSrc.PortEnd) ? srtSrc.PortStart : srtSrc.PortEnd;
+                        endPos = new Point(
+                            connectionPort.Pos.X + srtOne.Length,
+                            connectionPort.Pos.Y
+                            );
+                        ConnectRail(srtOne, connectionPort, endPos);
+
+                        endPos = new Point(
+                            connectionPort.Pos.X + srtTwo.Length,
+                            connectionPort.Pos.Y + srtTwo.Length
+                            );
+                        ConnectRail(srtTwo, connectionPort, endPos);
+
+                        SwitchItem switchItem = new SwitchItem(srtSrc.End) {
+                            IsBroken = vertex.IsBlocked(),
+                        };
+                        canvas.AddTopologyItem(switchItem);
+                        switchItem.Place(connectionPort);
+                        switchItem.SetSource(srtSrc.GetOtherPort(connectionPort));
+                        break;
+
                 }
             }
 
             canvas.ResetLatestTopologyItem();
         }
 
-        private static void AddTopologyItem(RailwayCanvasViewModel canvas, Port port, Vertex vertex) {
-            switch (vertex) {
-                case InputVertex inputVertex:
-                    ExternalTrackItem externalTrackItem = new ExternalTrackItem(port.Pos) {
-                        IsBroken = inputVertex.IsBlocked(),
-                        Type = ExternalTrackItem.ExternalTrackType.IN
-                    };
-                    canvas.AddTopologyItem(externalTrackItem);
-                    externalTrackItem.Place(port);
-                    break;
-                case OutputVertex outputVertex:
-                    externalTrackItem = new ExternalTrackItem(port.Pos) {
-                        IsBroken = outputVertex.IsBlocked(),
-                        Type = ExternalTrackItem.ExternalTrackType.OUT
-                    };
-                    canvas.AddTopologyItem(externalTrackItem);
-                    externalTrackItem.Place(port);
-                    break;
-                case DeadEndVertex deadEndVertex:
-                    DeadendItem deadendItem = new DeadendItem(port.Pos) {
-                        IsBroken = deadEndVertex.IsBlocked(),
-                    };
-                    canvas.AddTopologyItem(deadendItem); 
-                    deadendItem.Place(port); 
-                    break;
-                case SwitchVertex switchVertex:
-                    SwitchItem switchItem = new SwitchItem(port.Pos) {
-                        IsBroken = switchVertex.IsBlocked(),
-                    };
-                    canvas.AddTopologyItem(switchItem);
-                    switchItem.Place(port);
-                    break;
-                case TrafficLightVertex trafficLightVertex:
-                    SignalItem signalItem = new SignalItem(port.Pos) {
-                        IsBroken = trafficLightVertex.IsBlocked()
-                    };
-                    canvas.AddTopologyItem(signalItem);
-                    signalItem.Place(port);
-                    break;
+        private static bool HasItems(Port port) {
+            int totalItems = port.TopologyItems.Count();
+            return totalItems - port.TopologyItems.OfType<StraightRailTrackItem>().Count() != 0;
+        }
+
+        private static void ConnectRail(StraightRailTrackItem srt, Port port, Point otherPos) {
+            if (HasItems(srt.PortStart)) {
+                // start is occupied -> connect by end
+                srt.PlaceEndPoint(port);
+                srt.PlaceStartPoint(otherPos);
+            }
+            else {
+                // end is occupied -> connect by start
+                srt.PlaceStartPoint(port);
+                srt.PlaceEndPoint(otherPos);
             }
         }
     }

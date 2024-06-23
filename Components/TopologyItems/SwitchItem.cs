@@ -8,7 +8,8 @@ namespace railway_monitor.Components.TopologyItems {
         public enum SwitchPlacementStatus {
             ERROR,
             NOT_PLACED,
-            PLACED
+            PLACED,
+            SOURCE_SET
         }
 
         public enum SwitchDirection {
@@ -29,14 +30,21 @@ namespace railway_monitor.Components.TopologyItems {
         #endregion
 
         private static readonly Brush _switchBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+        private static readonly Brush _switchArrowBrush = new SolidColorBrush(Colors.ForestGreen);
         private static readonly Pen _switchPen = new Pen(_switchBrush, _switchLineWidth);
+        private static readonly Pen _switchArrowPen = new Pen(_switchArrowBrush, _switchArrowWidth);
         private static readonly Pen _switchBrokenPen = new Pen(brokenBrush, _switchLineWidth);
+
+        static SwitchItem() {
+            _switchArrowPen.StartLineCap = PenLineCap.Round;
+            _switchArrowPen.EndLineCap = PenLineCap.Round;
+        }
 
         #region Drawing points        
         private Point _arrowTailPos = new Point(0, 0);
         private Point ArrowTailPos {
             get {
-                GraphicCalc.GetPointInDirection(ref _arrowTailPos, Pos, PortSrc.Pos, _arrowDistance);
+                GraphicCalc.GetPointInDirection(ref _arrowTailPos, Pos, SrcPos, _arrowDistance);
                 return _arrowTailPos;
             }
         }
@@ -67,7 +75,7 @@ namespace railway_monitor.Components.TopologyItems {
         private Point _lineHeadPos = new Point(0, 0);
         private Point LineHeadPos {
             get {
-                if (PlacementStatus == SwitchPlacementStatus.PLACED) {
+                if (PlacementStatus == SwitchPlacementStatus.SOURCE_SET) {
                     GraphicCalc.GetPointInDirection(ref _lineHeadPos, Pos, DstPos, _lineLength);
                 }
                 else {
@@ -81,6 +89,16 @@ namespace railway_monitor.Components.TopologyItems {
         #endregion
 
         public Port PortSrc { get; private set; }
+        public Point SrcPos {
+            get {
+                return PortSrc.Pos;
+            }
+            set {
+                PortSrc.Pos.X = value.X;
+                PortSrc.Pos.Y = value.Y;
+                Render();
+            }
+        }
         public Port PortDstOne { get; private set; }
         public Port PortDstTwo { get; private set; }
         public Point DstPos {
@@ -133,12 +151,35 @@ namespace railway_monitor.Components.TopologyItems {
 
         public void Place(Port mainPort) {
             mainPort.Merge(Port);
+            PlacementStatus = SwitchPlacementStatus.PLACED;
+            Render();
+        }
 
+        public bool IsSourceValid(Port source) {
+            if (source == Port) {
+                // user has chosen port where switch is placed
+                return false;
+            }
             var connectedRails = Port.TopologyItems.OfType<StraightRailTrackItem>();
-            StraightRailTrackItem srcRail = connectedRails.First(srt => srt.MovementPortEnd == Port);
+            var srcRail = connectedRails.FirstOrDefault((rail) => rail.PortStart == source || rail.PortEnd == source);
+            if (srcRail == null) {
+                // user has chosen port not out of three connected ports
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Tries to set port as switch's source of train flow. If it's not valid - doesn't set
+        /// </summary>
+        public void SetSource(Port source) {
+            var connectedRails = Port.TopologyItems.OfType<StraightRailTrackItem>();
+            StraightRailTrackItem srcRail = connectedRails.First((rail) => rail.PortStart == source || rail.PortEnd == source);
             connectedRails = connectedRails.Except([srcRail]);
 
             // set Source Port
+            PortSrc = source;
             PortSrc = srcRail.GetOtherPort(Port);
 
             // set first Destination Port
@@ -151,15 +192,16 @@ namespace railway_monitor.Components.TopologyItems {
 
             Direction = SwitchDirection.FIRST;
 
+            PlacementStatus = SwitchPlacementStatus.SOURCE_SET;
             SrcTrack = srcRail;
             DstOneTrack = dstOne;
             DstTwoTrack = dstTwo;
 
-            PlacementStatus = SwitchPlacementStatus.PLACED;
+            PlacementStatus = SwitchPlacementStatus.SOURCE_SET;
             Render();
         }
 
-        public override void Reassign_OnPortMerged(object? sender, Port oldPort) {
+    public override void Reassign_OnPortMerged(object? sender, Port oldPort) {
             if (sender is not Port newPort) return;
             Port = newPort;
         }
@@ -179,6 +221,13 @@ namespace railway_monitor.Components.TopologyItems {
             }
             else {
                 dc.DrawLine(_switchPen, Pos, LineHeadPos);
+            }
+
+            // source arrow
+            if (PlacementStatus == SwitchPlacementStatus.PLACED) {
+                dc.DrawLine(_switchArrowPen, ArrowTailPos, ArrowHeadPos);
+                dc.DrawLine(_switchArrowPen, _arrowHeadPos, ArrowTipOne);
+                dc.DrawLine(_switchArrowPen, _arrowHeadPos, ArrowTipTwo);
             }
         }
     }

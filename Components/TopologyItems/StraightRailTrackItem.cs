@@ -30,8 +30,6 @@ namespace railway_monitor.Components.TopologyItems {
 
         private static readonly Brush _railTrackBrush = new SolidColorBrush(Color.FromRgb(153, 255, 51));
         private static readonly Pen _railTrackPen = new Pen(_railTrackBrush, _railWidth);
-        private static readonly Brush _railArrowBrush = new SolidColorBrush(Colors.Black);
-        private static readonly Pen _railArrowPen = new Pen(_railArrowBrush, 1);
         private static readonly Brush _passengerTrackBrush = new SolidColorBrush(Color.FromRgb(185, 111, 92));
         private static readonly Pen _passengerTrackPen = new Pen(_passengerTrackBrush, 0);
         private static readonly Brush _passengerHoverBrush = new SolidColorBrush(Color.FromArgb(100, 185, 111, 92));
@@ -43,11 +41,6 @@ namespace railway_monitor.Components.TopologyItems {
         private static readonly Brush _noneHoverBrush = new SolidColorBrush(Color.FromArgb(100, 235, 220, 185));
         private static readonly Pen _noneHoverPen = new Pen(_noneHoverBrush, 0);
         private static readonly Pen _brokenRailTrackPen = new Pen(brokenBrush, _railWidth);
-
-        static StraightRailTrackItem() {
-            _railArrowPen.StartLineCap = PenLineCap.Round;
-            _railArrowPen.EndLineCap = PenLineCap.Round;
-        }
 
         #region Arrow params
         private static readonly double _arrowLength = 10.0;
@@ -92,60 +85,9 @@ namespace railway_monitor.Components.TopologyItems {
                 Render();
             }
         }
-        public Port MovementPortStart {
-            get {
-                if (StartsFromStart) {
-                    return PortStart;
-                }
-                else {
-                    return PortEnd;
-                }
-            }
-        }
-        public Port MovementPortEnd {
-            get {
-                if (StartsFromStart) {
-                    return PortEnd;
-                }
-                else {
-                    return PortStart;
-                }
-            }
-        }
-        public Point MovementStart {
-            get {
-                if (StartsFromStart) {
-                    return Start;
-                }
-                else {
-                    return End;
-                }
-            }
-        }
-        public Point MovementEnd {
-            get {
-                if (StartsFromStart) {
-                    return End;
-                }
-                else {
-                    return Start;
-                }
-            }
-        }
         public double GraphicLength {
             get {
                 return GraphicCalc.GetDistance(Start, End);
-            }
-        }
-
-        private bool _startsFromStart = true;
-        public bool StartsFromStart {
-            get {
-                return _startsFromStart;
-            }
-            set {
-                _startsFromStart = value;
-                Render();
             }
         }
 
@@ -197,47 +139,6 @@ namespace railway_monitor.Components.TopologyItems {
                     GraphicCalc.GetPointInDirection(ref _platfromCornerFour, _platfromCornerOne, Start, _platformSideLength, -_platformTiltAngle);
                 }
                 return _platfromCornerFour;
-            }
-        }
-
-        private Point _arrowTailPos = new Point(0, 0);
-        private Point ArrowTailPos {
-            get {
-                if (StartsFromStart) {
-                    GraphicCalc.GetPointInDirection(ref _arrowTailPos, Center, Start, _arrowLength / 2);
-                }
-                else {
-                    GraphicCalc.GetPointInDirection(ref _arrowTailPos, Center, End, _arrowLength / 2);
-                }
-                return _arrowTailPos;
-            }
-        }
-
-        private Point _arrowHeadPos = new Point(0, 0);
-        private Point ArrowHeadPos {
-            get {
-                if (StartsFromStart) {
-                    GraphicCalc.GetPointInDirection(ref _arrowHeadPos, _arrowTailPos, End, _arrowLength);
-                }
-                else {
-                    GraphicCalc.GetPointInDirection(ref _arrowHeadPos, _arrowTailPos, Start, _arrowLength);
-                }
-                return _arrowHeadPos;
-            }
-        }
-
-        private Point _arrowTipOne = new Point(0, 0);
-        private Point ArrowTipOne {
-            get {
-                GraphicCalc.GetPointInDirection(ref _arrowTipOne, _arrowHeadPos, _arrowTailPos, _arrowTipsLength, _arrowTipsAngle);
-                return _arrowTipOne;
-            }
-        }
-        private Point _arrowTipTwo = new Point(0, 0);
-        private Point ArrowTipTwo {
-            get {
-                GraphicCalc.GetPointInDirection(ref _arrowTipTwo, _arrowHeadPos, _arrowTailPos, _arrowTipsLength, -_arrowTipsAngle);
-                return _arrowTipTwo;
             }
         }
         #endregion
@@ -337,13 +238,6 @@ namespace railway_monitor.Components.TopologyItems {
                 }
                 else {
                     dc.DrawLine(_railTrackPen, Start, End);
-                }
-
-                if (GraphicLength >= _minDrawableLength) {
-                    // direction arrow 
-                    dc.DrawLine(_railArrowPen, ArrowTailPos, ArrowHeadPos);
-                    dc.DrawLine(_railArrowPen, _arrowHeadPos, ArrowTipOne);
-                    dc.DrawLine(_railArrowPen, _arrowHeadPos, ArrowTipTwo);
                 }
 
                 // second circle

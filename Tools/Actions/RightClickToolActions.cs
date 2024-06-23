@@ -18,15 +18,6 @@ namespace railway_monitor.Tools.Actions {
                     break;
             }
         }
-        public static void ChangeRailDirection(RailwayCanvasViewModel canvas) {
-            StraightRailTrackItem? srtItem = canvas.LatestTopologyItem as StraightRailTrackItem;
-            if (srtItem == null) {
-                return;
-            }
-
-            if (srtItem.StartsFromStart) srtItem.StartsFromStart = false;
-            else srtItem.StartsFromStart = true;
-        }
         public static void ScrollPlatformType(RailwayCanvasViewModel canvas) {
             StraightRailTrackItem? srtItem = canvas.LatestTopologyItem as StraightRailTrackItem;
             if (srtItem == null) {
