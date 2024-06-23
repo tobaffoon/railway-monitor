@@ -3,12 +3,12 @@ using railway_monitor.Components.ToolButtons;
 using railway_monitor.MVVM.Models.Station;
 using railway_monitor.Tools.Actions;
 using railway_monitor.Tools;
-using System.Windows.Data;
+using SolverLibrary.Model;
 
 namespace railway_monitor.MVVM.ViewModels {
     public class RailwayMonitorViewModel : RailwayBaseViewModel { 
         private static readonly int _defaultTimeInaccuracy = 5;
-        public StationManager? StationManager { get; set; }
+        public StationManager? StationManager { get; private set; }
 
         public RailwayMonitorViewModel(MainViewModel mainViewModel) : base(mainViewModel) {
             CanvasKeyboardCommand = new KeyboardCommand(UtilToolActions.NoKeyboardAction);
@@ -18,6 +18,10 @@ namespace railway_monitor.MVVM.ViewModels {
             LeftReleaseCommand = new CanvasCommand(LeftReleaseToolActions.ReleaseDrag);
             WheelCommand = new WheelCommand(UtilToolActions.NoWheelAction);
             ArrowsCommand = new KeyboardCommand(UtilToolActions.NoKeyboardAction);
+        }
+
+        internal void Start(TrainSchedule trainSchedule, int timeInaccuracy) {
+            StationManager = new StationManager(RailwayCanvas, trainSchedule, timeInaccuracy);
         }
 
         internal void FinishMonitoring() {

@@ -230,7 +230,7 @@ namespace railway_monitor.MVVM.Models.Station {
             }
 
             TrainItem train = trainItems[timer.TrainId];
-            Tuple<StraightRailTrackItem, double> nextPos = canvas.GetAdvancedTrainPos(train, train.Speed, flowUpdateInterval, false);
+            Tuple<StraightRailTrackItem, double> nextPos = GetAdvancedTrainPos(train, train.Speed, flowUpdateInterval, false);
             train.FlowCurrentTrack = nextPos.Item1;
             train.FlowTrackProgress = nextPos.Item2;
         }
@@ -291,6 +291,53 @@ namespace railway_monitor.MVVM.Models.Station {
                 int expectedDeparture = GetScheduleById(trainId).GetTimeDeparture() + timeInaccuracy;
                 return expectedArrival < CurrentTime && CurrentTime < expectedDeparture;
             }
+        }
+
+        public static Tuple<StraightRailTrackItem, double> GetAdvancedTrainPos(TrainItem train, double speed, double millis, bool reactsToState = true) {
+            StraightRailTrackItem trainTrack = train.FlowCurrentTrack;
+            Port dstPort = train.FlowEndingPort;
+            double trackProgress = train.FlowTrackProgress;
+            double advancedProgress = trackProgress + speed / trainTrack.Length * millis / 1000;
+            if (advancedProgress < 1) {
+                return Tuple.Create(trainTrack, advancedProgress);
+            }
+
+            // At this point we might want to change track
+            if (Port.IsPortSignal(dstPort)) {
+                SignalItem signalItem = dstPort.TopologyItems.OfType<SignalItem>().First();
+                if (signalItem.LightStatus == SignalItem.SignalLightStatus.STOP || !reactsToState) {
+                    // stop if signal status is STOP. Or if caller doesn't want to react to station's state
+                    return Tuple.Create(trainTrack, trackProgress);
+                }
+            }
+
+            if (Port.IsPortSwitch(dstPort)) {
+                if (!reactsToState) {
+                    // stop if caller doesn't want to react to station's state
+                    return Tuple.Create(trainTrack, trackProgress);
+                }
+
+                SwitchItem switchItem = dstPort.TopologyItems.OfType<SwitchItem>().First();
+                if (switchItem.Direction == SwitchItem.SwitchDirection.FIRST) {
+                    return Tuple.Create(switchItem.DstOneTrack, TrainItem.minDrawableProgress);
+                }
+                else {
+                    return Tuple.Create(switchItem.DstTwoTrack, TrainItem.minDrawableProgress);
+                }
+            }
+            if (Port.IsPortConnection(dstPort)) {
+                StraightRailTrackItem nextSrt = dstPort.TopologyItems.OfType<StraightRailTrackItem>().First(srt => srt != trainTrack);
+                return Tuple.Create(nextSrt, TrainItem.minDrawableProgress);
+            }
+            if (Port.IsPortOutput(dstPort)) {
+                // TODO: send train departure package
+                return Tuple.Create(trainTrack, trackProgress);
+            }
+            if (Port.IsPortDeadend(dstPort)) {
+                return Tuple.Create(trainTrack, trackProgress);
+            }
+
+            throw new ArgumentException("Error while getting next position of a train that heads to " + dstPort);
         }
     }
 }
