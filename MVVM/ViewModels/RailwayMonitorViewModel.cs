@@ -1,22 +1,32 @@
-﻿using railway_monitor.Components.RailwayCanvas;
-using railway_monitor.Components.ToolButtons;
-using railway_monitor.MVVM.Models.Station;
+﻿using railway_monitor.MVVM.Models.Station;
+using railway_monitor.MVVM.Models.Server;
 using railway_monitor.Tools.Actions;
 using railway_monitor.Tools;
 using SolverLibrary.Model;
+using railway_monitor.Simulator;
+using SolverLibrary.Model.Graph;
+using System.ComponentModel;
 
 namespace railway_monitor.MVVM.ViewModels {
     public class RailwayMonitorViewModel : RailwayBaseViewModel { 
         private static readonly int _defaultTimeInaccuracy = 5;
         public StationManager? StationManager { get; private set; }
+
+        private RailwaySimulator? _simulator;
+        public StationGraph Graph { get; set; }
+
+        private int _currentTime;
         public string CurrentTime {
             get {
                 if (StationManager == null) {
                     return "0 s";
                 }
                 else {
-                    return StationManager.CurrentTime + " s";
+                    return _currentTime + " s";
                 }
+            }
+            set {
+                SetField(ref _currentTime, int.Parse(value));
             }
         }
 
@@ -31,7 +41,16 @@ namespace railway_monitor.MVVM.ViewModels {
         }
 
         internal void Start(TrainSchedule trainSchedule, int timeInaccuracy) {
-            StationManager = new StationManager(RailwayCanvas, trainSchedule, timeInaccuracy);
+            if (Graph == null) {
+                return;
+            }
+            _simulator = new RailwaySimulator();
+            StationManager = new StationManager(RailwayCanvas, trainSchedule, timeInaccuracy, _simulator, Graph);
+            StationManager.PropertyChanged += SetTime;
+            _simulator.Start(StationManager.GetWorkPlan(), trainSchedule, new SimulatorUpdatesListener(StationManager));
+        }
+        internal void Start(TrainSchedule trainSchedule) {
+            Start(trainSchedule, _defaultTimeInaccuracy);
         }
 
         internal void FinishMonitoring() {
@@ -42,6 +61,14 @@ namespace railway_monitor.MVVM.ViewModels {
             monitor.RailwayCanvas.Clear();
 
             mainViewModel.SelectView(MainViewModel.ViewModelName.Start);
+        }
+
+        private void SetTime(object? sender, PropertyChangedEventArgs args) {
+            if (args.PropertyName == null || args.PropertyName != "CurrentTime") {
+                return;
+            }
+
+            CurrentTime = StationManager.CurrentTime.ToString();
         }
     }
 }

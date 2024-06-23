@@ -21,5 +21,7 @@ namespace railway_monitor.Bases {
             Render(drawingContext);
             drawingContext.Close();
         }
+
+        public int Id { get; set; } = -1;
     }
 }

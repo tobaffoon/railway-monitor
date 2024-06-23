@@ -1,11 +1,11 @@
 ﻿using railway_monitor.MVVM.Models.Station;
 
 namespace railway_monitor.MVVM.Models.Server {
-    public abstract class StationUpdateListener {
+    public abstract class StationUpdatesListener {
         protected StationManager Manager;
-        protected abstract void Listen();
+        public abstract void Listen();
 
-        public StationUpdateListener(StationManager Manager) {
+        public StationUpdatesListener(StationManager Manager) {
             this.Manager = Manager;
         }
     }

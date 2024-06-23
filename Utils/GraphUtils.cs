@@ -187,6 +187,7 @@ namespace railway_monitor.Utils {
                 currentStart.Y += 10;
                 currentEnd.Y += 10;
                 railDict[edge] = srtItem;
+                srtItem.Id = edge.getId();
 
                 canvas.AddTopologyItemBehind(srtItem);
             }
@@ -206,6 +207,7 @@ namespace railway_monitor.Utils {
                         Port connectionPort = HasItems(srtItem.PortEnd) ? srtItem.PortStart : srtItem.PortEnd;
                         canvas.AddTopologyItem(externalTrackItem);
                         externalTrackItem.Place(connectionPort);
+                        externalTrackItem.Id = vertex.getId();
                         break;
                     case VertexType.OUTPUT:
                         Edge outputEdge = vertex.GetEdgeConnections()[0].Item1 == null ? vertex.GetEdgeConnections()[0].Item2 : vertex.GetEdgeConnections()[0].Item1;
@@ -218,6 +220,7 @@ namespace railway_monitor.Utils {
                         connectionPort = HasItems(srtItem.PortEnd) ? srtItem.PortStart : srtItem.PortEnd;
                         canvas.AddTopologyItem(externalTrackItem);
                         externalTrackItem.Place(connectionPort);
+                        externalTrackItem.Id = vertex.getId();
                         break;
                     case VertexType.DEADEND:
                         Edge deadendEdge = vertex.GetEdgeConnections()[0].Item1 == null ? vertex.GetEdgeConnections()[0].Item2 : vertex.GetEdgeConnections()[0].Item1;
@@ -229,6 +232,7 @@ namespace railway_monitor.Utils {
                         connectionPort = HasItems(srtItem.PortEnd) ? srtItem.PortStart : srtItem.PortEnd;
                         canvas.AddTopologyItem(deadendItem);
                         deadendItem.Place(connectionPort);
+                        deadendItem.Id = vertex.getId();
                         break;
                     case VertexType.CONNECTION:
                         Edge edgeOne = vertex.GetEdgeConnections()[0].Item1;
@@ -265,6 +269,7 @@ namespace railway_monitor.Utils {
                         };
                         canvas.AddTopologyItem(signalItem);
                         signalItem.Place(connectionPort);
+                        signalItem.Id = vertex.getId();
                         break;
                     case VertexType.SWITCH:
                         edgeOne = vertex.GetEdgeConnections()[0].Item1;
@@ -306,6 +311,7 @@ namespace railway_monitor.Utils {
                         canvas.AddTopologyItem(switchItem);
                         switchItem.Place(connectionPort);
                         switchItem.SetSource(srtSrc.GetOtherPort(connectionPort));
+                        switchItem.Id = vertex.getId();
                         break;
 
                 }

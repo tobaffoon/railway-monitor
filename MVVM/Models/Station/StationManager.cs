@@ -4,6 +4,7 @@ using railway_monitor.Components.RailwayCanvas;
 using railway_monitor.Components.TopologyItems;
 using railway_monitor.MVVM.Models.Server;
 using railway_monitor.MVVM.Models.UpdatePackages;
+using railway_monitor.Simulator;
 using railway_monitor.Utils;
 using SolverLibrary;
 using SolverLibrary.Model;
@@ -12,7 +13,7 @@ using SolverLibrary.Model.Graph.VertexTypes;
 using SolverLibrary.Model.TrainInfo;
 
 namespace railway_monitor.MVVM.Models.Station {
-    public class StationManager {
+    public class StationManager : PropertyNotifier {
         #region Emergency events
         /// <summary>
         /// Arguments are: trainId, inputVertexId
@@ -41,7 +42,6 @@ namespace railway_monitor.MVVM.Models.Station {
         private int trainIdCounter;
 
         private readonly RailwayCanvasViewModel canvas;
-        private readonly StationGraph stationGraph;
         private readonly TrainSchedule schedule;
         private readonly int timeInaccuracy;
         private readonly Dictionary<int, TopologyItem> topologyVertexDict;
@@ -52,20 +52,21 @@ namespace railway_monitor.MVVM.Models.Station {
         private readonly Solver solver;
         private readonly StationPlanSender planSender;
 
+        public StationGraph Graph { get; private set; }
         private int _currentTime;
         private readonly object _currentTimeLock = new object();
         public int CurrentTime {
             get {
                  return _currentTime;
             }
-            private set {
+            internal set {
                 lock (_currentTimeLock) {
-                    _currentTime = value;
+                    SetField(ref _currentTime, value);
                 }
             }
         }
 
-        public StationManager(RailwayCanvasViewModel canvas, TrainSchedule schedule, int timeInaccuracy) {
+        public StationManager(RailwayCanvasViewModel canvas, TrainSchedule schedule, int timeInaccuracy, RailwaySimulator simulator, StationGraph graph) {
             CurrentTime = 0;
 
             // TODO: smth-smth that takes schedule and remembers it
@@ -92,20 +93,18 @@ namespace railway_monitor.MVVM.Models.Station {
             }
 
             this.canvas = canvas;
-            Tuple<StationGraph, Dictionary<int, TopologyItem>, Dictionary<int, StraightRailTrackItem>, Dictionary<int, Vertex>> graphInfo = GraphUtils.CreateGraph(canvas);
-            stationGraph = graphInfo.Item1;
-            topologyVertexDict = graphInfo.Item2;
-            topologyEdgeDict = graphInfo.Item3;
-            graphVertexDict = graphInfo.Item4;
-
+            Graph = graph;
+            topologyVertexDict = canvas.GraphicItems.Where(item => item is TopologyItem && item is not StraightRailTrackItem && item.Id != -1).ToDictionary(x => x.Id, x => x as TopologyItem);
+            topologyEdgeDict = canvas.Rails.ToDictionary(x => x.Id, x => x);
+            graphVertexDict = graph.GetVertices().ToDictionary(x => x.getId(), x => x);
             this.schedule = schedule;
-            this.schedule.SetStationGraph(stationGraph);
+            this.schedule.SetStationGraph(Graph);
             this.timeInaccuracy = timeInaccuracy;
 
             trainItems = new Dictionary<int, TrainItem>();
 
-            solver = new Solver(stationGraph, timeInaccuracy);
-            planSender = new SimulatorPlanSender();
+            solver = new Solver(Graph, timeInaccuracy);
+            planSender = new SimulatorPlanSender(simulator);
         }
 
         public void UpdateTrain(TrainUpdatePackage package) {
@@ -338,6 +337,10 @@ namespace railway_monitor.MVVM.Models.Station {
             }
 
             throw new ArgumentException("Error while getting next position of a train that heads to " + dstPort);
+        }
+
+        public StationWorkPlan GetWorkPlan() {
+            return solver.CalculateWorkPlan(schedule);
         }
     }
 }

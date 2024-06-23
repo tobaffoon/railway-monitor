@@ -2,12 +2,12 @@
 using railway_monitor.MVVM.Models.UpdatePackages;
 
 namespace railway_monitor.MVVM.Models.Server {
-    public class SimulatorListener : StationUpdateListener {
+    public class SimulatorUpdatesListener : StationUpdatesListener {
         private bool _listensToSimulator = false;
 
-        public SimulatorListener(StationManager manager) : base(manager) { }
+        public SimulatorUpdatesListener(StationManager manager) : base(manager) { }
 
-        protected override void Listen() {
+        public override void Listen() {
             _listensToSimulator = true;
         }
 
@@ -50,6 +50,11 @@ namespace railway_monitor.MVVM.Models.Server {
             if (!_listensToSimulator) return;
 
             Manager.UpdateRail(package);
+        }
+        public void UpdateTime(int time) {
+            if (!_listensToSimulator) return;
+
+            Manager.CurrentTime = time;
         }
     }
 }

@@ -24,6 +24,7 @@ namespace railway_monitor.MVVM.ViewModels {
             }
 
             GraphUtils.AddTopologyFromGraph(monitor.RailwayCanvas, graph);
+            monitor.Graph = graph;
         }
     }
 }
