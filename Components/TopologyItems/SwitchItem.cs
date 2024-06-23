@@ -88,19 +88,41 @@ namespace railway_monitor.Components.TopologyItems {
         }
         #endregion
 
-        public Port PortSrc { get; private set; }
+        public Port PortSrc {
+            get {
+                return SrcTrack.GetOtherPort(Port);
+            } 
+        }
+        private Point _tempSrcPos = new Point(0, 0);
         public Point SrcPos {
             get {
+                if(PlacementStatus != SwitchPlacementStatus.SOURCE_SET) {
+                    return _tempSrcPos; 
+                }
                 return PortSrc.Pos;
             }
             set {
-                PortSrc.Pos.X = value.X;
-                PortSrc.Pos.Y = value.Y;
+                if (PlacementStatus != SwitchPlacementStatus.SOURCE_SET) {
+                    _tempSrcPos.X = value.X;
+                    _tempSrcPos.Y = value.Y;
+                }
+                else {
+                    PortSrc.Pos.X = value.X;
+                    PortSrc.Pos.Y = value.Y;
+                }
                 Render();
             }
         }
-        public Port PortDstOne { get; private set; }
-        public Port PortDstTwo { get; private set; }
+        public Port PortDstOne {
+            get {
+                return DstOneTrack.GetOtherPort(Port);
+            } 
+        }
+        public Port PortDstTwo {
+            get {
+                return DstTwoTrack.GetOtherPort(Port);
+            }
+        }
         public Point DstPos {
             get {
                 if (Direction == SwitchDirection.FIRST) {
@@ -143,10 +165,6 @@ namespace railway_monitor.Components.TopologyItems {
 
         public SwitchItem(Point initPos) : base() {
             Port = new Port(this, initPos);
-
-            PortSrc = new Port(this, new Point(0, 0));
-            PortDstOne = new Port(this, new Point(0, 0));
-            PortDstTwo = new Port(this, new Point(0, 0));
         }
 
         public void Place(Port mainPort) {
@@ -179,24 +197,15 @@ namespace railway_monitor.Components.TopologyItems {
             connectedRails = connectedRails.Except([srcRail]);
 
             // set Source Port
-            PortSrc = source;
-            PortSrc = srcRail.GetOtherPort(Port);
-
+            SrcTrack = srcRail;
             // set first Destination Port
             StraightRailTrackItem dstOne = connectedRails.ElementAt(0);
-            PortDstOne = dstOne.GetOtherPort(Port);
-
+            DstOneTrack = dstOne;
             // set second Destination Port
             StraightRailTrackItem dstTwo = connectedRails.ElementAt(1);
-            PortDstTwo = dstTwo.GetOtherPort(Port);
-
-            Direction = SwitchDirection.FIRST;
-
-            PlacementStatus = SwitchPlacementStatus.SOURCE_SET;
-            SrcTrack = srcRail;
-            DstOneTrack = dstOne;
             DstTwoTrack = dstTwo;
 
+            Direction = SwitchDirection.FIRST;
             PlacementStatus = SwitchPlacementStatus.SOURCE_SET;
             Render();
         }
