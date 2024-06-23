@@ -12,7 +12,7 @@ namespace railway_monitor.MVVM.ViewModels {
         private static readonly int _defaultTimeInaccuracy = 5;
         public StationManager? StationManager { get; private set; }
 
-        private RailwaySimulator? _simulator;
+        private RailwaySimulator _simulator;
         public StationGraph Graph { get; set; }
 
         private int _currentTime;
@@ -38,13 +38,14 @@ namespace railway_monitor.MVVM.ViewModels {
             LeftReleaseCommand = new CanvasCommand(LeftReleaseToolActions.ReleaseDrag);
             WheelCommand = new WheelCommand(UtilToolActions.NoWheelAction);
             ArrowsCommand = new KeyboardCommand(UtilToolActions.NoKeyboardAction);
+            
+            _simulator = new RailwaySimulator();
         }
 
         internal void Start(TrainSchedule trainSchedule, int timeInaccuracy) {
             if (Graph == null) {
                 return;
             }
-            _simulator = new RailwaySimulator();
             StationManager = new StationManager(RailwayCanvas, trainSchedule, timeInaccuracy, _simulator, Graph);
             StationManager.PropertyChanged += SetTime;
             _simulator.Start(StationManager.GetWorkPlan(), trainSchedule, new SimulatorUpdatesListener(StationManager));
@@ -59,6 +60,8 @@ namespace railway_monitor.MVVM.ViewModels {
                 return;
             }
             monitor.RailwayCanvas.Clear();
+            _simulator.Stop();
+            _currentTime = 0;
 
             mainViewModel.SelectView(MainViewModel.ViewModelName.Start);
         }
