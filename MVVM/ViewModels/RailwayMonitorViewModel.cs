@@ -48,7 +48,7 @@ namespace railway_monitor.MVVM.ViewModels {
             }
             StationManager = new StationManager(RailwayCanvas, trainSchedule, timeInaccuracy, _simulator, Graph);
             StationManager.PropertyChanged += SetTime;
-            _simulator.Start(StationManager.GetWorkPlan(), trainSchedule, new SimulatorUpdatesListener(StationManager));
+            _simulator.Start(StationManager.GetWorkPlan(), trainSchedule, new SimulatorUpdatesListener(StationManager), StationManager.trainIdDict);
         }
         internal void Start(TrainSchedule trainSchedule) {
             Start(trainSchedule, _defaultTimeInaccuracy);

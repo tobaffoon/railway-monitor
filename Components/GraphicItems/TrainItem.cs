@@ -60,13 +60,6 @@ namespace railway_monitor.Components.GraphicItems {
                 FlowCurrentTrack = value;
             }
         }
-        private Port _startingPort;
-        public Port StartingPort {
-            set {
-                _startingPort = value;
-                FlowStartingPort = value;
-            }
-        }
 
         private double _trackProgress;
         public double TrackProgress {
@@ -92,20 +85,20 @@ namespace railway_monitor.Components.GraphicItems {
                 Render();
             }
         }
-        private Port _flowStartingPort;
-        public Port FlowStartingPort {
+        private Port _flowEndingPort;
+        public Port FlowEndingPort {
             get {
-                return _flowStartingPort;
+                return _flowEndingPort;
             }
             set {
-                _flowStartingPort = value;
+                _flowEndingPort = value;
                 Render();
             }
         }
 
-        public Port FlowEndingPort {
+        public Port FlowStartingPort {
             get {
-                return _flowCurrentTrack.GetOtherPort(FlowStartingPort);
+                return _flowCurrentTrack.GetOtherPort(FlowEndingPort);
             }
         }
 
@@ -145,19 +138,20 @@ namespace railway_monitor.Components.GraphicItems {
             }
         }
 
-        public TrainItem(int id, StraightRailTrackItem startTrack, Port startingPort, double initSpeed) {
+        public TrainItem(int id, StraightRailTrackItem startTrack, Port endingPort, double initSpeed) {
             Id = id;
             _currentTrack = startTrack;
             _flowCurrentTrack = startTrack;
+            _flowEndingPort = endingPort;
             _trackProgress = minDrawableProgress;
             _flowTrackProgress = minDrawableProgress;
             Speed = initSpeed;
         }
-        public TrainItem(int id, StraightRailTrackItem startTrack, Port startingPort) : this(id, startTrack, startingPort, defaultSpeed) { }
-        public TrainItem(int id, ExternalTrackItem externalTrack, Port startingPort) : this(
+        public TrainItem(int id, StraightRailTrackItem startTrack, Port endingPort) : this(id, startTrack, endingPort, defaultSpeed) { }
+        public TrainItem(int id, ExternalTrackItem externalTrack) : this(
             id,
             externalTrack.Port.TopologyItems.OfType<StraightRailTrackItem>().First(),
-            externalTrack.Port
+            externalTrack.Port.TopologyItems.OfType<StraightRailTrackItem>().First().GetOtherPort(externalTrack.Port)
             ) { }
 
         protected override void Render(DrawingContext dc) {

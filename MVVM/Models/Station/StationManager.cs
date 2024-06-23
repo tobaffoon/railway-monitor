@@ -33,6 +33,8 @@ namespace railway_monitor.MVVM.Models.Station {
         private static readonly int flowUpdatesPerSec = 24;
         private static readonly int flowUpdateInterval = 1000 / flowUpdatesPerSec;
 
+        private object _flowLock = new object();
+
         // id -> confidence one-shot timer
         private readonly Dictionary<int, TrainTimer> confidenceTimers;
         // id -> flow periodic timer
@@ -66,6 +68,8 @@ namespace railway_monitor.MVVM.Models.Station {
             }
         }
 
+        public readonly Dictionary<Train, int> trainIdDict;
+
         public StationManager(RailwayCanvasViewModel canvas, TrainSchedule schedule, int timeInaccuracy, RailwaySimulator simulator, StationGraph graph) {
             CurrentTime = 0;
 
@@ -91,6 +95,7 @@ namespace railway_monitor.MVVM.Models.Station {
 
                 trainIdCounter++;
             }
+            trainIdDict = trains.ToDictionary(x => x.Value, x => x.Key);
 
             this.canvas = canvas;
             Graph = graph;
@@ -137,13 +142,13 @@ namespace railway_monitor.MVVM.Models.Station {
                 OnOffscheduledTrainArrive?.Invoke(package.trainId);
             }
             StraightRailTrackItem srtItem = inputTrackItem.Port.TopologyItems.OfType<StraightRailTrackItem>().First();
-            TrainItem trainItem = new TrainItem(package.trainId, srtItem, inputTrackItem.Port);
+            TrainItem trainItem = new TrainItem(package.trainId, inputTrackItem);
             trainItems[package.trainId] = trainItem;
             canvas.AddTrainItem(trainItem);
 
             // start confidence and flow timers
             confidenceTimers[package.trainId].Start();
-            flowTimers[package.trainId].Start();
+            //flowTimers[package.trainId].Start();
         }
         public void DepartTrain(TrainDeparturePackage package) {
             if (!trainItems.ContainsKey(package.trainId)) {
@@ -227,11 +232,13 @@ namespace railway_monitor.MVVM.Models.Station {
             if (sender is not TrainTimer timer) {
                 throw new ArgumentException(nameof(OnFlowTimerElapsed) + " sent by " + sender + ". However it can be used only for " + nameof(TrainTimer));
             }
-
-            TrainItem train = trainItems[timer.TrainId];
-            Tuple<StraightRailTrackItem, double> nextPos = GetAdvancedTrainPos(train, train.Speed, flowUpdateInterval, false);
-            train.FlowCurrentTrack = nextPos.Item1;
-            train.FlowTrackProgress = nextPos.Item2;
+            lock (_flowLock) {
+                TrainItem train = trainItems[timer.TrainId];
+                Tuple<StraightRailTrackItem, Port, double> nextPos = GetAdvancedTrainPos(train, train.Speed, flowUpdateInterval, false);
+                train.FlowCurrentTrack = nextPos.Item1;
+                train.FlowEndingPort = nextPos.Item2;
+                train.FlowTrackProgress = nextPos.Item3;
+            }
         }
         #endregion
         #region Emergency handlers
@@ -292,13 +299,13 @@ namespace railway_monitor.MVVM.Models.Station {
             }
         }
 
-        public static Tuple<StraightRailTrackItem, double> GetAdvancedTrainPos(TrainItem train, double speed, double millis, bool reactsToState = true) {
+        public static Tuple<StraightRailTrackItem, Port, double> GetAdvancedTrainPos(TrainItem train, double speed, double millis, bool reactsToState = true) {
             StraightRailTrackItem trainTrack = train.FlowCurrentTrack;
             Port dstPort = train.FlowEndingPort;
             double trackProgress = train.FlowTrackProgress;
             double advancedProgress = trackProgress + speed / trainTrack.Length * millis / 1000;
             if (advancedProgress < 1) {
-                return Tuple.Create(trainTrack, advancedProgress);
+                return Tuple.Create(trainTrack, dstPort, advancedProgress);
             }
 
             // At this point we might want to change track
@@ -306,34 +313,34 @@ namespace railway_monitor.MVVM.Models.Station {
                 SignalItem signalItem = dstPort.TopologyItems.OfType<SignalItem>().First();
                 if (signalItem.LightStatus == SignalItem.SignalLightStatus.STOP || !reactsToState) {
                     // stop if signal status is STOP. Or if caller doesn't want to react to station's state
-                    return Tuple.Create(trainTrack, trackProgress);
+                    return Tuple.Create(trainTrack, dstPort, trackProgress);
                 }
             }
 
             if (Port.IsPortSwitch(dstPort)) {
                 if (!reactsToState) {
                     // stop if caller doesn't want to react to station's state
-                    return Tuple.Create(trainTrack, trackProgress);
+                    return Tuple.Create(trainTrack, dstPort, trackProgress);
                 }
 
                 SwitchItem switchItem = dstPort.TopologyItems.OfType<SwitchItem>().First();
                 if (switchItem.Direction == SwitchItem.SwitchDirection.FIRST) {
-                    return Tuple.Create(switchItem.DstOneTrack, TrainItem.minDrawableProgress);
+                    return Tuple.Create(switchItem.DstOneTrack, switchItem.DstOneTrack.GetOtherPort(dstPort), TrainItem.minDrawableProgress);
                 }
                 else {
-                    return Tuple.Create(switchItem.DstTwoTrack, TrainItem.minDrawableProgress);
+                    return Tuple.Create(switchItem.DstTwoTrack, switchItem.DstTwoTrack.GetOtherPort(dstPort), TrainItem.minDrawableProgress);
                 }
             }
             if (Port.IsPortConnection(dstPort)) {
                 StraightRailTrackItem nextSrt = dstPort.TopologyItems.OfType<StraightRailTrackItem>().First(srt => srt != trainTrack);
-                return Tuple.Create(nextSrt, TrainItem.minDrawableProgress);
+                return Tuple.Create(nextSrt, nextSrt.GetOtherPort(dstPort), TrainItem.minDrawableProgress);
             }
             if (Port.IsPortOutput(dstPort)) {
                 // TODO: send train departure package
-                return Tuple.Create(trainTrack, trackProgress);
+                return Tuple.Create(trainTrack, dstPort, trackProgress);
             }
             if (Port.IsPortDeadend(dstPort)) {
-                return Tuple.Create(trainTrack, trackProgress);
+                return Tuple.Create(trainTrack, dstPort, trackProgress);
             }
 
             throw new ArgumentException("Error while getting next position of a train that heads to " + dstPort);
