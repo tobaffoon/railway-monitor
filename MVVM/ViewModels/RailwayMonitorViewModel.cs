@@ -42,7 +42,7 @@ namespace railway_monitor.MVVM.ViewModels {
             WheelCommand = new WheelCommand(UtilToolActions.NoWheelAction);
             ArrowsCommand = new KeyboardCommand(UtilToolActions.NoKeyboardAction);
             
-            _simulator = new RailwaySimulator(10);
+            _simulator = new RailwaySimulator(50);
         }
 
         internal void Start(TrainSchedule trainSchedule, int timeInaccuracy) {
@@ -78,11 +78,11 @@ namespace railway_monitor.MVVM.ViewModels {
             CurrentTime = StationManager.CurrentTime.ToString();
         }
 
-        public static Tuple<int, int, double> GetAdvancedTrainPos(TrainItem train, double millis, bool reactsToState = true) {
+        public static Tuple<int, int, double> GetAdvancedTrainPos(TrainItem train, bool reactsToState = true) {
             StraightRailTrackItem trainTrack = train.FlowCurrentTrack;
             Port dstPort = train.FlowEndingPort;
             double trackProgress = train.FlowTrackProgress;
-            double advancedProgress = trackProgress + train.Speed / trainTrack.Length * millis / 1000;
+            double advancedProgress = trackProgress + train.Speed / trainTrack.Length;
             if (advancedProgress < 1) {
                 return Tuple.Create(trainTrack.Id, dstPort.Id, advancedProgress);
             }
@@ -106,10 +106,12 @@ namespace railway_monitor.MVVM.ViewModels {
 
                 SwitchItem switchItem = dstPort.TopologyItems.OfType<SwitchItem>().First();
                 if (switchItem.Direction == SwitchItem.SwitchDirection.FIRST) {
-                    return Tuple.Create(switchItem.DstOneTrack.Id, switchItem.DstOneTrack.GetOtherPort(dstPort).Id, TrainItem.minDrawableProgress);
+                    StraightRailTrackItem dstSrt = switchItem.SrcTrack == train.FlowCurrentTrack ? switchItem.DstOneTrack : switchItem.SrcTrack;
+                    return Tuple.Create(dstSrt.Id, dstSrt.GetOtherPort(dstPort).Id, TrainItem.minDrawableProgress);
                 }
                 else {
-                    return Tuple.Create(switchItem.DstTwoTrack.Id, switchItem.DstTwoTrack.GetOtherPort(dstPort).Id, TrainItem.minDrawableProgress);
+                    StraightRailTrackItem dstSrt = switchItem.SrcTrack == train.FlowCurrentTrack ? switchItem.DstTwoTrack : switchItem.SrcTrack;
+                    return Tuple.Create(dstSrt.Id, dstSrt.GetOtherPort(dstPort).Id, TrainItem.minDrawableProgress);
                 }
             }
             if (Port.IsPortConnection(dstPort)) {

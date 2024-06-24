@@ -237,7 +237,7 @@ namespace railway_monitor.MVVM.Models.Station {
             }
             lock (_flowLock) {
                 TrainItem train = trainItems[timer.TrainId];
-                Tuple<int, int, double> nextPos = RailwayMonitorViewModel.GetAdvancedTrainPos(trainItems[timer.TrainId], flowUpdateInterval, false);
+                Tuple<int, int, double> nextPos = RailwayMonitorViewModel.GetAdvancedTrainPos(trainItems[timer.TrainId], false);
                 train.FlowCurrentTrack = topologyEdgeDict[nextPos.Item1];
                 train.FlowEndingPort = train.FlowCurrentTrack.PortStart.Id == nextPos.Item2 ? train.FlowCurrentTrack.PortStart : train.FlowCurrentTrack.PortEnd;
                 train.FlowTrackProgress = nextPos.Item3;

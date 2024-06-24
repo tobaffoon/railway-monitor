@@ -8,6 +8,7 @@ using railway_monitor.MVVM.ViewModels;
 using System.Windows.Threading;
 using SolverLibrary.Model.Graph.VertexTypes;
 using railway_monitor.Components.TopologyItems;
+using SolverLibrary.Model.PlanUnit;
 
 namespace railway_monitor.Simulator {
     public class RailwaySimulator {
@@ -92,26 +93,30 @@ namespace railway_monitor.Simulator {
             foreach (var entry in plan.GetSwitchPlanUnits().GroupBy(x => x.GetBeginTime())) {
                 int time = entry.Key >= 0 ? entry.Key : 0;
                 var events = entry.Select(x => new SwitchEvent(x.GetVertex().getId(), x.GetStatus()));
+                var inverseEvents = entry.Select(x => new SwitchEvent(x.GetVertex().getId(), ReverseSwitchStatus(x)));
                 if (!timedEvents.ContainsKey(time)) {
                     timedEvents[time] = new List<TimedEvent>(events);
                 }
                 else {
                     timedEvents[time].AddRange(events);
                 }
+                timedEvents[time].AddRange(inverseEvents);
             }
 
             // add signal events
             foreach (var entry in plan.GetTrafficLightPlanUnits().GroupBy(x => x.GetBeginTime())) {
                 int time = entry.Key >= 0 ? entry.Key : 0;
                 var events = entry.Select(x => new SignalEvent(x.GetVertex().getId(), x.GetStatus()));
+                var inverseEvents = entry.Select(x => new SignalEvent(x.GetVertex().getId(), ReverseTrafficLightStatus(x)));
                 if (!timedEvents.ContainsKey(time)) {
                     timedEvents[time] = new List<TimedEvent>(events);
                 }
                 else {
                     timedEvents[time].AddRange(events);
                 }
+                timedEvents[time].AddRange(inverseEvents);
             }
-            
+
             UpdatesListener = updatesListener;
             UpdatesListener.Listen();
             OnTimerElapsed(null, null);
@@ -165,7 +170,7 @@ namespace railway_monitor.Simulator {
 
             // move trains
             foreach (int trainId in _simulatedTrains) {
-                var nextTrainPos = RailwayMonitorViewModel.GetAdvancedTrainPos(trainItems[trainId], updateTimerPeriod, true);
+                var nextTrainPos = RailwayMonitorViewModel.GetAdvancedTrainPos(trainItems[trainId], true);
                 QueueTask(() => UpdatesListener.SendTrainUpdatePackage(new TrainUpdatePackage(trainId, nextTrainPos.Item1, nextTrainPos.Item2, nextTrainPos.Item3, false)));
             }
 
@@ -177,6 +182,14 @@ namespace railway_monitor.Simulator {
             await Task.Run(() =>
                 mainDispatcher.Invoke(action)
             );
+        }
+
+        private TrafficLightStatus ReverseTrafficLightStatus(TrafficLightPlanUnit unit) {
+            return unit.GetStatus() == TrafficLightStatus.STOP ? TrafficLightStatus.PASSING : TrafficLightStatus.STOP;
+        }
+
+        private SwitchStatus ReverseSwitchStatus(SwitchPlanUnit unit) {
+            return unit.GetStatus() == SwitchStatus.PASSINGCON1 ? SwitchStatus.PASSINGCON2 : SwitchStatus.PASSINGCON1;
         }
     }
 }
