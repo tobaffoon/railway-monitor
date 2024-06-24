@@ -341,7 +341,7 @@ namespace railway_monitor.MVVM.Models.Station {
             }
             StraightRailTrackItem randomSrt = platformedSrts[srtRandomBreaker.Next(platformedSrts.Count())];
             randomSrt.IsBroken = true;
-            graphEdgeDict[randomSrt.Id].Block();
+            graphEdgeDict[11].Block();
 
             Dictionary<Train, Tuple<Tuple<Vertex, Vertex>, int>> arrivedTrainsPos = trains.Values.Where(x => trainItems.ContainsKey(TrainIdDict[x])).ToDictionary(x => x, GetArrivedPos);
             Dictionary<Train, bool> passedStopPlatform = trains.Values.ToDictionary(x => x, x => false);
