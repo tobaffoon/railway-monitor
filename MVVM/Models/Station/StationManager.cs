@@ -47,8 +47,8 @@ namespace railway_monitor.MVVM.Models.Station {
         private readonly RailwayCanvasViewModel canvas;
         private TrainSchedule schedule;
         private readonly int timeInaccuracy;
-        private readonly Dictionary<int, TopologyItem> topologyVertexDict;
-        private readonly Dictionary<int, StraightRailTrackItem> topologyEdgeDict;
+        private Dictionary<int, TopologyItem> topologyVertexDict;
+        private Dictionary<int, StraightRailTrackItem> topologyEdgeDict;
         public readonly Dictionary<int, TrainItem> trainItems;
         private readonly Dictionary<int, Train> trains;
         private Dictionary<int, Vertex> graphVertexDict;
@@ -328,7 +328,9 @@ namespace railway_monitor.MVVM.Models.Station {
             }
             TrainIdDict = trains.ToDictionary(x => x.Value, x => x.Key);
             graphVertexDict = Graph.GetVertices().ToDictionary(x => x.getId(), x => x);
-            graphEdgeDict = Graph.GetEdges().ToDictionary(x => x.getId(), x => x);
+            graphEdgeDict = Graph.GetEdges().ToDictionary(x => x.getId(), x => x); 
+            topologyVertexDict = canvas.GraphicItems.Where(item => item is TopologyItem && item is not StraightRailTrackItem && item.Id != -1).ToDictionary(x => x.Id, x => x as TopologyItem);
+            topologyEdgeDict = canvas.Rails.ToDictionary(x => x.Id, x => x);
         }
 
         public StationWorkPlan BreakRandomPlatform() {
