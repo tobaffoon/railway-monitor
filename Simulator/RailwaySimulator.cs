@@ -171,7 +171,14 @@ namespace railway_monitor.Simulator {
             // move trains
             foreach (int trainId in _simulatedTrains) {
                 var nextTrainPos = RailwayMonitorViewModel.GetAdvancedTrainPos(trainItems[trainId], true);
-                QueueTask(() => UpdatesListener.SendTrainUpdatePackage(new TrainUpdatePackage(trainId, nextTrainPos.Item1, nextTrainPos.Item2, nextTrainPos.Item3, false)));
+                bool trainDeparted = nextTrainPos.Item4;
+                if (trainDeparted) {
+                    QueueTask(() => UpdatesListener.SendTrainDeparturePackage(new TrainDeparturePackage(trainId)));
+                    _simulatedTrains.Remove(trainId);
+                }
+                else {
+                    QueueTask(() => UpdatesListener.SendTrainUpdatePackage(new TrainUpdatePackage(trainId, nextTrainPos.Item1, nextTrainPos.Item2, nextTrainPos.Item3, false)));
+                }
             }
 
             CurrentTime++;
