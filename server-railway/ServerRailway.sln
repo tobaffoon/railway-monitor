@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerRailway", "ServerRailway\ServerRailway.csproj", "{F8B01B3A-CC3E-40B8-A8E7-828D0714246D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolverLibrary", "..\train-manager\TrainManager\SolverLibrary\SolverLibrary.csproj", "{D5369071-3EA4-435F-ABB4-15155A56DBE4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F8B01B3A-CC3E-40B8-A8E7-828D0714246D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8B01B3A-CC3E-40B8-A8E7-828D0714246D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8B01B3A-CC3E-40B8-A8E7-828D0714246D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8B01B3A-CC3E-40B8-A8E7-828D0714246D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5369071-3EA4-435F-ABB4-15155A56DBE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5369071-3EA4-435F-ABB4-15155A56DBE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5369071-3EA4-435F-ABB4-15155A56DBE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5369071-3EA4-435F-ABB4-15155A56DBE4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FE6EE853-F487-4E66-9504-EBE4B719F56A}
+	EndGlobalSection
+EndGlobal
