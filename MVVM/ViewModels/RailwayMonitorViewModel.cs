@@ -42,7 +42,7 @@ namespace railway_monitor.MVVM.ViewModels {
             WheelCommand = new WheelCommand(UtilToolActions.NoWheelAction);
             ArrowsCommand = new KeyboardCommand(UtilToolActions.NoKeyboardAction);
             
-            _simulator = new RailwaySimulator(5);
+            _simulator = new RailwaySimulator(50);
         }
 
         internal void Start(TrainSchedule trainSchedule, int timeInaccuracy) {
@@ -145,7 +145,8 @@ namespace railway_monitor.MVVM.ViewModels {
 
         public void BreakRandomPlatform() {
             if (StationManager == null) return;
-            StationManager.BreakRandomPlatform();
+            StationWorkPlan newPlan = StationManager.BreakRandomPlatform();
+            _simulator.ChangePlan(newPlan);
         }
     }
 }

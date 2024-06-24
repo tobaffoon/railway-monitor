@@ -54,12 +54,6 @@ namespace railway_monitor.Components.GraphicItems {
 
         #region LastRealPos info
         private StraightRailTrackItem _currentTrack;
-        public StraightRailTrackItem CurrentTrack {
-            set {
-                _currentTrack = value;
-                FlowCurrentTrack = value;
-            }
-        }
 
         private double _trackProgress;
         public double TrackProgress {
@@ -75,10 +69,14 @@ namespace railway_monitor.Components.GraphicItems {
             get {
                 return _flowCurrentTrack;
             }
-            set {
+            private set {
                 _flowCurrentTrack = value;
                 Render();
             }
+        }
+        public void SetTrack(StraightRailTrackItem track, int timeStamp) {
+            FlowCurrentTrack = track;
+            vertexPassedTimeStamp = timeStamp;
         }
         private Port _flowEndingPort;
         public Port FlowEndingPort {
@@ -132,6 +130,8 @@ namespace railway_monitor.Components.GraphicItems {
                 Render();
             }
         }
+
+        public int vertexPassedTimeStamp = 0;
 
         public TrainItem(int id, StraightRailTrackItem startTrack, Port endingPort, double initSpeed) {
             Id = id;

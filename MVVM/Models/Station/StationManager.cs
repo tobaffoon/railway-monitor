@@ -124,7 +124,7 @@ namespace railway_monitor.MVVM.Models.Station {
 
             TrainItem train = trainItems[package.trainId];
             StraightRailTrackItem srtItem = topologyEdgeDict[package.edgeId];
-            train.CurrentTrack = srtItem;
+            train.SetTrack(srtItem, CurrentTime);
             int dstId = package.dstVertexId;
             train.FlowEndingPort = srtItem.PortStart.Id == dstId ? srtItem.PortStart : srtItem.PortEnd;
             train.TrackProgress = package.trackProgress;
@@ -242,7 +242,7 @@ namespace railway_monitor.MVVM.Models.Station {
             lock (_flowLock) {
                 TrainItem train = trainItems[timer.TrainId];
                 Tuple<int, int, double, bool> nextPos = RailwayMonitorViewModel.GetAdvancedTrainPos(trainItems[timer.TrainId], false);
-                train.FlowCurrentTrack = topologyEdgeDict[nextPos.Item1];
+                train.SetTrack(topologyEdgeDict[nextPos.Item1], CurrentTime);
                 train.FlowEndingPort = train.FlowCurrentTrack.PortStart.Id == nextPos.Item2 ? train.FlowCurrentTrack.PortStart : train.FlowCurrentTrack.PortEnd;
                 train.FlowTrackProgress = nextPos.Item3;
             }
@@ -343,7 +343,19 @@ namespace railway_monitor.MVVM.Models.Station {
             randomSrt.IsBroken = true;
             graphEdgeDict[randomSrt.Id].Block();
 
-            
+            Dictionary<Train, Tuple<Tuple<Vertex, Vertex>, int>> arrivedTrainsPos = trains.Values.ToDictionary(x => x, GetArrivedPos);
+            Dictionary<Train, bool> passedStopPlatform = trains.Values.ToDictionary(x => x, x => false);
+            plan = solver.RecalculateStationWorkPlan(plan, schedule, arrivedTrainsPos, passedStopPlatform);
+            return plan;
         }
+
+        private Tuple<Tuple<Vertex, Vertex>, int> GetArrivedPos(Train train) {
+            TrainItem trainItem = trainItems[TrainIdDict[train]];
+            Port dstPort = trainItem.FlowEndingPort;
+            Port srcPort = trainItem.FlowCurrentTrack.GetOtherPort(dstPort);
+            Vertex dstVertex = graphVertexDict[dstPort.Id];
+            Vertex srcVertex = graphVertexDict[srcPort.Id];
+            return Tuple.Create(Tuple.Create(srcVertex, dstVertex), trainItem.vertexPassedTimeStamp);
+        } 
     }
 }

@@ -10,6 +10,7 @@ using SolverLibrary.Model.Graph.VertexTypes;
 using railway_monitor.Components.TopologyItems;
 using SolverLibrary.Model.PlanUnit;
 using System;
+using System.IO.Packaging;
 
 namespace railway_monitor.Simulator {
     public class RailwaySimulator {
@@ -61,6 +62,7 @@ namespace railway_monitor.Simulator {
             }
         }
 
+        private Task? _latestTask;
         private System.Timers.Timer _timer;
 
         public RailwaySimulator(int updatesPerSec) {
@@ -135,7 +137,7 @@ namespace railway_monitor.Simulator {
                     switch (tevent) {
                         case TrainArriveEvent arriveEvent:
                             _simulatedTrains.Add(arriveEvent.trainId);
-                            QueueTask(() => UpdatesListener.SendTrainArrivalPackage(new TrainArrivalPackage(arriveEvent.trainId, arriveEvent.inputVertexId)));
+                            mainDispatcher.Invoke(() => UpdatesListener.SendTrainArrivalPackage(new TrainArrivalPackage(arriveEvent.trainId, arriveEvent.inputVertexId)));
                             break;
                         case SwitchEvent switchEvent:
                             SwitchItem.SwitchDirection switchStatus = SwitchItem.SwitchDirection.FIRST;
@@ -147,7 +149,7 @@ namespace railway_monitor.Simulator {
                                     switchStatus = SwitchItem.SwitchDirection.SECOND;
                                     break;
                             }
-                            QueueTask(() => UpdatesListener.SendSwitchUpdatePackage(new SwitchUpdatePackage(switchEvent.switchId, false, switchStatus)));
+                            mainDispatcher.Invoke(() => UpdatesListener.SendSwitchUpdatePackage(new SwitchUpdatePackage(switchEvent.switchId, false, switchStatus)));
                             break;
                         case SignalEvent signalEvent:
                             SignalItem.SignalLightStatus signalStatus = SignalItem.SignalLightStatus.PASS;
@@ -159,7 +161,7 @@ namespace railway_monitor.Simulator {
                                     signalStatus = SignalItem.SignalLightStatus.PASS;
                                     break;
                             }
-                            QueueTask(() => UpdatesListener.SendSignalUpdatePackage(new SignalUpdatePackage(signalEvent.signalId, false, signalStatus)));
+                            mainDispatcher.Invoke(() => UpdatesListener.SendSignalUpdatePackage(new SignalUpdatePackage(signalEvent.signalId, false, signalStatus)));
                             break;
                     }
                 }
@@ -167,25 +169,26 @@ namespace railway_monitor.Simulator {
 
             // move trains
             foreach (int trainId in _simulatedTrains) {
+                if(_latestTask != null) {
+                    _latestTask.Wait();
+                }
                 var nextTrainPos = RailwayMonitorViewModel.GetAdvancedTrainPos(trainItems[trainId], true);
                 bool trainDeparted = nextTrainPos.Item4;
                 if (trainDeparted) {
-                    QueueTask(() => UpdatesListener.SendTrainDeparturePackage(new TrainDeparturePackage(trainId)));
+                    mainDispatcher.Invoke(() => UpdatesListener.SendTrainDeparturePackage(new TrainDeparturePackage(trainId)));
                     _simulatedTrains.Remove(trainId);
                 }
                 else {
-                    QueueTask(() => UpdatesListener.SendTrainUpdatePackage(new TrainUpdatePackage(trainId, nextTrainPos.Item1, nextTrainPos.Item2, nextTrainPos.Item3, false)));
+                    mainDispatcher.Invoke(() => UpdatesListener.SendTrainUpdatePackage(new TrainUpdatePackage(trainId, nextTrainPos.Item1, nextTrainPos.Item2, nextTrainPos.Item3, false)));
                 }
             }
 
             CurrentTime++;
-            QueueTask(() => UpdatesListener.UpdateTime(CurrentTime));
+            mainDispatcher.Invoke(() => UpdatesListener.UpdateTime(CurrentTime));
         }
 
-        public async void ChangePlan(StationWorkPlan plan) {
-            await Task.Run(() =>
-                mainDispatcher.Invoke(() => ChangePlanInner(plan), DispatcherPriority.Send)
-            );
+        public  void ChangePlan(StationWorkPlan plan) {
+            mainDispatcher.Invoke(() => ChangePlanInner(plan), DispatcherPriority.Send);
         }
 
         private void ChangePlanInner(StationWorkPlan plan) {
@@ -221,12 +224,6 @@ namespace railway_monitor.Simulator {
                 }
                 timedEvents[time].AddRange(inverseEvents);
             }
-        }
-
-        private async void QueueTask(Action action) {
-            await Task.Run(() =>
-                mainDispatcher.Invoke(action)
-            );
         }
 
         private TrafficLightStatus ReverseTrafficLightStatus(TrafficLightPlanUnit unit) {
