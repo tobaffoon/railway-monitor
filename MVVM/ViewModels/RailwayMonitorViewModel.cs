@@ -49,10 +49,16 @@ namespace railway_monitor.MVVM.ViewModels {
             if (Graph == null) {
                 return;
             }
-            StationManager = new StationManager(RailwayCanvas, trainSchedule, timeInaccuracy, _simulator, Graph);
+
+            if(StationManager == null) {
+                StationManager = new StationManager(RailwayCanvas, trainSchedule, timeInaccuracy, _simulator, Graph);
+            }
+            else {
+                StationManager.Reset(trainSchedule, Graph);
+            }
             StationManager.PropertyChanged += SetTime;
             _simulator.trainItems = StationManager.trainItems;
-            _simulator.Start(StationManager.GetWorkPlan(), trainSchedule, new SimulatorUpdatesListener(StationManager), StationManager.trainIdDict);
+            _simulator.Start(StationManager.GetWorkPlan(), trainSchedule, new SimulatorUpdatesListener(StationManager), StationManager.TrainIdDict);
         }
         internal void Start(TrainSchedule trainSchedule) {
             Start(trainSchedule, _defaultTimeInaccuracy);

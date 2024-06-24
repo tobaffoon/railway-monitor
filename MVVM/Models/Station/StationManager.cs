@@ -45,14 +45,14 @@ namespace railway_monitor.MVVM.Models.Station {
         private int trainIdCounter;
 
         private readonly RailwayCanvasViewModel canvas;
-        private readonly TrainSchedule schedule;
+        private TrainSchedule schedule;
         private readonly int timeInaccuracy;
         private readonly Dictionary<int, TopologyItem> topologyVertexDict;
         private readonly Dictionary<int, StraightRailTrackItem> topologyEdgeDict;
         public readonly Dictionary<int, TrainItem> trainItems;
         private readonly Dictionary<int, Train> trains;
         private readonly Dictionary<int, Vertex> graphVertexDict;
-        private readonly Solver solver;
+        private Solver solver;
         private readonly StationPlanSender planSender;
 
         public StationGraph Graph { get; private set; }
@@ -69,12 +69,11 @@ namespace railway_monitor.MVVM.Models.Station {
             }
         }
 
-        public readonly Dictionary<Train, int> trainIdDict;
+        public Dictionary<Train, int> TrainIdDict { get; private set; }
 
         public StationManager(RailwayCanvasViewModel canvas, TrainSchedule schedule, int timeInaccuracy, RailwaySimulator simulator, StationGraph graph) {
             CurrentTime = 0;
 
-            // TODO: smth-smth that takes schedule and remembers it
             trainIdCounter = 0;
             trains = new Dictionary<int, Train>();
             // Process scheduule
@@ -96,7 +95,7 @@ namespace railway_monitor.MVVM.Models.Station {
 
                 trainIdCounter++;
             }
-            trainIdDict = trains.ToDictionary(x => x.Value, x => x.Key);
+            TrainIdDict = trains.ToDictionary(x => x.Value, x => x.Key);
 
             this.canvas = canvas;
             Graph = graph;
@@ -304,6 +303,24 @@ namespace railway_monitor.MVVM.Models.Station {
 
         public StationWorkPlan GetWorkPlan() {
             return solver.CalculateWorkPlan(schedule);
+        }
+
+        public void Reset(TrainSchedule schedule, StationGraph graph) {
+            trainItems.Clear();
+            trains.Clear();
+
+            this.Graph = graph;
+            this.schedule = schedule;
+            this.schedule.SetStationGraph(Graph);
+            this.solver = new Solver(Graph, timeInaccuracy);
+            trainIdCounter = 0;
+            foreach (Train train in schedule.GetSchedule().Keys) {
+                // register train
+                trains[trainIdCounter] = train;
+
+                trainIdCounter++;
+            }
+            TrainIdDict = trains.ToDictionary(x => x.Value, x => x.Key);
         }
     }
 }
