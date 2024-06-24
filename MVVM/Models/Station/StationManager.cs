@@ -343,7 +343,7 @@ namespace railway_monitor.MVVM.Models.Station {
             randomSrt.IsBroken = true;
             graphEdgeDict[randomSrt.Id].Block();
 
-            Dictionary<Train, Tuple<Tuple<Vertex, Vertex>, int>> arrivedTrainsPos = trains.Values.ToDictionary(x => x, GetArrivedPos);
+            Dictionary<Train, Tuple<Tuple<Vertex, Vertex>, int>> arrivedTrainsPos = trains.Values.Where(x => trainItems.ContainsKey(TrainIdDict[x])).ToDictionary(x => x, GetArrivedPos);
             Dictionary<Train, bool> passedStopPlatform = trains.Values.ToDictionary(x => x, x => false);
             plan = solver.RecalculateStationWorkPlan(plan, schedule, arrivedTrainsPos, passedStopPlatform);
             return plan;

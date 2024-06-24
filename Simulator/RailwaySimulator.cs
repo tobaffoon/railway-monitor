@@ -187,7 +187,7 @@ namespace railway_monitor.Simulator {
             mainDispatcher.Invoke(() => UpdatesListener.UpdateTime(CurrentTime));
         }
 
-        public  void ChangePlan(StationWorkPlan plan) {
+        public void ChangePlan(StationWorkPlan plan) {
             mainDispatcher.Invoke(() => ChangePlanInner(plan), DispatcherPriority.Send);
         }
 
