@@ -4,9 +4,6 @@ using railway_monitor.MVVM.Models.UpdatePackages;
 using SolverLibrary.Model.TrainInfo;
 using railway_monitor.Simulator.TimedEvents;
 using railway_monitor.Components.GraphicItems;
-using railway_monitor.Simulator.Sync;
-using railway_monitor.Bases;
-using railway_monitor.Components.TopologyItems;
 using railway_monitor.MVVM.ViewModels;
 using System.Windows.Threading;
 
