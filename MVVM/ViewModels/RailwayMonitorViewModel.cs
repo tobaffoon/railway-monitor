@@ -42,7 +42,7 @@ namespace railway_monitor.MVVM.ViewModels {
             WheelCommand = new WheelCommand(UtilToolActions.NoWheelAction);
             ArrowsCommand = new KeyboardCommand(UtilToolActions.NoKeyboardAction);
             
-            _simulator = new RailwaySimulator();
+            _simulator = new RailwaySimulator(10);
         }
 
         internal void Start(TrainSchedule trainSchedule, int timeInaccuracy) {
@@ -78,11 +78,11 @@ namespace railway_monitor.MVVM.ViewModels {
             CurrentTime = StationManager.CurrentTime.ToString();
         }
 
-        public static Tuple<int, int, double> GetAdvancedTrainPos(TrainItem train, double speed, double millis, bool reactsToState = true) {
+        public static Tuple<int, int, double> GetAdvancedTrainPos(TrainItem train, double millis, bool reactsToState = true) {
             StraightRailTrackItem trainTrack = train.FlowCurrentTrack;
             Port dstPort = train.FlowEndingPort;
             double trackProgress = train.FlowTrackProgress;
-            double advancedProgress = trackProgress + speed / trainTrack.Length * millis / 1000;
+            double advancedProgress = trackProgress + train.Speed / trainTrack.Length * millis / 1000;
             if (advancedProgress < 1) {
                 return Tuple.Create(trainTrack.Id, dstPort.Id, advancedProgress);
             }

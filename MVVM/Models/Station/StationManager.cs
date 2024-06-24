@@ -145,7 +145,7 @@ namespace railway_monitor.MVVM.Models.Station {
                 OnOffscheduledTrainArrive?.Invoke(package.trainId);
             }
             StraightRailTrackItem srtItem = inputTrackItem.Port.TopologyItems.OfType<StraightRailTrackItem>().First();
-            TrainItem trainItem = new TrainItem(package.trainId, inputTrackItem);
+            TrainItem trainItem = new TrainItem(package.trainId, inputTrackItem, trains[package.trainId].GetSpeed());
             trainItems[package.trainId] = trainItem;
             canvas.AddTrainItem(trainItem);
 
@@ -237,7 +237,7 @@ namespace railway_monitor.MVVM.Models.Station {
             }
             lock (_flowLock) {
                 TrainItem train = trainItems[timer.TrainId];
-                Tuple<int, int, double> nextPos = RailwayMonitorViewModel.GetAdvancedTrainPos(trainItems[timer.TrainId], train.Speed, flowUpdateInterval, false);
+                Tuple<int, int, double> nextPos = RailwayMonitorViewModel.GetAdvancedTrainPos(trainItems[timer.TrainId], flowUpdateInterval, false);
                 train.FlowCurrentTrack = topologyEdgeDict[nextPos.Item1];
                 train.FlowEndingPort = train.FlowCurrentTrack.PortStart.Id == nextPos.Item2 ? train.FlowCurrentTrack.PortStart : train.FlowCurrentTrack.PortEnd;
                 train.FlowTrackProgress = nextPos.Item3;

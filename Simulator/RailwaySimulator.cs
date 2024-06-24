@@ -6,10 +6,12 @@ using railway_monitor.Simulator.TimedEvents;
 using railway_monitor.Components.GraphicItems;
 using railway_monitor.MVVM.ViewModels;
 using System.Windows.Threading;
+using SolverLibrary.Model.Graph.VertexTypes;
+using railway_monitor.Components.TopologyItems;
 
 namespace railway_monitor.Simulator {
     public class RailwaySimulator {
-        public static readonly int defaultUpdatesPerSec = 1;
+        public static readonly int defaultUpdatesPerSec = 10;
 
         private object _planLock = new object();
         private StationWorkPlan? _plan;
@@ -59,15 +61,16 @@ namespace railway_monitor.Simulator {
 
         private System.Timers.Timer _timer;
 
-        public RailwaySimulator() {
+        public RailwaySimulator(int updatesPerSec) {
             CurrentTime = 0;
-            updateTimerPeriod = 200 / defaultUpdatesPerSec;
+            updateTimerPeriod = 1000 / updatesPerSec;
             _timer = new System.Timers.Timer(updateTimerPeriod);
             _timer.AutoReset = true;
             _timer.Elapsed += OnTimerElapsed;
             _simulatedTrains = [];
             mainDispatcher = Dispatcher.CurrentDispatcher;
         }
+        public RailwaySimulator() : this(defaultUpdatesPerSec) { }
 
         public void Start(StationWorkPlan plan, TrainSchedule schedule, SimulatorUpdatesListener updatesListener, Dictionary<Train, int> trainIdDict) {
             _trainSchedule = schedule;
@@ -82,6 +85,30 @@ namespace railway_monitor.Simulator {
                 }
                 else {
                     timedEvents[arrivalTime].AddRange(events);
+                }
+            }
+
+            // add switch events
+            foreach (var entry in plan.GetSwitchPlanUnits().GroupBy(x => x.GetBeginTime())) {
+                int time = entry.Key >= 0 ? entry.Key : 0;
+                var events = entry.Select(x => new SwitchEvent(x.GetVertex().getId(), x.GetStatus()));
+                if (!timedEvents.ContainsKey(time)) {
+                    timedEvents[time] = new List<TimedEvent>(events);
+                }
+                else {
+                    timedEvents[time].AddRange(events);
+                }
+            }
+
+            // add signal events
+            foreach (var entry in plan.GetTrafficLightPlanUnits().GroupBy(x => x.GetBeginTime())) {
+                int time = entry.Key >= 0 ? entry.Key : 0;
+                var events = entry.Select(x => new SignalEvent(x.GetVertex().getId(), x.GetStatus()));
+                if (!timedEvents.ContainsKey(time)) {
+                    timedEvents[time] = new List<TimedEvent>(events);
+                }
+                else {
+                    timedEvents[time].AddRange(events);
                 }
             }
             
@@ -108,26 +135,47 @@ namespace railway_monitor.Simulator {
                                 )
                             );
                             break;
+                        case SwitchEvent switchEvent:
+                            SwitchItem.SwitchDirection switchStatus = SwitchItem.SwitchDirection.FIRST;
+                            switch (switchEvent.status) {
+                                case SwitchStatus.PASSINGCON1:
+                                    switchStatus = SwitchItem.SwitchDirection.FIRST;
+                                    break;
+                                case SwitchStatus.PASSINGCON2:
+                                    switchStatus = SwitchItem.SwitchDirection.SECOND;
+                                    break;
+                            }
+                            QueueTask(() => UpdatesListener.SendSwitchUpdatePackage(new SwitchUpdatePackage(switchEvent.switchId, false, switchStatus)));
+                            break;
+                        case SignalEvent signalEvent:
+                            SignalItem.SignalLightStatus signalStatus = SignalItem.SignalLightStatus.PASS;
+                            switch (signalEvent.status) {
+                                case TrafficLightStatus.STOP:
+                                    signalStatus = SignalItem.SignalLightStatus.STOP;
+                                    break;
+                                case TrafficLightStatus.PASSING:
+                                    signalStatus = SignalItem.SignalLightStatus.PASS;
+                                    break;
+                            }
+                            QueueTask(() => UpdatesListener.SendSignalUpdatePackage(new SignalUpdatePackage(signalEvent.signalId, false, signalStatus)));
+                            break;
                     }
                 }
-
             }
 
             // move trains
             foreach (int trainId in _simulatedTrains) {
-                var nextTrainPos = RailwayMonitorViewModel.GetAdvancedTrainPos(trainItems[trainId], TrainItem.defaultSpeed, updateTimerPeriod, true);
-                await Task.Run(() =>
-                    mainDispatcher.Invoke(() => 
-                        UpdatesListener.SendTrainUpdatePackage(new TrainUpdatePackage(trainId, nextTrainPos.Item1, nextTrainPos.Item2, nextTrainPos.Item3, false))
-                    )
-                );
+                var nextTrainPos = RailwayMonitorViewModel.GetAdvancedTrainPos(trainItems[trainId], updateTimerPeriod, true);
+                QueueTask(() => UpdatesListener.SendTrainUpdatePackage(new TrainUpdatePackage(trainId, nextTrainPos.Item1, nextTrainPos.Item2, nextTrainPos.Item3, false)));
             }
 
-            CurrentTime++; 
+            CurrentTime++;
+            QueueTask(() => UpdatesListener.UpdateTime(CurrentTime));
+        }
+
+        private async void QueueTask(Action action) {
             await Task.Run(() =>
-                mainDispatcher.Invoke(() =>
-                    UpdatesListener.UpdateTime(CurrentTime)
-                 )
+                mainDispatcher.Invoke(action)
             );
         }
     }

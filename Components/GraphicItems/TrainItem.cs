@@ -120,7 +120,7 @@ namespace railway_monitor.Components.GraphicItems {
         #endregion
 
         public int Id { get; }
-        public double Speed; // equals 1 when it passes SRT of Length = 1 in one sec
+        public double Speed;
 
         private bool _isBroken = false;
         public bool IsBroken {
@@ -147,6 +147,12 @@ namespace railway_monitor.Components.GraphicItems {
             id,
             externalTrack.Port.TopologyItems.OfType<StraightRailTrackItem>().First(),
             externalTrack.Port.TopologyItems.OfType<StraightRailTrackItem>().First().GetOtherPort(externalTrack.Port)
+            ) { }
+        public TrainItem(int id, ExternalTrackItem externalTrack, double initSpeed) : this(
+            id,
+            externalTrack.Port.TopologyItems.OfType<StraightRailTrackItem>().First(),
+            externalTrack.Port.TopologyItems.OfType<StraightRailTrackItem>().First().GetOtherPort(externalTrack.Port),
+            initSpeed
             ) { }
 
         protected override void Render(DrawingContext dc) {
