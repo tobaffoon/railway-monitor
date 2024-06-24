@@ -4,6 +4,7 @@ using railway_monitor.Components.RailwayCanvas;
 using railway_monitor.Components.TopologyItems;
 using railway_monitor.MVVM.Models.Server;
 using railway_monitor.MVVM.Models.UpdatePackages;
+using railway_monitor.MVVM.ViewModels;
 using railway_monitor.Simulator;
 using railway_monitor.Utils;
 using SolverLibrary;
@@ -48,7 +49,7 @@ namespace railway_monitor.MVVM.Models.Station {
         private readonly int timeInaccuracy;
         private readonly Dictionary<int, TopologyItem> topologyVertexDict;
         private readonly Dictionary<int, StraightRailTrackItem> topologyEdgeDict;
-        private readonly Dictionary<int, TrainItem> trainItems;
+        public readonly Dictionary<int, TrainItem> trainItems;
         private readonly Dictionary<int, Train> trains;
         private readonly Dictionary<int, Vertex> graphVertexDict;
         private readonly Solver solver;
@@ -122,8 +123,8 @@ namespace railway_monitor.MVVM.Models.Station {
             train.CurrentTrack = srtItem;
             train.TrackProgress = package.trackProgress;
             train.IsBroken = package.isBroken;
-            confidenceTimers[package.trainId].Stop();
-            confidenceTimers[package.trainId].Start();
+            //confidenceTimers[package.trainId].Stop();
+            //confidenceTimers[package.trainId].Start();
         }
         public void ArriveTrain(TrainArrivalPackage package) {
             if (!topologyVertexDict.ContainsKey(package.inputVertexId)) {
@@ -147,7 +148,7 @@ namespace railway_monitor.MVVM.Models.Station {
             canvas.AddTrainItem(trainItem);
 
             // start confidence and flow timers
-            confidenceTimers[package.trainId].Start();
+            //confidenceTimers[package.trainId].Start();
             //flowTimers[package.trainId].Start();
         }
         public void DepartTrain(TrainDeparturePackage package) {
@@ -161,8 +162,8 @@ namespace railway_monitor.MVVM.Models.Station {
             // stop confidence and flow timers
             TrainTimer confidenceTimer = confidenceTimers[package.trainId];
             TrainTimer flowTimer = flowTimers[package.trainId];
-            confidenceTimer.Stop();
-            flowTimer.Stop();
+            //confidenceTimer.Stop();
+            //flowTimer.Stop();
         }
         public void UpdateSwitch(SwitchUpdatePackage package) {
             if (!topologyVertexDict.ContainsKey(package.vertexId)) {
@@ -234,9 +235,9 @@ namespace railway_monitor.MVVM.Models.Station {
             }
             lock (_flowLock) {
                 TrainItem train = trainItems[timer.TrainId];
-                Tuple<StraightRailTrackItem, Port, double> nextPos = GetAdvancedTrainPos(train, train.Speed, flowUpdateInterval, false);
-                train.FlowCurrentTrack = nextPos.Item1;
-                train.FlowEndingPort = nextPos.Item2;
+                Tuple<int, int, double> nextPos = RailwayMonitorViewModel.GetAdvancedTrainPos(trainItems[timer.TrainId], train.Speed, flowUpdateInterval, false);
+                train.FlowCurrentTrack = topologyEdgeDict[nextPos.Item1];
+                train.FlowEndingPort = train.FlowCurrentTrack.PortStart.Id == nextPos.Item2 ? train.FlowCurrentTrack.PortStart : train.FlowCurrentTrack.PortEnd;
                 train.FlowTrackProgress = nextPos.Item3;
             }
         }
@@ -297,53 +298,6 @@ namespace railway_monitor.MVVM.Models.Station {
                 int expectedDeparture = GetScheduleById(trainId).GetTimeDeparture() + timeInaccuracy;
                 return expectedArrival < CurrentTime && CurrentTime < expectedDeparture;
             }
-        }
-
-        public static Tuple<StraightRailTrackItem, Port, double> GetAdvancedTrainPos(TrainItem train, double speed, double millis, bool reactsToState = true) {
-            StraightRailTrackItem trainTrack = train.FlowCurrentTrack;
-            Port dstPort = train.FlowEndingPort;
-            double trackProgress = train.FlowTrackProgress;
-            double advancedProgress = trackProgress + speed / trainTrack.Length * millis / 1000;
-            if (advancedProgress < 1) {
-                return Tuple.Create(trainTrack, dstPort, advancedProgress);
-            }
-
-            // At this point we might want to change track
-            if (Port.IsPortSignal(dstPort)) {
-                SignalItem signalItem = dstPort.TopologyItems.OfType<SignalItem>().First();
-                if (signalItem.LightStatus == SignalItem.SignalLightStatus.STOP || !reactsToState) {
-                    // stop if signal status is STOP. Or if caller doesn't want to react to station's state
-                    return Tuple.Create(trainTrack, dstPort, trackProgress);
-                }
-            }
-
-            if (Port.IsPortSwitch(dstPort)) {
-                if (!reactsToState) {
-                    // stop if caller doesn't want to react to station's state
-                    return Tuple.Create(trainTrack, dstPort, trackProgress);
-                }
-
-                SwitchItem switchItem = dstPort.TopologyItems.OfType<SwitchItem>().First();
-                if (switchItem.Direction == SwitchItem.SwitchDirection.FIRST) {
-                    return Tuple.Create(switchItem.DstOneTrack, switchItem.DstOneTrack.GetOtherPort(dstPort), TrainItem.minDrawableProgress);
-                }
-                else {
-                    return Tuple.Create(switchItem.DstTwoTrack, switchItem.DstTwoTrack.GetOtherPort(dstPort), TrainItem.minDrawableProgress);
-                }
-            }
-            if (Port.IsPortConnection(dstPort)) {
-                StraightRailTrackItem nextSrt = dstPort.TopologyItems.OfType<StraightRailTrackItem>().First(srt => srt != trainTrack);
-                return Tuple.Create(nextSrt, nextSrt.GetOtherPort(dstPort), TrainItem.minDrawableProgress);
-            }
-            if (Port.IsPortOutput(dstPort)) {
-                // TODO: send train departure package
-                return Tuple.Create(trainTrack, dstPort, trackProgress);
-            }
-            if (Port.IsPortDeadend(dstPort)) {
-                return Tuple.Create(trainTrack, dstPort, trackProgress);
-            }
-
-            throw new ArgumentException("Error while getting next position of a train that heads to " + dstPort);
         }
 
         public StationWorkPlan GetWorkPlan() {

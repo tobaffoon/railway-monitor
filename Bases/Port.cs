@@ -100,5 +100,7 @@ namespace railway_monitor.Bases {
             }
             return "<" + typePrefix + "Port " + GetHashCode() + ">";
         }
+
+        public int Id { get; set; } = -1;
     }
 }

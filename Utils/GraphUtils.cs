@@ -195,6 +195,7 @@ namespace railway_monitor.Utils {
             // connect rails using info from edgeConnections
             // only non input vertices can have their starts moved
             foreach (Vertex vertex in vertices.Values) {
+                Port connectionPort;
                 switch (vertex.GetVertexType()) {
                     case VertexType.INPUT:
                         Edge inputEdge = vertex.GetEdgeConnections()[0].Item1 == null ? vertex.GetEdgeConnections()[0].Item2 : vertex.GetEdgeConnections()[0].Item1;
@@ -204,7 +205,7 @@ namespace railway_monitor.Utils {
                             IsBroken = vertex.IsBlocked(),
                             Type = ExternalTrackItem.ExternalTrackType.IN
                         };
-                        Port connectionPort = HasItems(srtItem.PortEnd) ? srtItem.PortStart : srtItem.PortEnd;
+                        connectionPort = HasItems(srtItem.PortEnd) ? srtItem.PortStart : srtItem.PortEnd;
                         canvas.AddTopologyItem(externalTrackItem);
                         externalTrackItem.Place(connectionPort);
                         externalTrackItem.Id = vertex.getId();
@@ -313,8 +314,10 @@ namespace railway_monitor.Utils {
                         switchItem.SetSource(srtSrc.GetOtherPort(connectionPort));
                         switchItem.Id = vertex.getId();
                         break;
-
+                    default:
+                        throw new ArgumentException("Wrong train type");
                 }
+                connectionPort.Id = vertex.getId();
             }
 
             canvas.ResetLatestTopologyItem();

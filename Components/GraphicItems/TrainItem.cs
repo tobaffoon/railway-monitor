@@ -63,14 +63,16 @@ namespace railway_monitor.Components.GraphicItems {
 
         private double _trackProgress;
         public double TrackProgress {
-            set {
-                if (0.1 <= value && value <= 1) {
-                    _trackProgress = value;
-                    FlowTrackProgress = value;
-                }
-                else {
-                    throw new InvalidDataException("Track progress of train " + Id + " attempted to be set outside of [0.1; 1]");
-                }
+            set { 
+                _trackProgress = value;
+                FlowTrackProgress = value;
+            //if (0.1 <= value && value <= 1) {
+            //    _trackProgress = value;
+            //    FlowTrackProgress = value;
+            //}
+            //else {
+            //    throw new InvalidDataException("Track progress of train " + Id + " attempted to be set outside of [0.1; 1]");
+            //}
             }
         }
         #endregion
