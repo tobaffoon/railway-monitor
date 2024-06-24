@@ -51,7 +51,8 @@ namespace railway_monitor.MVVM.Models.Station {
         private readonly Dictionary<int, StraightRailTrackItem> topologyEdgeDict;
         public readonly Dictionary<int, TrainItem> trainItems;
         private readonly Dictionary<int, Train> trains;
-        private readonly Dictionary<int, Vertex> graphVertexDict;
+        private Dictionary<int, Vertex> graphVertexDict;
+        private Dictionary<int, Edge> graphEdgeDict;
         private Solver solver;
         private readonly StationPlanSender planSender;
 
@@ -70,6 +71,8 @@ namespace railway_monitor.MVVM.Models.Station {
         }
 
         public Dictionary<Train, int> TrainIdDict { get; private set; }
+
+        private readonly Random srtRandomBreaker = new Random((int)DateTime.Now.Ticks);
 
         public StationManager(RailwayCanvasViewModel canvas, TrainSchedule schedule, int timeInaccuracy, RailwaySimulator simulator, StationGraph graph) {
             CurrentTime = 0;
@@ -102,6 +105,7 @@ namespace railway_monitor.MVVM.Models.Station {
             topologyVertexDict = canvas.GraphicItems.Where(item => item is TopologyItem && item is not StraightRailTrackItem && item.Id != -1).ToDictionary(x => x.Id, x => x as TopologyItem);
             topologyEdgeDict = canvas.Rails.ToDictionary(x => x.Id, x => x);
             graphVertexDict = graph.GetVertices().ToDictionary(x => x.getId(), x => x);
+            graphEdgeDict = graph.GetEdges().ToDictionary(x => x.getId(), x => x);
             this.schedule = schedule;
             this.schedule.SetStationGraph(Graph);
             this.timeInaccuracy = timeInaccuracy;
@@ -321,6 +325,22 @@ namespace railway_monitor.MVVM.Models.Station {
                 trainIdCounter++;
             }
             TrainIdDict = trains.ToDictionary(x => x.Value, x => x.Key);
+            graphVertexDict = Graph.GetVertices().ToDictionary(x => x.getId(), x => x);
+            graphEdgeDict = Graph.GetEdges().ToDictionary(x => x.getId(), x => x);
+        }
+
+        public void BreakRandomPlatform() {
+            List<StraightRailTrackItem> platformedSrts = canvas.GraphicItems.OfType<StraightRailTrackItem>().Where(
+                x => !x.IsBroken 
+                && (x.PlatformType == StraightRailTrackItem.RailPlatformType.PASSENGER 
+                    || x.PlatformType == StraightRailTrackItem.RailPlatformType.CARGO)).ToList();
+            if(platformedSrts.Count() == 0) {
+                return;
+            }
+            StraightRailTrackItem randomSrt = platformedSrts[srtRandomBreaker.Next(platformedSrts.Count())];
+            randomSrt.IsBroken = true;
+            graphEdgeDict[randomSrt.Id].Block();
+            // plan sender
         }
     }
 }

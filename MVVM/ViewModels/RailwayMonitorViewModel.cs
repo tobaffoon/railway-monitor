@@ -42,7 +42,7 @@ namespace railway_monitor.MVVM.ViewModels {
             WheelCommand = new WheelCommand(UtilToolActions.NoWheelAction);
             ArrowsCommand = new KeyboardCommand(UtilToolActions.NoKeyboardAction);
             
-            _simulator = new RailwaySimulator(50);
+            _simulator = new RailwaySimulator(5);
         }
 
         internal void Start(TrainSchedule trainSchedule, int timeInaccuracy) {
@@ -141,6 +141,11 @@ namespace railway_monitor.MVVM.ViewModels {
             }
 
             throw new ArgumentException("Error while getting next position of a train that heads to " + dstPort + String.Join(", ", dstPort.TopologyItems));
+        }
+
+        public void BreakRandomPlatform() {
+            if (StationManager == null) return;
+            StationManager.BreakRandomPlatform();
         }
     }
 }

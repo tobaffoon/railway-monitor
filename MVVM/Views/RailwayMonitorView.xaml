@@ -38,6 +38,7 @@
             <StackPanel Grid.Row="0" Orientation="Horizontal">
                 <Button MaxWidth="100" HorizontalAlignment="Left" Click="ExitMonitor">Exit</Button>
                 <Button MaxWidth="150" HorizontalAlignment="Left" Click="StartSimulation">Start simulation</Button>
+                <Button MaxWidth="150" HorizontalAlignment="Left" Click="BreakRandomPlatform">Break random platform</Button>
                 <TextBlock MaxWidth="150" HorizontalAlignment="Right" TextAlignment="Right" Text="{Binding CurrentTime}"/>
             </StackPanel>
         </Grid>

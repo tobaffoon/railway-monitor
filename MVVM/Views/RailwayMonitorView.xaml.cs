@@ -44,5 +44,9 @@ namespace railway_monitor.MVVM.Views {
         private void OnCanvasKeyDown(object sender, KeyEventArgs e) {
             
         }
+
+        private void BreakRandomPlatform(object sender, RoutedEventArgs e) {
+            Context.BreakRandomPlatform();
+        }
     }
 }
