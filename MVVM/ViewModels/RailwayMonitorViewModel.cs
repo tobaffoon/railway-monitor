@@ -123,6 +123,9 @@ namespace railway_monitor.MVVM.ViewModels {
             if (Port.IsPortDeadend(dstPort)) {
                 return Tuple.Create(trainTrack.Id, dstPort.Id, trackProgress);
             }
+            if (Port.IsPortInput(dstPort)) {
+                return Tuple.Create(trainTrack.Id, dstPort.Id, trackProgress);
+            }
 
             throw new ArgumentException("Error while getting next position of a train that heads to " + dstPort + String.Join(", ", dstPort.TopologyItems));
         }
