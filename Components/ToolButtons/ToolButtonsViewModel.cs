@@ -147,8 +147,7 @@ namespace railway_monitor.Components.ToolButtons {
                 signalButton,
                 deadEndButton,
                 externalTrackButton,
-                dragButton,
-                testButton
+                dragButton
                 ]);
 
             srtButton.IsChecked = true;

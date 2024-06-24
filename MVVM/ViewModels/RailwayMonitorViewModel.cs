@@ -42,7 +42,7 @@ namespace railway_monitor.MVVM.ViewModels {
             WheelCommand = new WheelCommand(UtilToolActions.NoWheelAction);
             ArrowsCommand = new KeyboardCommand(UtilToolActions.NoKeyboardAction);
             
-            _simulator = new RailwaySimulator(50);
+            _simulator = new RailwaySimulator(20);
         }
 
         internal void Start(TrainSchedule trainSchedule, int timeInaccuracy) {
