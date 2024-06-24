@@ -16,16 +16,16 @@ namespace railway_monitor.Components.GraphicItems {
         public static readonly int defaultSpeed = 10;
         public static readonly int defaultLength = 400;
 
-        private static readonly double _trainBorderWidth = 0.1;
+        private static readonly double _trainBorderWidth = 0.3;
 
         private static readonly Brush _trainBrush = new SolidColorBrush(Colors.Black);
         private static readonly Brush _trainBrokenBrush = new SolidColorBrush(Colors.DarkRed);
-        private static readonly Brush _trainOutlinesBrush = new SolidColorBrush(Colors.LightGoldenrodYellow);
+        private static readonly Brush _trainOutlinesBrush = new SolidColorBrush(Colors.DeepPink);
         private static readonly Pen _trainPen = new Pen(_trainOutlinesBrush, _trainBorderWidth);
 
         #region Drawing params
-        private static readonly double _triangleSide = 6;
-        private static readonly double _triangleAngle = 0.542;  // radians = 30 deg
+        private static readonly double _triangleSide = 16;
+        private static readonly double _triangleAngle = 0.2;  // radians = 30 deg
         #endregion
 
         #region Drawing Points

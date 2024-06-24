@@ -50,7 +50,7 @@ namespace railway_monitor.Components.TopologyItems {
 
         private static readonly Brush _externalTrackBrush = new SolidColorBrush(Colors.Black);
         private static readonly Pen _externalTrackPen = new Pen(_externalTrackBrush, 0);
-        private static readonly Brush _externalPortBrush = new SolidColorBrush(Color.FromRgb(153, 255, 51));
+        private static readonly Brush _externalPortBrush = new SolidColorBrush(Color.FromRgb(0, 181, 86));
         private static readonly Pen _externalPortPen = new Pen(_externalPortBrush, 0);
 
         #region Drawing points 

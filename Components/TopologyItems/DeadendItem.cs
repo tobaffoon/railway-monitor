@@ -35,7 +35,7 @@ namespace railway_monitor.Components.TopologyItems {
 
         private static readonly Brush _deadendBrush = new SolidColorBrush(Colors.Red);
         private static readonly Pen _deadendPen = new Pen(_deadendBrush, _deadendWidth);
-        private static readonly Brush _deadendPortBrush = new SolidColorBrush(Color.FromRgb(153, 255, 51));
+        private static readonly Brush _deadendPortBrush = new SolidColorBrush(Color.FromRgb(0, 181, 86));
         private static readonly Pen _deadendPortPen = new Pen(_deadendPortBrush, 0);
         private static readonly Pen _deadendBrokenPen = new Pen(brokenBrush, _deadendWidth);
 

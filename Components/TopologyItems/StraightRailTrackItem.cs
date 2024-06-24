@@ -21,14 +21,14 @@ namespace railway_monitor.Components.TopologyItems {
 
         private static readonly double defaultLength = 1;
         #region Main line params
-        private static readonly double _railWidth = 6;
+        private static readonly double _railWidth = 10;
         private static readonly double _circleRadius = 4.21;
         private static readonly double _platformOffset = 10; // must be bigger than circle radius
         private static readonly double _platformTiltAngle = 1.048;  // radians = 60 deg
-        private static readonly double _platformSideLength = 11;
+        private static readonly double _platformSideLength = 16;
         #endregion
 
-        private static readonly Brush _railTrackBrush = new SolidColorBrush(Color.FromRgb(153, 255, 51));
+        private static readonly Brush _railTrackBrush = new SolidColorBrush(Color.FromRgb(0, 181, 86));
         private static readonly Pen _railTrackPen = new Pen(_railTrackBrush, _railWidth);
         private static readonly Brush _passengerTrackBrush = new SolidColorBrush(Color.FromRgb(185, 111, 92));
         private static readonly Pen _passengerTrackPen = new Pen(_passengerTrackBrush, 0);
