@@ -1,15 +1,15 @@
-﻿using railway_monitor.Components.GraphicItems;
+﻿using railway_monitor.Components.TopologyItems;
 using System.Windows;
 
 namespace railway_monitor.Bases {
     public class Port {
         public event EventHandler<Port>? OnPortMerged;
 
-        public HashSet<TopologyItem> TopologyItems { get; }
+        public List<TopologyItem> TopologyItems { get; }
         public Point Pos;
 
         public Port(TopologyItem parentItem, Point startPos) {
-            TopologyItems = new HashSet<TopologyItem>();
+            TopologyItems = new List<TopologyItem>();
             AddItem(parentItem);
             Pos = startPos;
         }
@@ -57,8 +57,50 @@ namespace railway_monitor.Bases {
             }
         }
 
-        public override string ToString() {
-            return "<Port " + GetHashCode() + ">";
+        #region Port types
+        public static bool IsPortInput(Port port) {
+            return port.TopologyItems.OfType<ExternalTrackItem>().Any(externalItem => externalItem.Type == ExternalTrackItem.ExternalTrackType.IN);
         }
+        public static bool IsPortOutput(Port port) {
+            return port.TopologyItems.OfType<ExternalTrackItem>().Any(externalItem => externalItem.Type == ExternalTrackItem.ExternalTrackType.OUT);
+        }
+        public static bool IsPortConnection(Port port) {
+            return port.TopologyItems.OfType<StraightRailTrackItem>().Count() == port.TopologyItems.Count;
+        }
+        public static bool IsPortDeadend(Port port) {
+            return port.TopologyItems.OfType<DeadendItem>().Any();
+        }
+        public static bool IsPortSwitch(Port port) {
+            return port.TopologyItems.OfType<SwitchItem>().Any();
+        }
+        public static bool IsPortSignal(Port port) {
+            return port.TopologyItems.OfType<SignalItem>().Any();
+        }
+        #endregion
+
+        public override string ToString() {
+            string typePrefix = "";
+            if (IsPortInput(this)) {
+                typePrefix = "Input ";
+            }
+            else if (IsPortOutput(this)) {
+                typePrefix = "Output ";
+            }
+            else if (IsPortConnection(this)) {
+                typePrefix = "Connection ";
+            }
+            else if (IsPortDeadend(this)) {
+                typePrefix = "Deadend ";
+            }
+            else if (IsPortSwitch(this)) {
+                typePrefix = "Switch ";
+            }
+            else if (IsPortSignal(this)) {
+                typePrefix = "Signal ";
+            }
+            return "<" + typePrefix + "Port " + GetHashCode() + ">";
+        }
+
+        public int Id { get; set; } = -1;
     }
 }

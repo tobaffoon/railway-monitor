@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Media;
 
-namespace railway_monitor.Components.GraphicItems {
+namespace railway_monitor.Components.TopologyItems {
     public class SignalItem : TopologyItem {
         public enum SignalPlacementStatus {
             ERROR,
@@ -26,17 +26,19 @@ namespace railway_monitor.Components.GraphicItems {
             }
         }
 
+        #region Draw params
+        private static readonly double _poleLength = 20;
+        private static readonly double _poleWidth = 4;
+        private static readonly double _circleRadius = 6;
+        #endregion
+
         private static readonly Brush _signalPoleBrush = new SolidColorBrush(Colors.DarkGray);
-        private static readonly Pen _signalPolePen = new Pen(_signalPoleBrush, 4);
+        private static readonly Pen _signalPolePen = new Pen(_signalPoleBrush, _poleWidth);
         private static readonly Brush _signalStopBrush = new SolidColorBrush(Colors.Red);
         private static readonly Pen _signalStopPen = new Pen(_signalStopBrush, 0);
         private static readonly Brush _signalPassBrush = new SolidColorBrush(Colors.LawnGreen);
         private static readonly Pen _signalPassPen = new Pen(_signalPassBrush, 0);
-
-        #region Draw params
-        private static readonly double _poleLength = 20;
-        private static readonly double _circleRadius = 6;
-        #endregion
+        private static readonly Pen _signalBrokenPolePen = new Pen(brokenBrush, _poleWidth);
 
         static SignalItem() {
             _signalPolePen.StartLineCap = PenLineCap.Round;
@@ -80,6 +82,12 @@ namespace railway_monitor.Components.GraphicItems {
         }
 
         protected override void Render(DrawingContext dc) {
+            if (IsBroken) {
+                dc.DrawLine(_signalBrokenPolePen, Pos, PoleTopPos);
+                dc.DrawEllipse(brokenBrush, brokenPen, PoleTopPos, _circleRadius, _circleRadius);
+                return;
+            }
+
             dc.DrawLine(_signalPolePen, Pos, PoleTopPos);
             if (LightStatus == SignalLightStatus.PASS) {
                 dc.DrawEllipse(_signalPassBrush, _signalPassPen, PoleTopPos, _circleRadius, _circleRadius);

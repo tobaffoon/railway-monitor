@@ -3,7 +3,7 @@ using railway_monitor.Utils;
 using System.Windows;
 using System.Windows.Media;
 
-namespace railway_monitor.Components.GraphicItems {
+namespace railway_monitor.Components.TopologyItems {
     public class PlatformItem : TopologyItem {
         public enum PlatformItemType {
             PASSENGER,
@@ -12,6 +12,14 @@ namespace railway_monitor.Components.GraphicItems {
         }
 
         public static readonly double ConnectRadius = 7;
+        #region Draw params
+        private static readonly double _platformOffset = 10;
+        private static readonly double _platformTiltAngle = 1.048;  // radians = 60 deg
+        private static readonly double _platformSideLength = 7;
+        private static readonly double _platformLength = 30;
+
+        private static readonly double _crossHandLength = 10;
+        #endregion
 
         private static readonly Brush _platformOutlineBrush = new SolidColorBrush(Colors.Black);
         private static readonly Brush _passengerPlatformBrush = new SolidColorBrush(Color.FromRgb(185, 111, 92));
@@ -22,15 +30,6 @@ namespace railway_monitor.Components.GraphicItems {
         private static readonly Pen _nonePlatformPen = new Pen(_platformOutlineBrush, 0.5);
         private static readonly Brush _errorCrossBrush = new SolidColorBrush(Colors.DarkRed);
         private static readonly Pen _errorCrossPen = new Pen(_errorCrossBrush, 4);
-
-        #region Draw params
-        private static readonly double _platformOffset = 10;
-        private static readonly double _platformTiltAngle = 1.048;  // radians = 60 deg
-        private static readonly double _platformSideLength = 7;
-        private static readonly double _platformLength = 30;
-
-        private static readonly double _crossHandLength = 10;
-        #endregion
 
         private PlatformItemType _platformType;
         public PlatformItemType PlatformType {
@@ -167,7 +166,7 @@ namespace railway_monitor.Components.GraphicItems {
                     dc.DrawGeometry(_nonePlatformBrush, _nonePlatformPen, platformGeometry);
                     break;
             }
-            
+
             if (ConnectionErrorOccured) {
                 // cross
                 dc.DrawLine(_errorCrossPen, CrossHandOneStart, CrossHandOneEnd);

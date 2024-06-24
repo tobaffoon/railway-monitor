@@ -1,30 +1,35 @@
-﻿using railway_monitor.Bases;
-using System.Windows.Input;
-
-namespace railway_monitor.MVVM.ViewModels {
+﻿namespace railway_monitor.MVVM.ViewModels {
     public class MainViewModel : ViewModelBase {
         public enum ViewModelName {
-            Undefined = 0, RailwayMonitor
+            Undefined = 0, 
+            Start, 
+            RailwayDesigner, 
+            RailwayMonitor
         }
-
-        public ICommand SelectViewCommand => new CommandBase<ViewModelName>(SelectView);
 
         private Dictionary<ViewModelName, ViewModelBase> ViewModels { get; }
 
-        public ViewModelBase SelectedViewModel { get; set; }
+        private ViewModelBase _selectedViewModel;
+        public ViewModelBase SelectedViewModel { 
+            get => _selectedViewModel;
+            set => SetField(ref _selectedViewModel, value);
+        }
 
         public MainViewModel() {
             ViewModels = new Dictionary<ViewModelName, ViewModelBase>
             {
-                { ViewModelName.RailwayMonitor, new RailwayMonitorViewModel() }
+                { ViewModelName.RailwayDesigner, new RailwayDesignerViewModel(this) },
+                { ViewModelName.Start, new StartViewModel(this) },
+                { ViewModelName.RailwayMonitor, new RailwayMonitorViewModel(this) }
             };
 
-            SelectedViewModel = ViewModels.First().Value;
+            SelectedViewModel = ViewModels[ViewModelName.Start];
         }
 
-        public void SelectView(ViewModelName viewModelName) {
-            if (ViewModels.TryGetValue(viewModelName, out ViewModelBase? selectedViewModel)) {
-                this.SelectedViewModel = selectedViewModel;
+        public void SelectView(object param) {
+            if (param is ViewModelName viewModelName &&
+                    ViewModels.TryGetValue(viewModelName, out ViewModelBase? selectedViewModel)) {
+                SelectedViewModel = selectedViewModel;
             }
         }
     }

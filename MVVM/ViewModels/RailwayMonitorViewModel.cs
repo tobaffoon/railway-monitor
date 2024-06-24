@@ -1,125 +1,152 @@
-using railway_monitor.Components.RailwayCanvas;
-using railway_monitor.Components.ToolButtons;
-using railway_monitor.Tools;
+﻿using railway_monitor.MVVM.Models.Station;
+using railway_monitor.MVVM.Models.Server;
 using railway_monitor.Tools.Actions;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
+using railway_monitor.Tools;
+using SolverLibrary.Model;
+using railway_monitor.Simulator;
+using SolverLibrary.Model.Graph;
+using System.ComponentModel;
+using railway_monitor.Bases;
+using railway_monitor.Components.GraphicItems;
+using railway_monitor.Components.TopologyItems;
 
-namespace railway_monitor.MVVM.ViewModels
-{
-    public class RailwayMonitorViewModel : ViewModelBase {
-        private void PreprocessButtonChecked() {
-            RailwayCanvas.DeleteLatestTopologyItem();
-        }
+namespace railway_monitor.MVVM.ViewModels {
+    public class RailwayMonitorViewModel : RailwayBaseViewModel { 
+        private static readonly int _defaultTimeInaccuracy = 5;
+        public StationManager? StationManager { get; private set; }
 
-        private void AddPreprocessButtonChecked(IEnumerable<RadioButton> buttons) {
-            foreach (RadioButton button in buttons) {
-                button.Checked += (object sender, RoutedEventArgs e) => PreprocessButtonChecked();
+        private RailwaySimulator _simulator;
+        public StationGraph Graph { get; set; }
+
+        private int _currentTime;
+        public string CurrentTime {
+            get {
+                if (StationManager == null) {
+                    return "0 s";
+                }
+                else {
+                    return _currentTime + " s";
+                }
+            }
+            set {
+                SetField(ref _currentTime, int.Parse(value));
             }
         }
 
-        private void InitializeViewModels() {
-            ToolButtons = new ToolButtonsViewModel();
-            RailwayCanvas = new RailwayCanvasViewModel();
-            AddPreprocessButtonChecked(ToolButtons.ToolButtonsList);
+        public RailwayMonitorViewModel(MainViewModel mainViewModel) : base(mainViewModel) {
+            CanvasKeyboardCommand = new KeyboardCommand(UtilToolActions.NoKeyboardAction);
+            RightClickCommand = new CanvasCommand(UtilToolActions.NoCanvasAction); 
+            LeftClickCommand = new UseToolCommand(LeftClickToolActions.CaptureDrag);
+            MoveCommand = new UseToolCommand(MoveToolActions.MoveDrag);
+            LeftReleaseCommand = new CanvasCommand(LeftReleaseToolActions.ReleaseDrag);
+            WheelCommand = new WheelCommand(UtilToolActions.NoWheelAction);
+            ArrowsCommand = new KeyboardCommand(UtilToolActions.NoKeyboardAction);
+            
+            _simulator = new RailwaySimulator(50);
         }
 
-        public static readonly DependencyProperty MoveCommandProperty =
-            DependencyProperty.Register(
-            "MoveCommand", typeof(UseToolCommand),
-            typeof(RailwayMonitorViewModel));
-        public UseToolCommand MoveCommand {
-            get { return (UseToolCommand)GetValue(MoveCommandProperty); }
-            set { SetValue(MoveCommandProperty, value); }
+        internal void Start(TrainSchedule trainSchedule, int timeInaccuracy) {
+            if (Graph == null) {
+                return;
+            }
+
+            if(StationManager == null) {
+                StationManager = new StationManager(RailwayCanvas, trainSchedule, timeInaccuracy, _simulator, Graph);
+            }
+            else {
+                StationManager.Reset(trainSchedule, Graph);
+            }
+            StationManager.PropertyChanged += SetTime;
+            _simulator.trainItems = StationManager.trainItems;
+            _simulator.Start(StationManager.GetWorkPlan(), trainSchedule, new SimulatorUpdatesListener(StationManager), StationManager.TrainIdDict);
+        }
+        internal void Start(TrainSchedule trainSchedule) {
+            Start(trainSchedule, _defaultTimeInaccuracy);
         }
 
-        public static readonly DependencyProperty LeftClickCommandProperty =
-            DependencyProperty.Register(
-            "LeftClickCommand", typeof(UseToolCommand),
-            typeof(RailwayMonitorViewModel));
-        public UseToolCommand LeftClickCommand {
-            get { return (UseToolCommand)GetValue(LeftClickCommandProperty); }
-            set { SetValue(LeftClickCommandProperty, value); }
+        internal void FinishMonitoring() {
+            if (mainViewModel.SelectedViewModel is not RailwayMonitorViewModel monitor) {
+                mainViewModel.SelectView(MainViewModel.ViewModelName.Start);
+                return;
+            }
+            monitor.RailwayCanvas.Clear();
+            _simulator.Stop();
+            _currentTime = 0;
+
+            mainViewModel.SelectView(MainViewModel.ViewModelName.Start);
         }
 
-        public static readonly DependencyProperty RightClickCommandProperty =
-            DependencyProperty.Register(
-            "RightClickCommand", typeof(CanvasCommand),
-            typeof(RailwayMonitorViewModel));
-        public CanvasCommand RightClickCommand {
-            get { return (CanvasCommand)GetValue(RightClickCommandProperty); }
-            set { SetValue(RightClickCommandProperty, value); }
+        private void SetTime(object? sender, PropertyChangedEventArgs args) {
+            if (args.PropertyName == null || args.PropertyName != "CurrentTime") {
+                return;
+            }
+
+            CurrentTime = StationManager.CurrentTime.ToString();
         }
 
-        public static readonly DependencyProperty LeftReleaseCommandProperty =
-            DependencyProperty.Register(
-            "LeftReleaseCommand", typeof(CanvasCommand),
-            typeof(RailwayMonitorViewModel));
-        public CanvasCommand LeftReleaseCommand {
-            get { return (CanvasCommand)GetValue(LeftReleaseCommandProperty); }
-            set { SetValue(LeftReleaseCommandProperty, value); }
+        /// <summary>
+        /// Function to calculate next position for train in simulation
+        /// </summary>
+        /// <param name="train"></param>
+        /// <param name="reactsToState"></param>
+        /// <returns>
+        /// Tuple of: track id, destination port id, progress on the track, bool for whether train is departed
+        /// </returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static Tuple<int, int, double, bool> GetAdvancedTrainPos(TrainItem train, bool reactsToState = true) {
+            StraightRailTrackItem trainTrack = train.FlowCurrentTrack;
+            Port dstPort = train.FlowEndingPort;
+            double trackProgress = train.FlowTrackProgress;
+            double advancedProgress = trackProgress + train.Speed / trainTrack.Length;
+            if (advancedProgress < 1) {
+                return Tuple.Create(trainTrack.Id, dstPort.Id, advancedProgress, false);
+            }
+
+            // At this point we might want to change track
+            if (Port.IsPortSignal(dstPort)) {
+                SignalItem signalItem = dstPort.TopologyItems.OfType<SignalItem>().First();
+                if (signalItem.LightStatus == SignalItem.SignalLightStatus.STOP || !reactsToState) {
+                    // stop if signal status is STOP. Or if caller doesn't want to react to station's state
+                    return Tuple.Create(trainTrack.Id, dstPort.Id, trackProgress, false);
+                }
+                StraightRailTrackItem nextSrt = dstPort.TopologyItems.OfType<StraightRailTrackItem>().First(srt => srt != trainTrack);
+                return Tuple.Create(nextSrt.Id, nextSrt.GetOtherPort(dstPort).Id, TrainItem.minDrawableProgress, false);
+            }
+
+            if (Port.IsPortSwitch(dstPort)) {
+                if (!reactsToState) {
+                    // stop if caller doesn't want to react to station's state
+                    return Tuple.Create(trainTrack.Id, dstPort.Id, trackProgress, false);
+                }
+
+                SwitchItem switchItem = dstPort.TopologyItems.OfType<SwitchItem>().First();
+                if (switchItem.Direction == SwitchItem.SwitchDirection.FIRST) {
+                    StraightRailTrackItem dstSrt = switchItem.SrcTrack == train.FlowCurrentTrack ? switchItem.DstOneTrack : switchItem.SrcTrack;
+                    return Tuple.Create(dstSrt.Id, dstSrt.GetOtherPort(dstPort).Id, TrainItem.minDrawableProgress, false);
+                }
+                else {
+                    StraightRailTrackItem dstSrt = switchItem.SrcTrack == train.FlowCurrentTrack ? switchItem.DstTwoTrack : switchItem.SrcTrack;
+                    return Tuple.Create(dstSrt.Id, dstSrt.GetOtherPort(dstPort).Id, TrainItem.minDrawableProgress, false);
+                }
+            }
+            if (Port.IsPortConnection(dstPort)) {
+                StraightRailTrackItem nextSrt = dstPort.TopologyItems.OfType<StraightRailTrackItem>().First(srt => srt != trainTrack);
+                return Tuple.Create(nextSrt.Id, nextSrt.GetOtherPort(dstPort).Id, TrainItem.minDrawableProgress, false);
+            }
+            if (Port.IsPortOutput(dstPort)) {
+                return Tuple.Create(trainTrack.Id, dstPort.Id, trackProgress, true);
+            }
+            if (Port.IsPortDeadend(dstPort)) {
+                return Tuple.Create(trainTrack.Id, dstPort.Id, trackProgress, false);
+            }
+
+            throw new ArgumentException("Error while getting next position of a train that heads to " + dstPort + String.Join(", ", dstPort.TopologyItems));
         }
 
-
-        public static readonly DependencyProperty WheelCommandProperty =
-            DependencyProperty.Register(
-            "WheelCommand", typeof(WheelCommand),
-            typeof(RailwayMonitorViewModel));
-        public WheelCommand WheelCommand {
-            get { return (WheelCommand)GetValue(WheelCommandProperty); }
-            set { SetValue(WheelCommandProperty, value); }
-        }
-
-        public static readonly DependencyProperty ArrowsCommandProperty =
-            DependencyProperty.Register(
-            "ArrowsCommand", typeof(KeyboardCommand),
-            typeof(RailwayMonitorViewModel));
-        public KeyboardCommand ArrowsCommand {
-            get { return (KeyboardCommand)GetValue(ArrowsCommandProperty); }
-            set { SetValue(ArrowsCommandProperty, value); }
-        }
-
-        public static readonly DependencyProperty CanvasKeyboardProperty =
-            DependencyProperty.Register(
-            "EscapeCommand", typeof(KeyboardCommand),
-            typeof(RailwayMonitorViewModel));
-        public KeyboardCommand CanvasKeyboardCommand {
-            get { return (KeyboardCommand)GetValue(CanvasKeyboardProperty); }
-            set { SetValue(CanvasKeyboardProperty, value); }
-        }
-
-        public ToolButtonsViewModel ToolButtons { get; private set; }
-        public RailwayCanvasViewModel RailwayCanvas { get; private set; }
-
-        public RailwayMonitorViewModel() {
-            InitializeViewModels();
-            CanvasKeyboardCommand = new KeyboardCommand(KeyboardActions.CanvasKeyDown);
-
-            var leftClickBinding = new Binding("LeftClickCommand") {
-                Source = ToolButtons
-            };
-            BindingOperations.SetBinding(this, LeftClickCommandProperty, leftClickBinding);
-            var rightClickBinding = new Binding("RightClickCommand") {
-                Source = ToolButtons
-            };
-            BindingOperations.SetBinding(this, RightClickCommandProperty, rightClickBinding);
-            var moveBinding = new Binding("MoveCommand") {
-                Source = ToolButtons
-            };
-            BindingOperations.SetBinding(this, MoveCommandProperty, moveBinding);
-            var leftReleaseBinding = new Binding("LeftReleaseCommand") {
-                Source = ToolButtons
-            };
-            BindingOperations.SetBinding(this, LeftReleaseCommandProperty, leftReleaseBinding);
-            var wheelBinding = new Binding("WheelCommand") {
-                Source = ToolButtons
-            };
-            BindingOperations.SetBinding(this, WheelCommandProperty, wheelBinding);
-            var arrowsBinding = new Binding("ArrowsCommand") {
-                Source = ToolButtons
-            };
-            BindingOperations.SetBinding(this, ArrowsCommandProperty, arrowsBinding);
+        public void BreakRandomPlatform() {
+            if (StationManager == null) return;
+            StationWorkPlan newPlan = StationManager.BreakRandomPlatform();
+            _simulator.ChangePlan(newPlan);
         }
     }
 }

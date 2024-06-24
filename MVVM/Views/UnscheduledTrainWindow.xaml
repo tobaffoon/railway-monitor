@@ -1,0 +1,39 @@
+﻿<Window x:Class="railway_monitor.MVVM.Views.UnscheduledTrainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:railway_monitor.MVVM.Views"
+        mc:Ignorable="d"
+        Title="Путь для нового поезда" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.Resources >
+            <Style TargetType="Border" >
+                <Setter Property="Padding" Value="0,0,0,5" />
+            </Style>
+            <Style TargetType="Button" >
+                <Setter Property="FontSize" Value="10" />
+            </Style>
+        </Grid.Resources>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0">
+            <TextBlock>Введите время отбытия нового поезда</TextBlock>
+        </Border>
+        <Border Grid.Row="1">
+            <TextBox x:Name="DepartureTimeTextBox" MinWidth="250" TextAlignment="Center">####</TextBox>
+        </Border>
+        <Border Grid.Row="2">
+            <Button Click="ChooseUnscheduledTrack" MinWidth="60">Choose output track</Button>
+        </Border>
+        <Border Grid.Row="3">
+            <Button x:Name="ScheduleNewButton" Click="ScheduleNewTrain" MinWidth="60" IsEnabled="False">Schedule new train</Button>
+        </Border>
+    </Grid>
+</Window>

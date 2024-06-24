@@ -1,6 +1,6 @@
 ﻿using railway_monitor.Bases;
-using railway_monitor.Components.GraphicItems;
 using railway_monitor.Components.RailwayCanvas;
+using railway_monitor.Components.TopologyItems;
 using railway_monitor.Utils;
 using System.Windows;
 
@@ -26,7 +26,7 @@ namespace railway_monitor.Tools.Actions {
                     canvas.ResetLatestTopologyItem();
                 }
             }
-            else {
+            else if (connectionPort == null) {
                 // connection port is not found or latest srt cannot be connected to it
                 if (srtItem.PlacementStatus == StraightRailTrackItem.RailPlacementStatus.NOT_PLACED) {
                     srtItem.PlaceStartPoint(mousePos);
@@ -44,13 +44,13 @@ namespace railway_monitor.Tools.Actions {
 
             switch (srtItem.PlatformType) {
                 case StraightRailTrackItem.RailPlatformType.PASSENGER_HOVER:
-                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.PASSENGER; 
+                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.PASSENGER;
                     break;
                 case StraightRailTrackItem.RailPlatformType.CARGO_HOVER:
-                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.CARGO; 
+                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.CARGO;
                     break;
                 case StraightRailTrackItem.RailPlatformType.NONE_HOVER:
-                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.NONE_HOVER; 
+                    srtItem.PlatformType = StraightRailTrackItem.RailPlatformType.NONE_HOVER;
                     break;
             }
         }
@@ -81,7 +81,6 @@ namespace railway_monitor.Tools.Actions {
                     switchItem.SetSource(connectionPort);
                     canvas.ResetLatestTopologyItem();
                     break;
-
             }
         }
         public static void PlaceSignal(Tuple<RailwayCanvasViewModel, Point> args) {
@@ -154,6 +153,8 @@ namespace railway_monitor.Tools.Actions {
             if (connectionPort == null) return;
 
             canvas.DraggedPort = connectionPort;
+        }
+        public static void TestActions(Tuple<RailwayCanvasViewModel, Point> args) {
         }
     }
 }

@@ -1,20 +1,20 @@
 ﻿using railway_monitor.Bases;
-using railway_monitor.Components.GraphicItems;
+using railway_monitor.Components.TopologyItems;
 
 namespace railway_monitor.Utils {
     public static class ConnectConditions {
         public static bool IsRailConnectable(Port connectionPort) {
-            int switches = connectionPort.TopologyItems.OfType<SwitchItem>().Count();
             int srts = connectionPort.TopologyItems.OfType<StraightRailTrackItem>().Count();
 
-            if (switches != 0 && srts >= 3) return false;
+            if (srts >= 3) return false;
             return true;
         }
         public static bool IsSwitchConnectable(Port connectionPort) {
-            return connectionPort.TopologyItems.OfType<StraightRailTrackItem>().Count() == 3 && connectionPort.TopologyItems.OfType<SwitchItem>().Count() == 0;
+            IEnumerable<StraightRailTrackItem> connectedSrts = connectionPort.TopologyItems.OfType<StraightRailTrackItem>();
+            return connectedSrts.Count() == 3 && connectionPort.TopologyItems.OfType<SwitchItem>().Count() == 0;
         }
         public static bool IsSignalConnectable(Port connectionPort) {
-            return connectionPort.TopologyItems.OfType<StraightRailTrackItem>().Count() >= 2 && connectionPort.TopologyItems.OfType<SignalItem>().Count() == 0;
+            return connectionPort.TopologyItems.OfType<StraightRailTrackItem>().Count() == 2 && connectionPort.TopologyItems.OfType<SignalItem>().Count() == 0;
         }
         public static bool IsExternalTrackConnectable(Port connectionPort) {
             return connectionPort.TopologyItems.OfType<ExternalTrackItem>().Count() == 0;

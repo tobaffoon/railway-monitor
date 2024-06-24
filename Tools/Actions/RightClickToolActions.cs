@@ -1,8 +1,5 @@
-﻿using railway_monitor.Bases;
-using railway_monitor.Components.GraphicItems;
-using railway_monitor.Components.RailwayCanvas;
-using railway_monitor.Utils;
-using System.Diagnostics;
+﻿using railway_monitor.Components.RailwayCanvas;
+using railway_monitor.Components.TopologyItems;
 
 namespace railway_monitor.Tools.Actions {
     public static class RightClickToolActions {
@@ -20,15 +17,6 @@ namespace railway_monitor.Tools.Actions {
                     externalTrackItem.Type = ExternalTrackItem.ExternalTrackType.IN;
                     break;
             }
-        }
-        public static void ChangeRailDirection(RailwayCanvasViewModel canvas) {
-            StraightRailTrackItem? srtItem = canvas.LatestTopologyItem as StraightRailTrackItem;
-            if (srtItem == null) {
-                return;
-            }
-
-            if (srtItem.StartsFromStart) srtItem.StartsFromStart = false;
-            else srtItem.StartsFromStart = true;
         }
         public static void ScrollPlatformType(RailwayCanvasViewModel canvas) {
             StraightRailTrackItem? srtItem = canvas.LatestTopologyItem as StraightRailTrackItem;

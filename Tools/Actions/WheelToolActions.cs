@@ -1,5 +1,5 @@
-﻿using railway_monitor.Components.GraphicItems;
-using railway_monitor.Components.RailwayCanvas;
+﻿using railway_monitor.Components.RailwayCanvas;
+using railway_monitor.Components.TopologyItems;
 
 namespace railway_monitor.Tools.Actions {
     public static class WheelToolActions {

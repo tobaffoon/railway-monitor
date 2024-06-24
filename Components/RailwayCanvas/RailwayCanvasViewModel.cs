@@ -1,6 +1,8 @@
 ﻿using railway_monitor.Bases;
 using railway_monitor.Components.GraphicItems;
+using railway_monitor.Components.TopologyItems;
 using railway_monitor.MVVM.ViewModels;
+using SolverLibrary.Model.Graph;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;
@@ -11,7 +13,7 @@ namespace railway_monitor.Components.RailwayCanvas {
         private StraightRailTrackItem? ConnectionPortTrack { get; set; }
         private HighlightPort HighlightPort = new HighlightPort();
         private double PortConnectionRadius = HighlightPort.ConnectRadius;
-        
+
         public bool ConnectionErrorOccured {
             get => HighlightPort.ConnectionErrorOccured;
             set => HighlightPort.ConnectionErrorOccured = value;
@@ -27,17 +29,29 @@ namespace railway_monitor.Components.RailwayCanvas {
 
         public ObservableCollection<GraphicItem> GraphicItems { get; }
         public TopologyItem? LatestTopologyItem { get; set; }
+        public List<StraightRailTrackItem> Rails {
+            get {
+                return GraphicItems.OfType<StraightRailTrackItem>().ToList();
+            }
+        }
 
-        private TopologyItem[] permanentItems;
+        private GraphicItem[] permanentItems;
 
         public RailwayCanvasViewModel() {
             permanentItems = [HighlightPort];
             GraphicItems = [];
+            AddPermanentItems();
+        }
+
+        private void AddPermanentItems() {
             foreach (var item in permanentItems) {
                 GraphicItems.Add(item);
             }
         }
 
+        public void AddTrainItem(TrainItem item) {
+            GraphicItems.Add(item);
+        }
         public void AddTopologyItem(TopologyItem item) {
             GraphicItems.Add(item);
             LatestTopologyItem = item;
@@ -51,6 +65,9 @@ namespace railway_monitor.Components.RailwayCanvas {
             if (item == LatestTopologyItem) {
                 LatestTopologyItem = null;
             }
+        }
+        public void DeleteTrainItem(TrainItem item) {
+            GraphicItems.Remove(item);
         }
         public void DeleteStraightRailTrack(StraightRailTrackItem srt) {
             DeleteTopologyItem(srt);
@@ -174,6 +191,14 @@ namespace railway_monitor.Components.RailwayCanvas {
             if (DraggedPort == null) return;
             DraggedPort.RenderTopologyGraphicItems();
             HighlightPort.Pos = DraggedPort.Pos;
+        }
+
+        public void Clear() {
+            GraphicItems.Clear();
+            AddPermanentItems();
+            ConnectionPlatformTrack = null;
+            DraggedPort = null;
+            LatestTopologyItem = null;
         }
     }
 }

@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="railway_monitor.MVVM.Views.RailwayDesignerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:toolbuttons="clr-namespace:railway_monitor.Components.ToolButtons"
+             xmlns:rw_canvas="clr-namespace:railway_monitor.Components.RailwayCanvas"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <Border x:Name="MainBorder"
+            Background="White"
+            BorderBrush="Black" 
+            BorderThickness="2"
+            Focusable="True"
+            PreviewKeyDown="FocusCanvas">
+
+        <Grid>
+            <Grid.Resources>
+                <Style TargetType="Button" >
+                    <Setter Property="Padding" Value="10,0" />
+                    <Setter Property="Margin" Value="10,0" />
+                </Style>
+            </Grid.Resources>
+                
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <ItemsControl Grid.Row="0" Grid.RowSpan="2" x:Name="railwayCanvas" ItemsSource="{Binding RailwayCanvas.GraphicItems}" Focusable="True" KeyDown="OnCanvasKeyDown">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <rw_canvas:RailwayCanvas x:Name="MainCanvas" Background="Azure"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                <Button MaxWidth="100" HorizontalAlignment="Left" Click="CancelDesigning">Cancel</Button>
+                <Button MaxWidth="100" HorizontalAlignment="Left" Click="FinishDesigning">Save</Button>
+            </StackPanel>
+            
+            <toolbuttons:ToolButtons Grid.Row="2" DataContext="{Binding ToolButtons}">
+                <toolbuttons:ToolButtons.HorizontalAlignment>
+                    Center
+                </toolbuttons:ToolButtons.HorizontalAlignment>
+                <toolbuttons:ToolButtons.VerticalAlignment>
+                    Bottom
+                </toolbuttons:ToolButtons.VerticalAlignment>
+            </toolbuttons:ToolButtons>
+        </Grid>
+    </Border>
+        
+</UserControl>

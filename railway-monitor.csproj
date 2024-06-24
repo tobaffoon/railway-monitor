@@ -9,4 +9,15 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Solver\**" />
+    <EmbeddedResource Remove="Solver\**" />
+    <None Remove="Solver\**" />
+    <Page Remove="Solver\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\train-manager\TrainManager\SolverLibrary\SolverLibrary.csproj" />
+  </ItemGroup>
+
 </Project>

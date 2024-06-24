@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Media;
 
-namespace railway_monitor.Components.GraphicItems {
+namespace railway_monitor.Components.TopologyItems {
     public class ExternalTrackItem : TopologyItem {
         public enum ExternalTrackPlacementStatus {
             ERROR,
@@ -43,16 +43,16 @@ namespace railway_monitor.Components.GraphicItems {
             }
         }
 
+        #region Draw params
+        private static readonly double _triangleSide = 30;
+        private static readonly double _portCircleRadius = 6;
+        #endregion
+
         private static readonly Brush _externalTrackBrush = new SolidColorBrush(Colors.Black);
         private static readonly Pen _externalTrackPen = new Pen(_externalTrackBrush, 0);
         private static readonly Brush _externalPortBrush = new SolidColorBrush(Color.FromRgb(153, 255, 51));
         private static readonly Pen _externalPortPen = new Pen(_externalPortBrush, 0);
 
-        #region Draw params
-        private static readonly double _triangleSide = 30;
-        private static readonly double _portCircleRadius = 6;
-        #endregion
-        
         #region Drawing points 
         private Point _triangleBasePos = new Point(0, 0);
         private Point TriangleBasePos {
@@ -174,12 +174,15 @@ namespace railway_monitor.Components.GraphicItems {
             }
         }
 
+        public StraightRailTrackItem ConnectedRail { get; private set; }
+
         public ExternalTrackItem(Point initPos) : base() {
             Port = new Port(this, initPos);
         }
 
         public void Place(Port mainPort) {
             mainPort.Merge(Port);
+            ConnectedRail = Port.TopologyItems.OfType<StraightRailTrackItem>().First();
             PlacementStatus = ExternalTrackPlacementStatus.PLACED;
             Render();
         }
@@ -200,7 +203,12 @@ namespace railway_monitor.Components.GraphicItems {
                 new LineSegment(SideVertexTwo, true),
                 ], true);
             PathGeometry triangleGeometry = new PathGeometry([triangle]);
-            dc.DrawGeometry(_externalTrackBrush, _externalTrackPen, triangleGeometry);
+            if (IsBroken) {
+                dc.DrawGeometry(brokenBrush, brokenPen, triangleGeometry);
+            }
+            else {
+                dc.DrawGeometry(_externalTrackBrush, _externalTrackPen, triangleGeometry);
+            }
         }
     }
 }
