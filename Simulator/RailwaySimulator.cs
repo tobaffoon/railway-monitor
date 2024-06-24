@@ -9,6 +9,7 @@ using System.Windows.Threading;
 using SolverLibrary.Model.Graph.VertexTypes;
 using railway_monitor.Components.TopologyItems;
 using SolverLibrary.Model.PlanUnit;
+using System;
 
 namespace railway_monitor.Simulator {
     public class RailwaySimulator {
@@ -134,11 +135,7 @@ namespace railway_monitor.Simulator {
                     switch (tevent) {
                         case TrainArriveEvent arriveEvent:
                             _simulatedTrains.Add(arriveEvent.trainId);
-                            await Task.Run(() =>
-                                mainDispatcher.Invoke(() =>
-                                    UpdatesListener.SendTrainArrivalPackage(new TrainArrivalPackage(arriveEvent.trainId, arriveEvent.inputVertexId))
-                                )
-                            );
+                            QueueTask(() => UpdatesListener.SendTrainArrivalPackage(new TrainArrivalPackage(arriveEvent.trainId, arriveEvent.inputVertexId)));
                             break;
                         case SwitchEvent switchEvent:
                             SwitchItem.SwitchDirection switchStatus = SwitchItem.SwitchDirection.FIRST;
@@ -183,6 +180,47 @@ namespace railway_monitor.Simulator {
 
             CurrentTime++;
             QueueTask(() => UpdatesListener.UpdateTime(CurrentTime));
+        }
+
+        public async void ChangePlan(StationWorkPlan plan) {
+            await Task.Run(() =>
+                mainDispatcher.Invoke(() => ChangePlanInner(plan), DispatcherPriority.Send)
+            );
+        }
+
+        private void ChangePlanInner(StationWorkPlan plan) {
+            // remove previous plan entries
+            foreach (int time in timedEvents.Keys) {
+                timedEvents[time] = timedEvents[time].Where(x => x is not SwitchEvent && x is not SignalEvent).ToList();
+            }
+
+            // add new switch events
+            foreach (var entry in plan.GetSwitchPlanUnits().GroupBy(x => x.GetBeginTime())) {
+                int time = entry.Key >= 0 ? entry.Key : 0;
+                var events = entry.Select(x => new SwitchEvent(x.GetVertex().getId(), x.GetStatus()));
+                var inverseEvents = entry.Select(x => new SwitchEvent(x.GetVertex().getId(), ReverseSwitchStatus(x)));
+                if (!timedEvents.ContainsKey(time)) {
+                    timedEvents[time] = new List<TimedEvent>(events);
+                }
+                else {
+                    timedEvents[time].AddRange(events);
+                }
+                timedEvents[time].AddRange(inverseEvents);
+            }
+
+            // add new signal events
+            foreach (var entry in plan.GetTrafficLightPlanUnits().GroupBy(x => x.GetBeginTime())) {
+                int time = entry.Key >= 0 ? entry.Key : 0;
+                var events = entry.Select(x => new SignalEvent(x.GetVertex().getId(), x.GetStatus()));
+                var inverseEvents = entry.Select(x => new SignalEvent(x.GetVertex().getId(), ReverseTrafficLightStatus(x)));
+                if (!timedEvents.ContainsKey(time)) {
+                    timedEvents[time] = new List<TimedEvent>(events);
+                }
+                else {
+                    timedEvents[time].AddRange(events);
+                }
+                timedEvents[time].AddRange(inverseEvents);
+            }
         }
 
         private async void QueueTask(Action action) {

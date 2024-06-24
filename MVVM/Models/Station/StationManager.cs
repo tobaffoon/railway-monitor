@@ -54,6 +54,7 @@ namespace railway_monitor.MVVM.Models.Station {
         private Dictionary<int, Vertex> graphVertexDict;
         private Dictionary<int, Edge> graphEdgeDict;
         private Solver solver;
+        private StationWorkPlan plan;
         private readonly StationPlanSender planSender;
 
         public StationGraph Graph { get; private set; }
@@ -306,7 +307,8 @@ namespace railway_monitor.MVVM.Models.Station {
         }
 
         public StationWorkPlan GetWorkPlan() {
-            return solver.CalculateWorkPlan(schedule);
+            plan = solver.CalculateWorkPlan(schedule);
+            return plan;
         }
 
         public void Reset(TrainSchedule schedule, StationGraph graph) {
@@ -329,18 +331,19 @@ namespace railway_monitor.MVVM.Models.Station {
             graphEdgeDict = Graph.GetEdges().ToDictionary(x => x.getId(), x => x);
         }
 
-        public void BreakRandomPlatform() {
+        public StationWorkPlan BreakRandomPlatform() {
             List<StraightRailTrackItem> platformedSrts = canvas.GraphicItems.OfType<StraightRailTrackItem>().Where(
                 x => !x.IsBroken 
                 && (x.PlatformType == StraightRailTrackItem.RailPlatformType.PASSENGER 
                     || x.PlatformType == StraightRailTrackItem.RailPlatformType.CARGO)).ToList();
             if(platformedSrts.Count() == 0) {
-                return;
+                return plan;
             }
             StraightRailTrackItem randomSrt = platformedSrts[srtRandomBreaker.Next(platformedSrts.Count())];
             randomSrt.IsBroken = true;
             graphEdgeDict[randomSrt.Id].Block();
-            // plan sender
+
+            
         }
     }
 }
