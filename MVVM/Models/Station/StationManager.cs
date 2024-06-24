@@ -121,6 +121,8 @@ namespace railway_monitor.MVVM.Models.Station {
             TrainItem train = trainItems[package.trainId];
             StraightRailTrackItem srtItem = topologyEdgeDict[package.edgeId];
             train.CurrentTrack = srtItem;
+            int dstId = package.dstVertexId;
+            train.FlowEndingPort = srtItem.PortStart.Id == dstId ? srtItem.PortStart : srtItem.PortEnd;
             train.TrackProgress = package.trackProgress;
             train.IsBroken = package.isBroken;
             //confidenceTimers[package.trainId].Stop();

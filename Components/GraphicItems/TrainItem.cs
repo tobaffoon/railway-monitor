@@ -13,7 +13,7 @@ namespace railway_monitor.Components.GraphicItems {
             NONE
         }
         public static readonly double minDrawableProgress = 1e-10;
-        public static readonly int defaultSpeed = 1;
+        public static readonly int defaultSpeed = 10;
         public static readonly int defaultLength = 400;
 
         private static readonly double _trainBorderWidth = 0.1;
@@ -66,13 +66,6 @@ namespace railway_monitor.Components.GraphicItems {
             set { 
                 _trackProgress = value;
                 FlowTrackProgress = value;
-            //if (0.1 <= value && value <= 1) {
-            //    _trackProgress = value;
-            //    FlowTrackProgress = value;
-            //}
-            //else {
-            //    throw new InvalidDataException("Track progress of train " + Id + " attempted to be set outside of [0.1; 1]");
-            //}
             }
         }
         #endregion

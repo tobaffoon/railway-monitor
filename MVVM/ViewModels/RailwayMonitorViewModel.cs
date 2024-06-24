@@ -94,6 +94,8 @@ namespace railway_monitor.MVVM.ViewModels {
                     // stop if signal status is STOP. Or if caller doesn't want to react to station's state
                     return Tuple.Create(trainTrack.Id, dstPort.Id, trackProgress);
                 }
+                StraightRailTrackItem nextSrt = dstPort.TopologyItems.OfType<StraightRailTrackItem>().First(srt => srt != trainTrack);
+                return Tuple.Create(nextSrt.Id, nextSrt.GetOtherPort(dstPort).Id, TrainItem.minDrawableProgress);
             }
 
             if (Port.IsPortSwitch(dstPort)) {
@@ -122,7 +124,7 @@ namespace railway_monitor.MVVM.ViewModels {
                 return Tuple.Create(trainTrack.Id, dstPort.Id, trackProgress);
             }
 
-            throw new ArgumentException("Error while getting next position of a train that heads to " + dstPort);
+            throw new ArgumentException("Error while getting next position of a train that heads to " + dstPort + String.Join(", ", dstPort.TopologyItems));
         }
     }
 }

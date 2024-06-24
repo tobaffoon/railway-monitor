@@ -61,7 +61,7 @@ namespace railway_monitor.Simulator {
 
         public RailwaySimulator() {
             CurrentTime = 0;
-            updateTimerPeriod = 1000 / defaultUpdatesPerSec;
+            updateTimerPeriod = 200 / defaultUpdatesPerSec;
             _timer = new System.Timers.Timer(updateTimerPeriod);
             _timer.AutoReset = true;
             _timer.Elapsed += OnTimerElapsed;
